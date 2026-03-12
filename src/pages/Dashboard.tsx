@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, ShoppingBag, User, Plus, MoreVertical, Heart, Trash2, ExternalLink, X as XIcon } from 'lucide-react';
+import { BookOpen, ShoppingBag, User, Plus, MoreVertical, Heart, Trash2, ExternalLink, X as XIcon, RefreshCw } from 'lucide-react';
 import { pageTransition, fadeUp } from '@/lib/animations';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassBadge, type BadgeVariant } from '@/components/ui/GlassBadge';
@@ -9,6 +9,7 @@ import { useAppToast } from '@/components/ui/GlassToast';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { BANGLADESH_DISTRICTS } from '@/data/districts';
+import useDocumentTitle from '@/hooks/useDocumentTitle';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
@@ -27,6 +28,7 @@ type TabId = typeof TABS[number]['id'];
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  useDocumentTitle('My Dashboard');
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, profile, refreshProfile } = useAuth();
   const { showToast } = useAppToast();
@@ -138,14 +140,31 @@ const MyListings = () => {
     fetch();
   };
 
+  const renewListing = async (id: string) => {
+    const newExpiry = new Date(Date.now() + 60 * 86400000).toISOString();
+    const { error } = await supabase.from('listings').update({
+      expires_at: newExpiry,
+      expiry_warning_sent: false,
+    } as any).eq('id', id);
+    if (error) { showToast('Failed to renew', 'error'); return; }
+    showToast('Listing renewed for 60 more days!', 'success');
+    fetch();
+  };
+
   const getStatusBadge = (l: any) => {
     const daysLeft = Math.ceil((new Date(l.expires_at).getTime() - Date.now()) / 86400000);
     if (l.status === 'pending') return <GlassBadge variant="good">Awaiting admin review</GlassBadge>;
-    if (l.status === 'available' && daysLeft <= 7) return <GlassBadge variant="fair">Expires in {daysLeft} days</GlassBadge>;
+    if (l.status === 'available' && daysLeft <= 7) return <GlassBadge variant="fair">Expiring Soon</GlassBadge>;
     if (l.status === 'available') return <GlassBadge variant="new">Live on marketplace</GlassBadge>;
     if (l.status === 'sold') return <GlassBadge variant="worn">Sold</GlassBadge>;
     if (l.status === 'rejected') return <GlassBadge variant="fair">Rejected</GlassBadge>;
     return <GlassBadge variant="worn">{l.status}</GlassBadge>;
+  };
+
+  const isExpiringSoon = (l: any) => {
+    if (l.status !== 'available') return false;
+    const daysLeft = Math.ceil((new Date(l.expires_at).getTime() - Date.now()) / 86400000);
+    return daysLeft <= 7;
   };
 
   if (loading) return <SkeletonList count={3} />;
@@ -191,6 +210,11 @@ const MyListings = () => {
                 </div>
               )}
             </div>
+            {isExpiringSoon(l) && (
+              <GlassButton variant="secondary" className="mt-1 py-1 text-[10px]" onClick={() => renewListing(l.id)}>
+                <RefreshCw size={12} className="mr-1" /> Renew
+              </GlassButton>
+            )}
           </div>
         </div>
       ))}

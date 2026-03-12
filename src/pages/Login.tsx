@@ -15,7 +15,8 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { showToast } = useAppToast();
-  const from = (location.state as any)?.from || '/';
+  const searchParams = new URLSearchParams(location.search);
+  const from = searchParams.get('redirect') || (location.state as any)?.from || '/';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

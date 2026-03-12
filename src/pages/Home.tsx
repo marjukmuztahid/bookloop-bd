@@ -31,7 +31,7 @@ const TypingText = ({ text }: { text: string }) => {
         clearInterval(interval);
         setDone(true);
       }
-    }, 50);
+    }, 110);
     return () => clearInterval(interval);
   }, [text]);
 

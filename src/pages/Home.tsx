@@ -83,7 +83,7 @@ const Home = () => {
           className="mx-auto max-w-3xl px-4 pb-8 pt-16 text-center md:pb-12 md:pt-24"
         >
           <h1 className="mb-4 text-3xl font-extrabold leading-tight text-[#1A1A1A] md:text-5xl">
-            Give Your Books a Second Life
+            <TypingText text="Give Your Books a Second Life" />
           </h1>
           <p className="mx-auto mb-8 max-w-lg text-base text-[#8A8A8A] md:text-lg">
             Buy and sell school &amp; college books across Bangladesh. Safe, simple, student-friendly.

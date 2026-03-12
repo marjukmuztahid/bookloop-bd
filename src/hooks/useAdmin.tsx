@@ -33,6 +33,4 @@ export const logActivity = async (eventType: string, description: string) => {
   await supabase.from('activity_log').insert({ event_type: eventType, description } as any);
 };
 
-export const notifyUser = async (userId: string, message: string) => {
-  await supabase.from('notifications').insert({ user_id: userId, message });
-};
+export { sendNotification as notifyUser } from '@/lib/notifications';

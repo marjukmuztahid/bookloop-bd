@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -17,6 +17,37 @@ const CURRICULA = ['All', 'Bangla Version', 'English Version', 'English Medium']
 const CONDITIONS = ['All', 'New', 'Good', 'Fair', 'Worn'];
 const CLASSES = ['All', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
 const BROWSE_CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
+
+const TypingText = ({ text }: { text: string }) => {
+  const [displayed, setDisplayed] = useState('');
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) {
+        clearInterval(interval);
+        setDone(true);
+      }
+    }, 50);
+    return () => clearInterval(interval);
+  }, [text]);
+
+  return (
+    <span>
+      {displayed}
+      {!done && (
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
+          className="inline-block w-[3px] ml-0.5 h-[0.85em] align-middle bg-[#E8357A] rounded-full"
+        />
+      )}
+    </span>
+  );
+};
 
 const Home = () => {
   const navigate = useNavigate();
@@ -83,7 +114,7 @@ const Home = () => {
           className="mx-auto max-w-3xl px-4 pb-8 pt-16 text-center md:pb-12 md:pt-24"
         >
           <h1 className="mb-4 text-3xl font-extrabold leading-tight text-[#1A1A1A] md:text-5xl">
-            Give Your Books a Second Life
+            <TypingText text="Give Your Books a Second Life" />
           </h1>
           <p className="mx-auto mb-8 max-w-lg text-base text-[#8A8A8A] md:text-lg">
             Buy and sell school &amp; college books across Bangladesh. Safe, simple, student-friendly.

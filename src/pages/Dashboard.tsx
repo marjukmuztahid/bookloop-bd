@@ -28,6 +28,7 @@ type TabId = typeof TABS[number]['id'];
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  useDocumentTitle('My Dashboard');
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, profile, refreshProfile } = useAuth();
   const { showToast } = useAppToast();

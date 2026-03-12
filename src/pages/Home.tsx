@@ -10,6 +10,7 @@ import Footer from '@/components/layout/Footer';
 import { mockBooks } from '@/data/mockBooks';
 import { SkeletonGrid } from '@/components/ui/SkeletonBookCard';
 import HowItWorksModal from '@/components/HowItWorksModal';
+import useDocumentTitle from '@/hooks/useDocumentTitle';
 
 const DISTRICTS = ['All', 'Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal', 'Rangpur', 'Mymensingh'];
 const CURRICULA = ['All', 'Bangla Version', 'English Version', 'English Medium'];

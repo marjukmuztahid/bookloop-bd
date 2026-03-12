@@ -213,6 +213,8 @@ const Home = () => {
       </main>
 
       <Footer />
+
+      {showWalkthrough && <HowItWorksModal onClose={() => setShowWalkthrough(false)} />}
     </div>
   );
 };

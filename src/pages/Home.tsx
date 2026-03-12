@@ -18,6 +18,37 @@ const CONDITIONS = ['All', 'New', 'Good', 'Fair', 'Worn'];
 const CLASSES = ['All', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
 const BROWSE_CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
 
+const TypingText = ({ text }: { text: string }) => {
+  const [displayed, setDisplayed] = useState('');
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) {
+        clearInterval(interval);
+        setDone(true);
+      }
+    }, 50);
+    return () => clearInterval(interval);
+  }, [text]);
+
+  return (
+    <span>
+      {displayed}
+      {!done && (
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
+          className="inline-block w-[3px] ml-0.5 h-[0.85em] align-middle bg-[#E8357A] rounded-full"
+        />
+      )}
+    </span>
+  );
+};
+
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();

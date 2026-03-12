@@ -21,6 +21,7 @@ const BROWSE_CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  useDocumentTitle('');
   const [searchQuery, setSearchQuery] = useState('');
   const [curriculum, setCurriculum] = useState('All');
   const [classLevel, setClassLevel] = useState('All');

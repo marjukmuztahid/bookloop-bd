@@ -39,7 +39,7 @@ const ListingDetail = () => {
         .from('listings')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error || !data) {
         setLoading(false);

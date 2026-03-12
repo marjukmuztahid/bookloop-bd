@@ -19,6 +19,7 @@ const BROWSE_CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 
 
 const Home = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [curriculum, setCurriculum] = useState('All');
   const [classLevel, setClassLevel] = useState('All');
@@ -28,6 +29,18 @@ const Home = () => {
   const [maxPrice, setMaxPrice] = useState('');
   const [activeClassPill, setActiveClassPill] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [showWalkthrough, setShowWalkthrough] = useState(false);
+
+  // Show walkthrough after signup
+  useEffect(() => {
+    const state = location.state as any;
+    if (state?.showWalkthrough && localStorage.getItem('howItWorksShown') === 'false') {
+      setShowWalkthrough(true);
+      localStorage.setItem('howItWorksShown', 'true');
+      // Clean up location state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Simulate loading
   useEffect(() => {

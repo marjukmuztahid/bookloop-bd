@@ -64,6 +64,7 @@ export type Database = {
           description: string | null
           display_price: number
           expires_at: string
+          expiry_warning_sent: boolean
           id: string
           photos: string[]
           rejection_reason: string | null
@@ -82,6 +83,7 @@ export type Database = {
           description?: string | null
           display_price?: number
           expires_at?: string
+          expiry_warning_sent?: boolean
           id?: string
           photos?: string[]
           rejection_reason?: string | null
@@ -100,6 +102,7 @@ export type Database = {
           description?: string | null
           display_price?: number
           expires_at?: string
+          expiry_warning_sent?: boolean
           id?: string
           photos?: string[]
           rejection_reason?: string | null
@@ -124,6 +127,7 @@ export type Database = {
           id: string
           is_read: boolean
           message: string
+          type: string
           user_id: string
         }
         Insert: {
@@ -131,6 +135,7 @@ export type Database = {
           id?: string
           is_read?: boolean
           message: string
+          type?: string
           user_id: string
         }
         Update: {
@@ -138,6 +143,7 @@ export type Database = {
           id?: string
           is_read?: boolean
           message?: string
+          type?: string
           user_id?: string
         }
         Relationships: [

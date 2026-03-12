@@ -8,6 +8,7 @@ import BookCard from '@/components/ui/BookCard';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { mockBooks } from '@/data/mockBooks';
+import { SkeletonGrid } from '@/components/ui/SkeletonBookCard';
 
 const DISTRICTS = ['All', 'Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal', 'Rangpur', 'Mymensingh'];
 const CURRICULA = ['All', 'Bangla Version', 'English Version', 'English Medium'];

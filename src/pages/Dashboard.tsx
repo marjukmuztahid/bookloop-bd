@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, ShoppingBag, User, Plus, MoreVertical, Heart, Trash2, ExternalLink, X as XIcon } from 'lucide-react';
+import { BookOpen, ShoppingBag, User, Plus, MoreVertical, Heart, Trash2, ExternalLink, X as XIcon, RefreshCw } from 'lucide-react';
 import { pageTransition, fadeUp } from '@/lib/animations';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassBadge, type BadgeVariant } from '@/components/ui/GlassBadge';
@@ -9,6 +9,7 @@ import { useAppToast } from '@/components/ui/GlassToast';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { BANGLADESH_DISTRICTS } from '@/data/districts';
+import useDocumentTitle from '@/hooks/useDocumentTitle';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 

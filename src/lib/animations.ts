@@ -1,8 +1,12 @@
+import type { Transition } from 'framer-motion';
+
+const smoothEase: [number, number, number, number] = [0.4, 0, 0.2, 1];
+
 export const fadeUp = {
   initial: { opacity: 0, y: 16 },
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: 8 },
-  transition: { duration: 0.35, ease: [0.4, 0, 0.2, 1] },
+  transition: { duration: 0.35, ease: smoothEase } satisfies Transition,
 };
 
 export const staggerContainer = {
@@ -13,7 +17,7 @@ export const pageTransition = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -8 },
-  transition: { duration: 0.45, ease: [0.4, 0, 0.2, 1] },
+  transition: { duration: 0.45, ease: smoothEase } satisfies Transition,
 };
 
 export const springButton = {

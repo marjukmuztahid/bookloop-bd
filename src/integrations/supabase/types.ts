@@ -14,7 +14,184 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      listings: {
+        Row: {
+          author_publisher: string
+          book_name: string
+          class_level: string
+          condition: string
+          created_at: string
+          curriculum: string
+          description: string | null
+          display_price: number
+          expires_at: string
+          id: string
+          photos: string[]
+          seller_id: string
+          seller_price: number
+          status: string
+          weight_kg: number
+        }
+        Insert: {
+          author_publisher: string
+          book_name: string
+          class_level: string
+          condition: string
+          created_at?: string
+          curriculum: string
+          description?: string | null
+          display_price?: number
+          expires_at?: string
+          id?: string
+          photos?: string[]
+          seller_id: string
+          seller_price: number
+          status?: string
+          weight_kg: number
+        }
+        Update: {
+          author_publisher?: string
+          book_name?: string
+          class_level?: string
+          condition?: string
+          created_at?: string
+          curriculum?: string
+          description?: string | null
+          display_price?: number
+          expires_at?: string
+          id?: string
+          photos?: string[]
+          seller_id?: string
+          seller_price?: number
+          status?: string
+          weight_kg?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listings_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          delivery_address: string
+          delivery_charge: number
+          delivery_phone: string
+          id: string
+          listing_id: string
+          pickup_scheduled_at: string | null
+          status: string
+          total_amount: number
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          delivery_address: string
+          delivery_charge: number
+          delivery_phone: string
+          id?: string
+          listing_id: string
+          pickup_scheduled_at?: string | null
+          status?: string
+          total_amount: number
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          delivery_address?: string
+          delivery_charge?: number
+          delivery_phone?: string
+          id?: string
+          listing_id?: string
+          pickup_scheduled_at?: string | null
+          status?: string
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          bkash_nagad_number: string | null
+          created_at: string
+          district: string
+          full_name: string
+          id: string
+          is_banned: boolean
+          phone: string
+        }
+        Insert: {
+          bkash_nagad_number?: string | null
+          created_at?: string
+          district: string
+          full_name: string
+          id: string
+          is_banned?: boolean
+          phone: string
+        }
+        Update: {
+          bkash_nagad_number?: string | null
+          created_at?: string
+          district?: string
+          full_name?: string
+          id?: string
+          is_banned?: boolean
+          phone?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

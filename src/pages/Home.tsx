@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -8,6 +8,7 @@ import BookCard from '@/components/ui/BookCard';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { mockBooks } from '@/data/mockBooks';
+import { SkeletonGrid } from '@/components/ui/SkeletonBookCard';
 
 const DISTRICTS = ['All', 'Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal', 'Rangpur', 'Mymensingh'];
 const CURRICULA = ['All', 'Bangla Version', 'English Version', 'English Medium'];
@@ -25,6 +26,13 @@ const Home = () => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [activeClassPill, setActiveClassPill] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const hasActiveFilter = curriculum !== 'All' || classLevel !== 'All' || condition !== 'All' || district !== 'All' || minPrice || maxPrice;
 
@@ -131,16 +139,20 @@ const Home = () => {
         {/* Book Grid */}
         <section id="book-grid" className="mx-auto max-w-7xl px-4 py-10">
           <h2 className="mb-6 text-xl font-bold text-[#1A1A1A]">Available Books</h2>
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
-            className="grid grid-cols-2 gap-4 md:grid-cols-4"
-          >
-            {mockBooks.map((book) => (
-              <BookCard key={book.id} book={book} />
-            ))}
-          </motion.div>
+          {isLoading ? (
+            <SkeletonGrid count={8} />
+          ) : (
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              animate="animate"
+              className="grid grid-cols-2 gap-4 md:grid-cols-4"
+            >
+              {mockBooks.map((book) => (
+                <BookCard key={book.id} book={book} />
+              ))}
+            </motion.div>
+          )}
 
           {/* Pagination placeholder */}
           <div className="mt-8 flex items-center justify-center gap-2">

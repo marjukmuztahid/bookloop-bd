@@ -139,16 +139,20 @@ const Home = () => {
         {/* Book Grid */}
         <section id="book-grid" className="mx-auto max-w-7xl px-4 py-10">
           <h2 className="mb-6 text-xl font-bold text-[#1A1A1A]">Available Books</h2>
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
-            className="grid grid-cols-2 gap-4 md:grid-cols-4"
-          >
-            {mockBooks.map((book) => (
-              <BookCard key={book.id} book={book} />
-            ))}
-          </motion.div>
+          {isLoading ? (
+            <SkeletonGrid count={8} />
+          ) : (
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              animate="animate"
+              className="grid grid-cols-2 gap-4 md:grid-cols-4"
+            >
+              {mockBooks.map((book) => (
+                <BookCard key={book.id} book={book} />
+              ))}
+            </motion.div>
+          )}
 
           {/* Pagination placeholder */}
           <div className="mt-8 flex items-center justify-center gap-2">

@@ -210,6 +210,11 @@ const MyListings = () => {
                 </div>
               )}
             </div>
+            {isExpiringSoon(l) && (
+              <GlassButton variant="secondary" className="mt-1 py-1 text-[10px]" onClick={() => renewListing(l.id)}>
+                <RefreshCw size={12} className="mr-1" /> Renew
+              </GlassButton>
+            )}
           </div>
         </div>
       ))}

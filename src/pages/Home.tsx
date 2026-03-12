@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { pageTransition, staggerContainer, fadeUp } from '@/lib/animations';
@@ -9,6 +9,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { mockBooks } from '@/data/mockBooks';
 import { SkeletonGrid } from '@/components/ui/SkeletonBookCard';
+import HowItWorksModal from '@/components/HowItWorksModal';
 
 const DISTRICTS = ['All', 'Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal', 'Rangpur', 'Mymensingh'];
 const CURRICULA = ['All', 'Bangla Version', 'English Version', 'English Medium'];
@@ -18,6 +19,7 @@ const BROWSE_CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 
 
 const Home = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [curriculum, setCurriculum] = useState('All');
   const [classLevel, setClassLevel] = useState('All');
@@ -27,6 +29,18 @@ const Home = () => {
   const [maxPrice, setMaxPrice] = useState('');
   const [activeClassPill, setActiveClassPill] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [showWalkthrough, setShowWalkthrough] = useState(false);
+
+  // Show walkthrough after signup
+  useEffect(() => {
+    const state = location.state as any;
+    if (state?.showWalkthrough && localStorage.getItem('howItWorksShown') === 'false') {
+      setShowWalkthrough(true);
+      localStorage.setItem('howItWorksShown', 'true');
+      // Clean up location state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Simulate loading
   useEffect(() => {
@@ -199,6 +213,8 @@ const Home = () => {
       </main>
 
       <Footer />
+
+      {showWalkthrough && <HowItWorksModal onClose={() => setShowWalkthrough(false)} />}
     </div>
   );
 };

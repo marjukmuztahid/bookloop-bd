@@ -10,6 +10,7 @@ import Footer from '@/components/layout/Footer';
 import { mockBooks } from '@/data/mockBooks';
 import { SkeletonGrid } from '@/components/ui/SkeletonBookCard';
 import HowItWorksModal from '@/components/HowItWorksModal';
+import useDocumentTitle from '@/hooks/useDocumentTitle';
 
 const DISTRICTS = ['All', 'Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal', 'Rangpur', 'Mymensingh'];
 const CURRICULA = ['All', 'Bangla Version', 'English Version', 'English Medium'];
@@ -20,6 +21,7 @@ const BROWSE_CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  useDocumentTitle('');
   const [searchQuery, setSearchQuery] = useState('');
   const [curriculum, setCurriculum] = useState('All');
   const [classLevel, setClassLevel] = useState('All');

@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_log: {
+        Row: {
+          created_at: string
+          description: string
+          event_type: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          event_type: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          event_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      admin_users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
       listings: {
         Row: {
           author_publisher: string
@@ -27,6 +66,7 @@ export type Database = {
           expires_at: string
           id: string
           photos: string[]
+          rejection_reason: string | null
           seller_id: string
           seller_price: number
           status: string
@@ -44,6 +84,7 @@ export type Database = {
           expires_at?: string
           id?: string
           photos?: string[]
+          rejection_reason?: string | null
           seller_id: string
           seller_price: number
           status?: string
@@ -61,6 +102,7 @@ export type Database = {
           expires_at?: string
           id?: string
           photos?: string[]
+          rejection_reason?: string | null
           seller_id?: string
           seller_price?: number
           status?: string
@@ -233,7 +275,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

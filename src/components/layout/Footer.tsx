@@ -26,8 +26,6 @@ const Footer = () => {
 
             {/* Column 3 — Info */}
             <div className="flex flex-col gap-2 text-sm text-[#8A8A8A]">
-              <span>Powered by Steadfast Courier</span>
-              <span>Payments via bKash &amp; Nagad</span>
               <span>© 2025 Book Loop BD</span>
             </div>
           </div>

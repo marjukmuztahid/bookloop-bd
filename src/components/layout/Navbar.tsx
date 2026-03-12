@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { Search, Menu, X, User, LogOut, LayoutDashboard, UserCircle } from 'lucide-react';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { useAuth } from '@/hooks/useAuth';
+import NotificationBell from '@/components/layout/NotificationBell';
 import logo from '@/assets/logo.png';
 
 const Navbar = () => {
@@ -60,7 +61,7 @@ const Navbar = () => {
       >
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4">
           <Link to="/" className="flex-shrink-0">
-            <img src={logo} alt="Book Loop BD" className="h-[38px] w-auto" />
+            <img src={logo} alt="Book Loop BD" className="h-[38px] w-auto" loading="lazy" />
           </Link>
 
           <form onSubmit={handleSearch} className="mx-8 hidden flex-1 max-w-md md:block">
@@ -72,7 +73,9 @@ const Navbar = () => {
             </div>
           </form>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {user && <NotificationBell />}
+
             <div className="hidden md:flex md:items-center md:gap-3">
               <GlassButton onClick={handleSell}>Sell a Book</GlassButton>
               {!user ? (
@@ -80,7 +83,8 @@ const Navbar = () => {
               ) : (
                 <div className="relative" ref={dropdownRef}>
                   <button onClick={() => setShowDropdown(!showDropdown)}
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[rgba(232,53,122,0.10)] text-[#E8357A] transition-colors hover:bg-[rgba(232,53,122,0.20)]">
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[rgba(232,53,122,0.10)] text-[#E8357A] transition-colors hover:bg-[rgba(232,53,122,0.20)]"
+                    aria-label="User menu">
                     <User size={18} />
                   </button>
                   <AnimatePresence>
@@ -92,7 +96,7 @@ const Navbar = () => {
                         transition={{ duration: 0.15 }}
                         className="glass-panel-sm absolute right-0 top-12 w-48 overflow-hidden p-1">
                         <DropdownItem icon={<LayoutDashboard size={16} />} label="My Dashboard" onClick={() => { navigate('/dashboard'); setShowDropdown(false); }} />
-                        <DropdownItem icon={<UserCircle size={16} />} label="My Profile" onClick={() => { navigate('/profile'); setShowDropdown(false); }} />
+                        <DropdownItem icon={<UserCircle size={16} />} label="My Profile" onClick={() => { navigate('/dashboard?tab=profile'); setShowDropdown(false); }} />
                         <DropdownItem icon={<LogOut size={16} />} label="Logout" onClick={handleLogout} />
                       </motion.div>
                     )}
@@ -102,7 +106,7 @@ const Navbar = () => {
             </div>
 
             <button className="flex h-9 w-9 items-center justify-center rounded-xl md:hidden"
-              onClick={() => setShowMobileMenu(true)}>
+              onClick={() => setShowMobileMenu(true)} aria-label="Open menu">
               <Menu size={22} className="text-[#3A3A3A]" />
             </button>
           </div>
@@ -120,7 +124,7 @@ const Navbar = () => {
               className="glass-panel fixed bottom-0 left-0 right-0 z-[70] rounded-b-none p-6">
               <div className="mb-4 flex items-center justify-between">
                 <span className="text-sm font-semibold text-[#1A1A1A]">Menu</span>
-                <button onClick={() => setShowMobileMenu(false)}>
+                <button onClick={() => setShowMobileMenu(false)} aria-label="Close menu">
                   <X size={20} className="text-[#8A8A8A]" />
                 </button>
               </div>
@@ -141,7 +145,7 @@ const Navbar = () => {
                 ) : (
                   <>
                     <GlassButton variant="secondary" className="w-full" onClick={() => { navigate('/dashboard'); setShowMobileMenu(false); }}>My Dashboard</GlassButton>
-                    <GlassButton variant="secondary" className="w-full" onClick={() => { navigate('/profile'); setShowMobileMenu(false); }}>My Profile</GlassButton>
+                    <GlassButton variant="secondary" className="w-full" onClick={() => { navigate('/notifications'); setShowMobileMenu(false); }}>Notifications</GlassButton>
                     <GlassButton variant="destructive" className="w-full" onClick={() => { handleLogout(); setShowMobileMenu(false); }}>Logout</GlassButton>
                   </>
                 )}

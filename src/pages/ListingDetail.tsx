@@ -101,10 +101,6 @@ const ListingDetail = () => {
   const isSoldPending = listing?.status === 'sold_pending_delivery';
   const isSold = listing?.status === 'sold';
 
-  const deliveryCharge =
-    listing && profile && seller
-      ? calculateDeliveryCharge(listing.weight_kg, seller.district, profile.district)
-      : null;
 
   if (loading) return <SkeletonDetail />;
 

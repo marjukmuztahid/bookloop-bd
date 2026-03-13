@@ -105,6 +105,7 @@ export const mockBooks: BookCardData[] = [
     book_name: 'Accounting — HSC 1st Year',
     author_publisher: 'Sohel Ahmed',
     curriculum: 'english_version',
+    class_level: 'HSC 1st Year',
     condition: 'new',
     display_price: 260,
     photos: [],

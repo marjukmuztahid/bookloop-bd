@@ -99,7 +99,7 @@ const Analytics = () => {
     { label: 'Total Listings', value: stats.totalListings },
     { label: 'Total Orders', value: stats.totalOrders },
     { label: 'Delivered', value: stats.deliveredOrders },
-    { label: 'Fee Revenue', value: formatPrice(stats.feeRevenue) },
+    { label: 'Total Revenue', value: formatPrice(stats.feeRevenue) },
     { label: 'Cancel Rate', value: `${cancelRate}%` },
   ];
 

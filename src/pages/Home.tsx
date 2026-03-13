@@ -87,16 +87,19 @@ const Home = () => {
 
   const fetchListings = useCallback(async () => {
     setIsLoading(true);
+    const userJoin = district !== 'All'
+      ? 'users!listings_seller_id_fkey!inner(district)'
+      : 'users!listings_seller_id_fkey(district)';
     let q = supabase
       .from('listings')
-      .select('id, book_name, author_publisher, curriculum, class_level, condition, display_price, photos, status, users!listings_seller_id_fkey(district)', { count: 'exact' })
+      .select(`id, book_name, author_publisher, curriculum, class_level, condition, display_price, photos, status, ${userJoin}`, { count: 'exact' })
       .in('status', ['available', 'sold_pending_delivery'])
       .order('created_at', { ascending: false });
 
     if (curriculum !== 'All') q = q.eq('curriculum', CURRICULA_MAP[curriculum]);
     if (classLevel !== 'All') q = q.eq('class_level', classLevel);
     if (condition !== 'All') q = q.eq('condition', CONDITIONS_MAP[condition]);
-    if (district !== 'All') q = (q as any).eq('users.district', district).not('users', 'is', null);
+    if (district !== 'All') q = (q as any).eq('users.district', district);
     if (minPrice) q = q.gte('display_price', Number(minPrice));
     if (maxPrice) q = q.lte('display_price', Number(maxPrice));
     if (searchQuery.trim()) {

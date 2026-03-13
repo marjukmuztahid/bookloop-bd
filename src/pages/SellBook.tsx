@@ -122,7 +122,6 @@ const SellBook = () => {
   };
 
   const priceNum = parseFloat(price) || 0;
-  const buyerPays = Math.round(priceNum * 1.05);
 
   const resetForm = () => {
     setPhotos([]); setPhotoPreviews([]); setBookName(''); setAuthor('');

@@ -96,7 +96,7 @@ const Home = () => {
     if (curriculum !== 'All') q = q.eq('curriculum', CURRICULA_MAP[curriculum]);
     if (classLevel !== 'All') q = q.eq('class_level', classLevel);
     if (condition !== 'All') q = q.eq('condition', CONDITIONS_MAP[condition]);
-    if (district !== 'All') q = q.eq('users.district', district);
+    if (district !== 'All') q = q.eq('users.district' as any, district).not('users', 'is', null);
     if (minPrice) q = q.gte('display_price', Number(minPrice));
     if (maxPrice) q = q.lte('display_price', Number(maxPrice));
     if (searchQuery.trim()) {

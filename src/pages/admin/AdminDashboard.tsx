@@ -20,13 +20,14 @@ const AdminDashboard = () => {
       supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
       supabase.from('orders').select('id', { count: 'exact', head: true }).in('status', ['pickup_scheduled', 'in_transit']),
       supabase.from('users').select('id', { count: 'exact', head: true }),
-      supabase.from('orders').select('listings(display_price, seller_price)').eq('status', 'delivered'),
+      supabase.from('orders').select('listings(seller_price)').eq('status', 'delivered'),
       supabase.from('activity_log').select('*').order('created_at', { ascending: false }).limit(10),
     ]);
 
     const fee = (rev.data || []).reduce((sum: number, o: any) => {
-      const l = o.listings;
-      return sum + (l ? l.display_price - l.seller_price : 0);
+      const price = o.listings?.seller_price || 0;
+      const rate = price <= 500 ? 0.07 : 0.05;
+      return sum + Math.round(price * rate);
     }, 0);
 
     setStats({

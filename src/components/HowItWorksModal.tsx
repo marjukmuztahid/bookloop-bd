@@ -18,7 +18,7 @@ const SELLING_STEPS = [
   { icon: '✅', title: 'Admin Approval', desc: 'We review and approve your listing — you\'ll get notified' },
   { icon: '📦', title: 'Buyer Orders', desc: 'When ordered, admin schedules a Steadfast pickup from you' },
   { icon: '🚚', title: 'Courier Collects', desc: 'Steadfast collects the book and delivers to the buyer' },
-  { icon: '💸', title: 'Get Paid', desc: 'Receive payment via bKash/Nagad minus 5% platform fee' },
+  { icon: '💸', title: 'Get Paid', desc: 'Receive payment via bKash/Nagad minus a small platform fee (7% under ৳500, 5% above)' },
 ];
 
 interface Props {

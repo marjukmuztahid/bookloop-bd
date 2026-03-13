@@ -85,8 +85,8 @@ const Home = () => {
     setIsLoading(true);
     let q = supabase
       .from('listings')
-      .select('id, book_name, author_publisher, curriculum, condition, display_price, photos, users!listings_seller_id_fkey(district)', { count: 'exact' })
-      .eq('status', 'available')
+      .select('id, book_name, author_publisher, curriculum, condition, display_price, photos, status, users!listings_seller_id_fkey(district)', { count: 'exact' })
+      .in('status', ['available', 'sold_pending_delivery'])
       .order('created_at', { ascending: false });
 
     if (curriculum !== 'All') q = q.eq('curriculum', CURRICULA_MAP[curriculum]);

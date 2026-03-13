@@ -141,6 +141,10 @@ const ListingDetail = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
                   className="h-full w-full object-cover"
+                  width={600}
+                  height={800}
+                  loading="eager"
+                  fetchPriority="high"
                 />
               </AnimatePresence>
               {!isAvailable && (

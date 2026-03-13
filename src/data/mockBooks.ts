@@ -28,6 +28,7 @@ export const mockBooks: BookCardData[] = [
     book_name: 'Higher Math 1st Paper — HSC',
     author_publisher: 'S.U. Ahmed',
     curriculum: 'bangla_version',
+    class_level: 'HSC 1st Year',
     condition: 'fair',
     display_price: 280,
     photos: [],

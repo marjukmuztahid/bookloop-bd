@@ -56,6 +56,8 @@ const App = () => (
                   <Route path="/how-it-works" element={<HowItWorks />} />
                   <Route path="/listings/:id" element={<ListingDetail />} />
                   <Route path="/contact" element={<Contact />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<Terms />} />
 
                   {/* User protected */}
                   <Route path="/checkout/:listingId" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />

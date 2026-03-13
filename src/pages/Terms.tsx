@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer';
 import useSEO from '@/hooks/useSEO';
 
 const Terms = () => {
-  useSEO({ title: 'Terms & Conditions — Book Loop BD', description: 'Read the terms and conditions for using Book Loop BD, Bangladesh's student book marketplace.' });
+  useSEO({ title: 'Terms & Conditions — Book Loop BD', description: "Read the terms and conditions for using Book Loop BD, Bangladesh's student book marketplace." });
 
   return (
     <div className="min-h-screen bg-background">

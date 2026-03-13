@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer';
 import useSEO from '@/hooks/useSEO';
 
 const PrivacyPolicy = () => {
-  useSEO({ title: 'Privacy Policy — Book Loop BD', description: 'Read the privacy policy of Book Loop BD, Bangladesh's student book marketplace.' });
+  useSEO({ title: 'Privacy Policy — Book Loop BD', description: "Read the privacy policy of Book Loop BD, Bangladesh's student book marketplace." });
 
   return (
     <div className="min-h-screen bg-background">

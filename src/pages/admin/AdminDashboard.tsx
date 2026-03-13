@@ -46,7 +46,7 @@ const AdminDashboard = () => {
     { icon: Package, label: 'Pending Orders', value: stats.pendingOrders, urgent: stats.pendingOrders > 0 },
     { icon: Truck, label: 'Active Deliveries', value: stats.activeDeliveries, urgent: false },
     { icon: Users, label: 'Total Users', value: stats.totalUsers, urgent: false },
-    { icon: DollarSign, label: 'Fee Revenue', value: formatPrice(stats.feeRevenue), urgent: false },
+    { icon: DollarSign, label: 'Total Revenue', value: formatPrice(stats.feeRevenue), urgent: false },
   ];
 
   const timeAgo = (d: string) => {

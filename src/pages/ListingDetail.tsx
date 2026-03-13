@@ -190,26 +190,8 @@ const ListingDetail = () => {
 
             {/* Delivery charge */}
             <div className="glass-panel-sm p-4">
-              {user && profile && deliveryCharge !== null ? (
-                <p className="text-sm text-[#3A3A3A]">
-                  Delivery to {profile.district}: <span className="font-bold">{formatPrice(deliveryCharge)}</span>
-                </p>
-              ) : (
-                <p className="text-sm text-[#8A8A8A]">
-                  <Link to="/login" className="font-semibold text-[#E8357A]">Login</Link> to see delivery charge
-                </p>
-              )}
+              <p className="text-sm text-[#8A8A8A]">Delivery charge calculated at checkout</p>
             </div>
-
-            {/* Total estimate */}
-            {deliveryCharge !== null && (
-              <div className="glass-panel-sm p-4">
-                <p className="text-sm text-[#8A8A8A]">
-                  Estimated total (COD):{' '}
-                  <span className="font-bold text-[#1A1A1A]">{formatPrice(listing.display_price + deliveryCharge)}</span>
-                </p>
-              </div>
-            )}
 
             {/* Seller info */}
             {seller && (

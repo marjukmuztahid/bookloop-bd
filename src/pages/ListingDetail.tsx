@@ -146,7 +146,7 @@ const ListingDetail = () => {
                 <motion.img
                   key={activePhoto}
                   src={photos[activePhoto]}
-                  alt={listing.book_name}
+                  alt={`${listing.class_level} ${listing.book_name} ${listing.condition} condition — Book Loop BD`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}

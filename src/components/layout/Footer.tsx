@@ -22,11 +22,21 @@ const Footer = () => {
               <FooterLink to="/listings" label="Browse Books" />
               <FooterLink to="/sell" label="Sell a Book" />
               <FooterLink to="/contact" label="Contact / Report an Issue" />
+              <div className="mt-2 flex gap-4">
+                <FooterLink to="/privacy" label="Privacy Policy" />
+                <FooterLink to="/terms" label="Terms of Use" />
+              </div>
             </div>
 
             {/* Column 3 — Info */}
             <div className="flex flex-col gap-2 text-sm text-[#8A8A8A]">
-              <span>© 2025 Book Loop BD</span>
+              <a
+                href="mailto:bookloopbd.com@gmail.com"
+                className="transition-colors duration-200 hover:text-[#E8357A]"
+              >
+                bookloopbd.com@gmail.com
+              </a>
+              <span>© {new Date().getFullYear()} Book Loop BD</span>
             </div>
           </div>
         </div>

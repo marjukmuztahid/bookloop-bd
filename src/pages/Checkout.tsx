@@ -140,8 +140,8 @@ const Checkout = () => {
 
       if (error) throw error;
 
-      // Mark listing as unavailable
-      await supabase.from('listings').update({ status: 'sold_pending_delivery' }).eq('id', listing.id);
+      // Mark listing as unavailable via secure DB function
+      await supabase.rpc('mark_listing_sold_pending', { p_listing_id: listing.id });
 
       setSuccess(true);
     } catch (err: any) {

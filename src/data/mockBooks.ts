@@ -116,6 +116,7 @@ export const mockBooks: BookCardData[] = [
     book_name: 'English Grammar & Composition',
     author_publisher: 'P.C. Das',
     curriculum: 'bangla_version',
+    class_level: 'Class 10',
     condition: 'good',
     display_price: 180,
     photos: [],

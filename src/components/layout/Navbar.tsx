@@ -12,7 +12,6 @@ const Navbar = () => {
   const { scrollY } = useScroll();
   const { user, signOut } = useAuth();
 
-  const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

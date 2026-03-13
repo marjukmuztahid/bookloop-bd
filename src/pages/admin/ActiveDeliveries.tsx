@@ -37,8 +37,10 @@ const ActiveDeliveries = () => {
       await supabase.from('listings').update({ status: 'sold' }).eq('id', o.listing_id);
       await logActivity('delivery_confirmed', `"${l?.book_name}" delivered successfully`);
       await notifyUser(o.buyer_id, `Your book "${l?.book_name}" has been delivered! Enjoy your studies.`);
-      if (l?.seller_id) {
-        const sellerAmount = l.seller_price;
+    if (l?.seller_id) {
+        const price = l.seller_price || 0;
+        const feeRate = price <= 500 ? 0.07 : 0.05;
+        const sellerAmount = Math.round(price - price * feeRate);
         await notifyUser(l.seller_id, `Your book "${l.book_name}" was delivered successfully. Your payment of ${formatPrice(sellerAmount)} will be sent to your bKash/Nagad shortly.`);
       }
       showToast('Delivery confirmed', 'success');

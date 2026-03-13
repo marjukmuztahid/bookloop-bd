@@ -61,6 +61,7 @@ export const mockBooks: BookCardData[] = [
     book_name: 'Chemistry 2nd Paper — HSC',
     author_publisher: 'Hajari & Nag',
     curriculum: 'english_version',
+    class_level: 'HSC 2nd Year',
     condition: 'good',
     display_price: 320,
     photos: [],

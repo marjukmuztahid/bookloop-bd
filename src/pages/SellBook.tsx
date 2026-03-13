@@ -152,6 +152,7 @@ const SellBook = () => {
       if (error) throw error;
       setSuccess(true);
     } catch (err: any) {
+      console.error('Listing submission error:', err);
       showToast(err.message || 'Something went wrong', 'error');
     } finally {
       setSubmitting(false);

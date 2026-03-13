@@ -47,7 +47,7 @@ const OrdersQueue = () => {
 
   const approveOrder = async (o: any) => {
     await supabase.from('orders').update({ status: 'approved' }).eq('id', o.id);
-    await supabase.from('listings').update({ status: 'sold' }).eq('id', o.listing_id);
+    await supabase.from('listings').update({ status: 'sold_pending_delivery' }).eq('id', o.listing_id);
     await logActivity('order_approved', `Order for "${o.listings?.book_name}" approved`);
     await notifyUser(o.buyer_id, `Your order for "${o.listings?.book_name}" has been approved! Get ready to receive it.`);
     if (o.listings?.seller_id) {

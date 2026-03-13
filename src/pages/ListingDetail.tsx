@@ -8,6 +8,7 @@ import { GlassBadge, type BadgeVariant } from '@/components/ui/GlassBadge';
 import { useAppToast } from '@/components/ui/GlassToast';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import useSEO from '@/hooks/useSEO';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 

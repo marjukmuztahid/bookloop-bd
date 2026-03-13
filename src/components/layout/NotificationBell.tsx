@@ -63,7 +63,7 @@ const NotificationBell = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="glass-panel absolute right-0 top-12 z-50 w-[340px] max-w-[calc(100vw-2rem)] overflow-hidden"
+            className="absolute right-0 top-12 z-50 w-[340px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-[20px] border border-white/50 bg-white/95 shadow-[0_4px_24px_rgba(0,0,0,0.10)] backdrop-blur-xl"
             style={{ transformOrigin: 'top right' }}
           >
             <div className="flex items-center justify-between border-b border-[rgba(0,0,0,0.06)] px-4 py-3">

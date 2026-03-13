@@ -282,6 +282,10 @@ export type Database = {
     }
     Functions: {
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      mark_listing_sold_pending: {
+        Args: { p_listing_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

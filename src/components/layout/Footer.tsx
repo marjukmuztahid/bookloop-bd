@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Column 1 — Brand */}
             <div>
-              <img src={logo} alt="Book Loop BD" className="mb-3 h-[66px] w-auto" />
+              <img src={logo} alt="Book Loop BD" className="mb-3 h-[66px] w-auto" width={132} height={66} loading="lazy" />
               <p className="text-sm text-muted-foreground">
                 Buy and sell school books across Bangladesh
               </p>

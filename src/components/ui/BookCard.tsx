@@ -34,13 +34,15 @@ const BookCard = ({ book }: { book: BookCardData }) => {
       onClick={() => navigate(`/listings/${book.id}`)}
       className="glass-panel cursor-pointer overflow-hidden p-3"
     >
-      {/* Cover photo */}
-      <div className="relative mb-3 overflow-hidden rounded-[14px]" style={{ aspectRatio: '3/4' }}>
+      {/* Cover photo — fixed aspect ratio to prevent CLS */}
+      <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-[14px]">
         <img
           src={book.photos[0] || '/placeholder.svg'}
           alt={book.book_name}
-          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+          width={300}
+          height={400}
           loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
         />
         {book.status === 'sold_pending_delivery' && (
           <div className="absolute inset-0 flex items-end justify-center bg-black/30 pb-3">
@@ -50,13 +52,13 @@ const BookCard = ({ book }: { book: BookCardData }) => {
       </div>
 
       {/* Book name */}
-      <h3 className="mb-0.5 truncate text-sm font-bold text-[#1A1A1A]">{book.book_name}</h3>
+      <h3 className="mb-0.5 truncate text-sm font-bold text-heading">{book.book_name}</h3>
 
       {/* Author */}
-      <p className="mb-1 truncate text-xs text-[#8A8A8A]">{book.author_publisher}</p>
+      <p className="mb-1 truncate text-xs text-muted-foreground">{book.author_publisher}</p>
 
       {/* Class */}
-      <p className="mb-2 truncate text-[11px] font-medium text-[#3A3A3A]">{book.class_level}</p>
+      <p className="mb-2 truncate text-[11px] font-medium text-foreground">{book.class_level}</p>
 
       {/* Badges */}
       <div className="mb-2 flex flex-wrap gap-1.5">
@@ -65,10 +67,10 @@ const BookCard = ({ book }: { book: BookCardData }) => {
       </div>
 
       {/* Price */}
-      <p className="mb-1 text-base font-bold text-[#E8357A]">৳ {book.display_price.toLocaleString()}</p>
+      <p className="mb-1 text-base font-bold text-primary">৳ {book.display_price.toLocaleString()}</p>
 
       {/* District */}
-      <div className="flex items-center gap-1 text-xs text-[#8A8A8A]">
+      <div className="flex items-center gap-1 text-xs text-muted-foreground">
         <MapPin size={12} />
         <span>{book.seller_district}</span>
       </div>

@@ -141,6 +141,10 @@ const ListingDetail = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
                   className="h-full w-full object-cover"
+                  width={600}
+                  height={800}
+                  loading="eager"
+                  fetchPriority="high"
                 />
               </AnimatePresence>
               {!isAvailable && (
@@ -161,7 +165,7 @@ const ListingDetail = () => {
                       i === activePhoto ? 'border-[#E8357A]' : 'border-transparent'
                     }`}
                   >
-                    <img src={p} alt="" className="h-full w-full object-cover" />
+                    <img src={p} alt="" className="h-full w-full object-cover" width={64} height={64} loading="lazy" />
                   </button>
                 ))}
               </div>

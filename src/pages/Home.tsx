@@ -226,6 +226,8 @@ const Home = () => {
           <h2 className="mb-6 text-xl font-bold text-[#1A1A1A]">Available Books</h2>
           {isLoading ? (
             <SkeletonGrid count={8} />
+          ) : books.length === 0 ? (
+            <p className="py-10 text-center text-sm text-[#8A8A8A]">No books found. Check back soon!</p>
           ) : (
             <motion.div
               variants={staggerContainer}
@@ -233,33 +235,44 @@ const Home = () => {
               animate="animate"
               className="grid grid-cols-2 gap-4 md:grid-cols-4"
             >
-              {mockBooks.map((book) => (
+              {books.map((book) => (
                 <BookCard key={book.id} book={book} />
               ))}
             </motion.div>
           )}
 
-          {/* Pagination placeholder */}
-          <div className="mt-8 flex items-center justify-center gap-2">
-            <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A]">
-              <ChevronLeft size={16} />
-            </button>
-            {[1, 2, 3].map((p) => (
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-2">
               <button
-                key={p}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl border text-sm font-semibold transition-colors ${
-                  p === 1
-                    ? 'border-[rgba(232,53,122,0.30)] bg-[rgba(232,53,122,0.12)] text-[#E8357A]'
-                    : 'border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#3A3A3A] hover:text-[#E8357A]'
-                }`}
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A] disabled:opacity-40"
               >
-                {p}
+                <ChevronLeft size={16} />
               </button>
-            ))}
-            <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A]">
-              <ChevronRight size={16} />
-            </button>
-          </div>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).slice(0, 5).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`flex h-9 w-9 items-center justify-center rounded-xl border text-sm font-semibold transition-colors ${
+                    p === page
+                      ? 'border-[rgba(232,53,122,0.30)] bg-[rgba(232,53,122,0.12)] text-[#E8357A]'
+                      : 'border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#3A3A3A] hover:text-[#E8357A]'
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+              <button
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A] disabled:opacity-40"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
         </section>
 
         {/* Browse by Class */}

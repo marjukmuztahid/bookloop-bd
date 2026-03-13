@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Search, Menu, X, User, LogOut, LayoutDashboard, UserCircle } from 'lucide-react';
+import { Menu, X, User, LogOut, LayoutDashboard, UserCircle } from 'lucide-react';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { useAuth } from '@/hooks/useAuth';
 import NotificationBell from '@/components/layout/NotificationBell';
@@ -12,7 +12,6 @@ const Navbar = () => {
   const { scrollY } = useScroll();
   const { user, signOut } = useAuth();
 
-  const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -29,13 +28,6 @@ const Navbar = () => {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/listings?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
 
   const handleSell = () => {
     navigate(user ? '/sell' : '/login');
@@ -63,15 +55,6 @@ const Navbar = () => {
           <Link to="/" className="flex-shrink-0">
             <img src={logo} alt="Book Loop BD" className="h-[56px] w-auto" width={112} height={56} loading="eager" fetchPriority="high" />
           </Link>
-
-          <form onSubmit={handleSearch} className="mx-8 hidden flex-1 max-w-md md:block">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A8A8A]" size={18} />
-              <input type="text" placeholder="Search by book name, author..." value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] py-2 pl-10 pr-4 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 ease-in-out focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]" />
-            </div>
-          </form>
 
           <div className="flex items-center gap-2">
             {user && <NotificationBell />}
@@ -128,15 +111,6 @@ const Navbar = () => {
                   <X size={20} className="text-[#8A8A8A]" />
                 </button>
               </div>
-
-              <form onSubmit={(e) => { handleSearch(e); setShowMobileMenu(false); }} className="mb-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A8A8A]" size={18} />
-                  <input type="text" placeholder="Search by book name, author..." value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] py-2.5 pl-10 pr-4 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]" />
-                </div>
-              </form>
 
               <div className="flex flex-col gap-2">
                 <GlassButton className="w-full" onClick={() => { handleSell(); setShowMobileMenu(false); }}>Sell a Book</GlassButton>

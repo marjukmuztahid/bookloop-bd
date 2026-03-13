@@ -8,6 +8,8 @@ import ProtectedRoute from "@/components/layout/ProtectedRoute";
 import AdminProtectedRoute from "@/components/admin/AdminProtectedRoute";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import TopProgressBar from "@/components/layout/TopProgressBar";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 // Lazy loaded pages
 const Home = lazy(() => import("./pages/Home"));
@@ -79,6 +81,8 @@ const App = () => (
               </Suspense>
             </BrowserRouter>
           </ToastProvider>
+          <VercelAnalytics />
+          <SpeedInsights />
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

@@ -83,6 +83,7 @@ export const mockBooks: BookCardData[] = [
     book_name: 'Biology — A-Level',
     author_publisher: 'Mary Jones',
     curriculum: 'english_medium',
+    class_level: 'A-Level',
     condition: 'good',
     display_price: 750,
     photos: [],

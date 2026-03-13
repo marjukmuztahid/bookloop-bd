@@ -12,8 +12,9 @@ import { SkeletonGrid } from '@/components/ui/SkeletonBookCard';
 import HowItWorksModal from '@/components/HowItWorksModal';
 import useSEO from '@/hooks/useSEO';
 import { supabase } from '@/integrations/supabase/client';
+import { BANGLADESH_DISTRICTS } from '@/data/districts';
 
-const DISTRICTS = ['All', 'Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal', 'Rangpur', 'Mymensingh'];
+const DISTRICTS = ['All', ...BANGLADESH_DISTRICTS];
 const CURRICULA_MAP: Record<string, string> = { 'All': 'All', 'Bangla Version': 'bangla_version', 'English Version': 'english_version', 'English Medium': 'english_medium' };
 const CURRICULA = Object.keys(CURRICULA_MAP);
 const CONDITIONS_MAP: Record<string, string> = { 'All': 'All', 'New': 'new', 'Good': 'good', 'Fair': 'fair', 'Worn': 'worn' };

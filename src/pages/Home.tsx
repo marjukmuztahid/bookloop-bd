@@ -279,25 +279,7 @@ const Home = () => {
           )}
         </section>
 
-        {/* Browse by Class */}
-        <section className="mx-auto max-w-7xl px-4 pb-12">
-          <h2 className="mb-4 text-xl font-bold text-[#1A1A1A]">Browse by Class</h2>
-          <div className="flex flex-wrap gap-2">
-            {BROWSE_CLASSES.map((cls) => (
-              <GlassButton
-                key={cls}
-                variant={activeClassPill === cls ? 'primary' : 'secondary'}
-                className="rounded-full px-4 py-2 text-xs"
-                onClick={() => {
-                  setActiveClassPill(cls);
-                  navigate(`/listings?class=${encodeURIComponent(cls)}`);
-                }}
-              >
-                {cls}
-              </GlassButton>
-            ))}
-          </div>
-        </section>
+
       </main>
 
       <Footer />

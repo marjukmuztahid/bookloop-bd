@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { pageTransition, staggerContainer, fadeUp } from '@/lib/animations';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import useSEO from '@/hooks/useSEO';
 
 const BUYING_STEPS = [
   { icon: '🔍', title: 'Browse or Search', desc: 'Find books by class, curriculum, or condition using our search and filter tools.' },

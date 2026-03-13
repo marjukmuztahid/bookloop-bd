@@ -24,7 +24,7 @@ const Analytics = () => {
         supabase.from('orders').select('id', { count: 'exact', head: true }),
         supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'delivered'),
         supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'cancelled'),
-        supabase.from('orders').select('listings(display_price, seller_price)').eq('status', 'delivered'),
+        supabase.from('orders').select('listings(seller_price)').eq('status', 'delivered'),
       ]);
 
       const fee = (revenue.data || []).reduce((sum: number, o: any) => {

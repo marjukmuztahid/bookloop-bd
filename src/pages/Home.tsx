@@ -67,6 +67,9 @@ const Home = () => {
   const [activeClassPill, setActiveClassPill] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
+  const [books, setBooks] = useState<BookCardData[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   // Show walkthrough after signup
   useEffect(() => {
@@ -74,17 +77,47 @@ const Home = () => {
     if (state?.showWalkthrough && localStorage.getItem('howItWorksShown') === 'false') {
       setShowWalkthrough(true);
       localStorage.setItem('howItWorksShown', 'true');
-      // Clean up location state
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
 
-  // Simulate loading
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
+  const fetchListings = useCallback(async () => {
+    setIsLoading(true);
+    let q = supabase
+      .from('listings')
+      .select('id, book_name, author_publisher, curriculum, condition, display_price, photos, users!listings_seller_id_fkey(district)', { count: 'exact' })
+      .eq('status', 'available')
+      .order('created_at', { ascending: false });
 
+    if (curriculum !== 'All') q = q.eq('curriculum', CURRICULA_MAP[curriculum]);
+    if (classLevel !== 'All') q = q.eq('class_level', classLevel);
+    if (condition !== 'All') q = q.eq('condition', CONDITIONS_MAP[condition]);
+    if (district !== 'All') q = q.eq('users.district', district);
+    if (minPrice) q = q.gte('display_price', Number(minPrice));
+    if (maxPrice) q = q.lte('display_price', Number(maxPrice));
+
+    const from = (page - 1) * PAGE_SIZE;
+    q = q.range(from, from + PAGE_SIZE - 1);
+
+    const { data, count } = await q;
+    const mapped: BookCardData[] = (data || []).map((l: any) => ({
+      id: l.id,
+      book_name: l.book_name,
+      author_publisher: l.author_publisher,
+      curriculum: l.curriculum,
+      condition: l.condition,
+      display_price: l.display_price,
+      photos: l.photos || [],
+      seller_district: l.users?.district || 'Unknown',
+    }));
+    setBooks(mapped);
+    setTotalCount(count || 0);
+    setIsLoading(false);
+  }, [curriculum, classLevel, condition, district, minPrice, maxPrice, page]);
+
+  useEffect(() => { fetchListings(); }, [fetchListings]);
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const hasActiveFilter = curriculum !== 'All' || classLevel !== 'All' || condition !== 'All' || district !== 'All' || minPrice || maxPrice;
 
   const clearFilters = () => {
@@ -94,6 +127,7 @@ const Home = () => {
     setDistrict('All');
     setMinPrice('');
     setMaxPrice('');
+    setPage(1);
   };
 
   const handleSearch = (e: React.FormEvent) => {

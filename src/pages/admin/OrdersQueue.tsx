@@ -85,7 +85,7 @@ const OrdersQueue = () => {
   };
 
   const statusBadge = (s: string) => {
-    const map: Record<string, any> = { pending: ['Pending', 'good'], approved: ['Approved', 'new'], pickup_scheduled: ['Pickup Scheduled', 'fair'], cancelled: ['Cancelled', 'worn'] };
+    const map: Record<string, any> = { pending: ['Pending', 'good'], approved: ['Approved', 'new'], pickup_scheduled: ['Pickup Scheduled', 'fair'], in_transit: ['In Transit', 'good'], delivered: ['Delivered', 'new'], unsuccessful: ['Unsuccessful', 'worn'], cancelled: ['Cancelled', 'worn'] };
     const [label, variant] = map[s] || [s, 'worn'];
     return <GlassBadge variant={variant}>{label}</GlassBadge>;
   };

@@ -109,6 +109,7 @@ const Home = () => {
       display_price: l.display_price,
       photos: l.photos || [],
       seller_district: l.users?.district || 'Unknown',
+      status: l.status,
     }));
     setBooks(mapped);
     setTotalCount(count || 0);

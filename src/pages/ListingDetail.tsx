@@ -243,6 +243,13 @@ const ListingDetail = () => {
                   {wishlisted ? 'Saved' : 'Save to Wishlist'}
                 </GlassButton>
               </div>
+            ) : isSoldPending ? (
+              <div className="flex flex-col gap-2 pt-2">
+                <GlassButton className="w-full py-3" disabled>
+                  Currently Unavailable
+                </GlassButton>
+                <p className="text-center text-xs text-[#8A8A8A]">This book has a pending order. Check back later — it may become available again.</p>
+              </div>
             ) : (
               <div className="pt-2">
                 <GlassBadge variant="worn" className="w-full justify-center py-3">

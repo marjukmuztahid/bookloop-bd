@@ -41,6 +41,11 @@ const BookCard = ({ book }: { book: BookCardData }) => {
           className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
           loading="lazy"
         />
+        {book.status === 'sold_pending_delivery' && (
+          <div className="absolute inset-0 flex items-end justify-center bg-black/30 pb-3">
+            <span className="rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold text-[#3A3A3A]">Currently Unavailable</span>
+          </div>
+        )}
       </div>
 
       {/* Book name */}

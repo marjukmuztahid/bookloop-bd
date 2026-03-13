@@ -99,6 +99,7 @@ const ListingDetail = () => {
   };
 
   const isAvailable = listing?.status === 'available';
+  const isSoldPending = listing?.status === 'sold_pending_delivery';
   const isSold = listing?.status === 'sold';
 
   const deliveryCharge =

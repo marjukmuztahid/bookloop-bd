@@ -42,6 +42,7 @@ const BookCard = ({ book }: { book: BookCardData }) => {
           width={300}
           height={400}
           loading="lazy"
+          decoding="async"
           className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
         />
         {book.status === 'sold_pending_delivery' && (

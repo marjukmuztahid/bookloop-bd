@@ -6,6 +6,7 @@ import { useAppToast } from '@/components/ui/GlassToast';
 import { supabase } from '@/integrations/supabase/client';
 import { logActivity, notifyUser } from '@/hooks/useAdmin';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { sendEmail, getUserEmail, sellerDeliverySuccessful, sellerDeliveryUnsuccessful, buyerDeliverySuccessful, buyerDeliveryUnsuccessful } from '@/lib/email';
 
 const formatPrice = (n: number) => `৳ ${n.toLocaleString('en-BD')}`;
 

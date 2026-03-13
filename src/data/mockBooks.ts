@@ -39,6 +39,7 @@ export const mockBooks: BookCardData[] = [
     book_name: 'Physics — O-Level',
     author_publisher: 'Cambridge IGCSE',
     curriculum: 'english_medium',
+    class_level: 'O-Level',
     condition: 'good',
     display_price: 650,
     photos: [],

@@ -89,12 +89,28 @@ const SellBook = () => {
       </div>
     );
   }
-  const addPhotos = (files: FileList | null) => {
+  const compressImage = async (file: File): Promise<File> => {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1200,
+      useWebWorker: true,
+      fileType: 'image/jpeg' as const,
+      initialQuality: 0.8,
+    };
+    try {
+      return await imageCompression(file, options);
+    } catch {
+      return file;
+    }
+  };
+
+  const addPhotos = async (files: FileList | null) => {
     if (!files) return;
     const newFiles = Array.from(files).filter(
       (f) => ['image/jpeg', 'image/png', 'image/webp'].includes(f.type) && f.size <= 5 * 1024 * 1024
     );
-    const total = [...photos, ...newFiles].slice(0, 3);
+    const compressed = await Promise.all(newFiles.map(compressImage));
+    const total = [...photos, ...compressed].slice(0, 3);
     setPhotos(total);
     setPhotoPreviews(total.map((f) => URL.createObjectURL(f)));
   };

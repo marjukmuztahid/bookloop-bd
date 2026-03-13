@@ -50,6 +50,7 @@ export const mockBooks: BookCardData[] = [
     book_name: 'Bangla Sahityo — Class 10',
     author_publisher: 'NCTB',
     curriculum: 'bangla_version',
+    class_level: 'Class 10',
     condition: 'worn',
     display_price: 80,
     photos: [],

@@ -7,6 +7,7 @@ import { useAppToast } from '@/components/ui/GlassToast';
 import { supabase } from '@/integrations/supabase/client';
 import { logActivity, notifyUser } from '@/hooks/useAdmin';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { sendEmail, getUserEmail, sellerOrderApproved, buyerOrderApproved } from '@/lib/email';
 
 const INPUT_CLASS = 'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
 const formatPrice = (n: number) => `৳ ${n.toLocaleString('en-BD')}`;
@@ -55,6 +56,27 @@ const OrdersQueue = () => {
     }
     showToast('Order approved', 'success');
     fetch();
+
+    // Send emails in background (non-blocking)
+    const bookTitle = o.listings?.book_name || 'your book';
+    const sellerId = o.listings?.seller_id;
+    const sellerName = (o.listings?.users?.full_name || 'Seller').split(' ')[0];
+    const buyerName = (o.buyer?.full_name || 'Customer').split(' ')[0];
+
+    if (sellerId) {
+      getUserEmail(sellerId).then((sellerEmail) => {
+        if (sellerEmail) {
+          const { subject, html } = sellerOrderApproved(sellerName, bookTitle);
+          sendEmail(sellerEmail, subject, html);
+        }
+      });
+    }
+    getUserEmail(o.buyer_id).then((buyerEmail) => {
+      if (buyerEmail) {
+        const { subject, html } = buyerOrderApproved(buyerName, bookTitle, o.delivery_address, o.total_amount);
+        sendEmail(buyerEmail, subject, html);
+      }
+    });
   };
 
   const confirmReject = async () => {

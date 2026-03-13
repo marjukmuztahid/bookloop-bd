@@ -14,10 +14,13 @@ import useDocumentTitle from '@/hooks/useDocumentTitle';
 import { supabase } from '@/integrations/supabase/client';
 
 const DISTRICTS = ['All', 'Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal', 'Rangpur', 'Mymensingh'];
-const CURRICULA = ['All', 'Bangla Version', 'English Version', 'English Medium'];
-const CONDITIONS = ['All', 'New', 'Good', 'Fair', 'Worn'];
+const CURRICULA_MAP: Record<string, string> = { 'All': 'All', 'Bangla Version': 'bangla_version', 'English Version': 'english_version', 'English Medium': 'english_medium' };
+const CURRICULA = Object.keys(CURRICULA_MAP);
+const CONDITIONS_MAP: Record<string, string> = { 'All': 'All', 'New': 'new', 'Good': 'good', 'Fair': 'fair', 'Worn': 'worn' };
+const CONDITIONS = Object.keys(CONDITIONS_MAP);
 const CLASSES = ['All', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
 const BROWSE_CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
+const PAGE_SIZE = 12;
 
 const TypingText = ({ text }: { text: string }) => {
   const [displayed, setDisplayed] = useState('');

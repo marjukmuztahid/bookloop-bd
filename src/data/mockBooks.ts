@@ -17,6 +17,7 @@ export const mockBooks: BookCardData[] = [
     book_name: 'English For Today — Class 9',
     author_publisher: 'NCTB',
     curriculum: 'bangla_version',
+    class_level: 'Class 9',
     condition: 'new',
     display_price: 150,
     photos: [],

@@ -34,7 +34,7 @@ const ActiveDeliveries = () => {
 
     if (action === 'delivered') {
       await supabase.from('orders').update({ status: 'delivered' }).eq('id', o.id);
-      await supabase.from('listings').delete().eq('id', o.listing_id);
+      await supabase.from('listings').update({ status: 'sold' }).eq('id', o.listing_id);
       await logActivity('delivery_confirmed', `"${l?.book_name}" delivered successfully`);
       await notifyUser(o.buyer_id, `Your book "${l?.book_name}" has been delivered! Enjoy your studies.`);
       if (l?.seller_id) {

@@ -31,9 +31,9 @@ const CONDITIONS: Array<{ value: BookCondition; label: string; desc: string }> =
   { value: 'worn', label: 'Worn', desc: 'Heavy use but readable' },
 ];
 const WEIGHTS = [
-  { label: 'Under 200g', value: 0.15 },
-  { label: '200g – 500g', value: 0.35 },
-  { label: '500g+', value: 0.75 },
+  { label: 'Under 2 kg', value: 1 },
+  { label: '2 – 4 kg', value: 3 },
+  { label: 'Above 4 kg', value: 5 },
 ];
 
 const formatPrice = (n: number) => `৳ ${n.toLocaleString('en-BD')}`;

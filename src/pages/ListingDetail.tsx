@@ -99,6 +99,7 @@ const ListingDetail = () => {
   };
 
   const isAvailable = listing?.status === 'available';
+  const isSoldPending = listing?.status === 'sold_pending_delivery';
   const isSold = listing?.status === 'sold';
 
   const deliveryCharge =
@@ -150,7 +151,7 @@ const ListingDetail = () => {
               {!isAvailable && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                   <span className="rounded-full bg-white/90 px-5 py-2 text-sm font-bold text-[#3A3A3A]">
-                    {isSold ? 'Sold' : 'Unavailable'}
+                    {isSoldPending ? 'Currently Unavailable' : isSold ? 'Sold' : 'Unavailable'}
                   </span>
                 </div>
               )}
@@ -241,6 +242,13 @@ const ListingDetail = () => {
                   <Heart size={16} className={`mr-2 ${wishlisted ? 'fill-[#E8357A] text-[#E8357A]' : ''}`} />
                   {wishlisted ? 'Saved' : 'Save to Wishlist'}
                 </GlassButton>
+              </div>
+            ) : isSoldPending ? (
+              <div className="flex flex-col gap-2 pt-2">
+                <GlassButton className="w-full py-3" disabled>
+                  Currently Unavailable
+                </GlassButton>
+                <p className="text-center text-xs text-[#8A8A8A]">This book has a pending order. Check back later — it may become available again.</p>
               </div>
             ) : (
               <div className="pt-2">

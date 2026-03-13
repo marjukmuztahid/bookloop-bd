@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Column 1 — Brand */}
             <div>
-              <img src={logo} alt="Book Loop BD" className="mb-3 h-7 w-auto" />
+              <img src={logo} alt="Book Loop BD" className="mb-3 h-9 w-auto" />
               <p className="text-sm text-[#8A8A8A]">
                 Buy and sell school books across Bangladesh
               </p>

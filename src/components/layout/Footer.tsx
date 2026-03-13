@@ -11,7 +11,7 @@ const Footer = () => {
             {/* Column 1 — Brand */}
             <div>
               <img src={logo} alt="Book Loop BD" className="mb-3 h-[66px] w-auto" />
-              <p className="text-sm text-[#8A8A8A]">
+              <p className="text-sm text-muted-foreground">
                 Buy and sell school books across Bangladesh
               </p>
             </div>
@@ -22,21 +22,39 @@ const Footer = () => {
               <FooterLink to="/listings" label="Browse Books" />
               <FooterLink to="/sell" label="Sell a Book" />
               <FooterLink to="/contact" label="Contact / Report an Issue" />
-              <div className="mt-2 flex gap-4">
-                <FooterLink to="/privacy" label="Privacy Policy" />
-                <FooterLink to="/terms" label="Terms of Use" />
-              </div>
             </div>
 
             {/* Column 3 — Info */}
-            <div className="flex flex-col gap-2 text-sm text-[#8A8A8A]">
+            <div className="flex flex-col gap-2 text-sm text-muted-foreground">
               <a
                 href="mailto:bookloopbd.com@gmail.com"
-                className="transition-colors duration-200 hover:text-[#E8357A]"
+                className="transition-colors duration-200 hover:text-primary"
               >
                 bookloopbd.com@gmail.com
               </a>
-              <span>© {new Date().getFullYear()} Book Loop BD</span>
+            </div>
+          </div>
+
+          {/* Divider + Legal row */}
+          <div className="mt-8 border-t border-[rgba(0,0,0,0.06)] pt-5">
+            <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+              <div className="flex gap-4">
+                <Link
+                  to="/privacy-policy"
+                  className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary"
+                >
+                  Privacy Policy
+                </Link>
+                <Link
+                  to="/terms"
+                  className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary"
+                >
+                  Terms &amp; Conditions
+                </Link>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                © {new Date().getFullYear()} Book Loop BD
+              </span>
             </div>
           </div>
         </div>
@@ -48,7 +66,7 @@ const Footer = () => {
 const FooterLink = ({ to, label }: { to: string; label: string }) => (
   <Link
     to={to}
-    className="text-sm text-[#8A8A8A] transition-colors duration-200 hover:text-[#E8357A]"
+    className="text-sm text-muted-foreground transition-colors duration-200 hover:text-primary"
   >
     {label}
   </Link>

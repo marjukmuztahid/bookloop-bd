@@ -20,6 +20,8 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const SellBook = lazy(() => import("./pages/SellBook"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 const Contact = lazy(() => import("./pages/Contact"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const Terms = lazy(() => import("./pages/Terms"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const ListingsQueue = lazy(() => import("./pages/admin/ListingsQueue"));
@@ -54,6 +56,8 @@ const App = () => (
                   <Route path="/how-it-works" element={<HowItWorks />} />
                   <Route path="/listings/:id" element={<ListingDetail />} />
                   <Route path="/contact" element={<Contact />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<Terms />} />
 
                   {/* User protected */}
                   <Route path="/checkout/:listingId" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />

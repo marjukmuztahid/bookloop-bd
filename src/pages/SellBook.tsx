@@ -122,7 +122,6 @@ const SellBook = () => {
   };
 
   const priceNum = parseFloat(price) || 0;
-  const buyerPays = Math.round(priceNum * 1.05);
 
   const resetForm = () => {
     setPhotos([]); setPhotoPreviews([]); setBookName(''); setAuthor('');
@@ -316,14 +315,6 @@ const SellBook = () => {
             <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Your Price (৳)</label>
             <input type="number" value={price} onChange={(e) => setPrice(e.target.value)}
               className={INPUT_CLASS} placeholder="Enter amount in BDT" min={10} />
-            {priceNum >= 10 && (
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span className="text-xs text-[#8A8A8A]">Buyer pays: <span className="font-semibold">{formatPrice(buyerPays)}</span></span>
-                <span className="inline-flex items-center rounded-full border border-[rgba(48,209,88,0.25)] bg-[rgba(48,209,88,0.10)] px-2.5 py-0.5 text-[10px] font-semibold text-[#1A7A35]">
-                  You receive: {formatPrice(priceNum)}
-                </span>
-              </div>
-            )}
           </div>
 
           {/* 9. Description */}

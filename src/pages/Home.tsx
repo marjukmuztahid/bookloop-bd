@@ -95,6 +95,10 @@ const Home = () => {
     if (district !== 'All') q = q.eq('users.district', district);
     if (minPrice) q = q.gte('display_price', Number(minPrice));
     if (maxPrice) q = q.lte('display_price', Number(maxPrice));
+    if (searchQuery.trim()) {
+      const term = `%${searchQuery.trim()}%`;
+      q = q.or(`book_name.ilike.${term},author_publisher.ilike.${term}`);
+    }
 
     const from = (page - 1) * PAGE_SIZE;
     q = q.range(from, from + PAGE_SIZE - 1);
@@ -114,7 +118,7 @@ const Home = () => {
     setBooks(mapped);
     setTotalCount(count || 0);
     setIsLoading(false);
-  }, [curriculum, classLevel, condition, district, minPrice, maxPrice, page]);
+  }, [curriculum, classLevel, condition, district, minPrice, maxPrice, page, searchQuery]);
 
   useEffect(() => { fetchListings(); }, [fetchListings]);
 
@@ -133,9 +137,7 @@ const Home = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/listings?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
+    setPage(1);
   };
 
   const scrollToGrid = () => {

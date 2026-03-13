@@ -12,8 +12,9 @@ import { SkeletonGrid } from '@/components/ui/SkeletonBookCard';
 import HowItWorksModal from '@/components/HowItWorksModal';
 import useSEO from '@/hooks/useSEO';
 import { supabase } from '@/integrations/supabase/client';
+import { BANGLADESH_DISTRICTS } from '@/data/districts';
 
-const DISTRICTS = ['All', 'Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal', 'Rangpur', 'Mymensingh'];
+const DISTRICTS = ['All', ...BANGLADESH_DISTRICTS];
 const CURRICULA_MAP: Record<string, string> = { 'All': 'All', 'Bangla Version': 'bangla_version', 'English Version': 'english_version', 'English Medium': 'english_medium' };
 const CURRICULA = Object.keys(CURRICULA_MAP);
 const CONDITIONS_MAP: Record<string, string> = { 'All': 'All', 'New': 'new', 'Good': 'good', 'Fair': 'fair', 'Worn': 'worn' };
@@ -86,16 +87,19 @@ const Home = () => {
 
   const fetchListings = useCallback(async () => {
     setIsLoading(true);
+    const userJoin = district !== 'All'
+      ? 'users!listings_seller_id_fkey!inner(district)'
+      : 'users!listings_seller_id_fkey(district)';
     let q = supabase
       .from('listings')
-      .select('id, book_name, author_publisher, curriculum, class_level, condition, display_price, photos, status, users!listings_seller_id_fkey(district)', { count: 'exact' })
+      .select(`id, book_name, author_publisher, curriculum, class_level, condition, display_price, photos, status, ${userJoin}`, { count: 'exact' })
       .in('status', ['available', 'sold_pending_delivery'])
       .order('created_at', { ascending: false });
 
     if (curriculum !== 'All') q = q.eq('curriculum', CURRICULA_MAP[curriculum]);
     if (classLevel !== 'All') q = q.eq('class_level', classLevel);
     if (condition !== 'All') q = q.eq('condition', CONDITIONS_MAP[condition]);
-    if (district !== 'All') q = q.eq('users.district', district);
+    if (district !== 'All') q = (q as any).eq('users.district', district);
     if (minPrice) q = q.gte('display_price', Number(minPrice));
     if (maxPrice) q = q.lte('display_price', Number(maxPrice));
     if (searchQuery.trim()) {

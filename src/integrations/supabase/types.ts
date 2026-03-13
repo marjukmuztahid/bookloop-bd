@@ -281,6 +281,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_email: { Args: { _user_id: string }; Returns: string }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       mark_listing_sold_pending: {
         Args: { p_listing_id: string }

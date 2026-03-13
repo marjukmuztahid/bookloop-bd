@@ -9,21 +9,26 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import type { BookCondition, Curriculum } from '@/types';
 
 const INPUT_CLASS =
   'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
 
-const CURRICULUMS = ['Bangla Version', 'English Version', 'English Medium'];
+const CURRICULUMS: Array<{ label: string; value: Curriculum }> = [
+  { label: 'Bangla Version', value: 'bangla_version' },
+  { label: 'English Version', value: 'english_version' },
+  { label: 'English Medium', value: 'english_medium' },
+];
 const CLASS_LEVELS = [
   'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5',
   'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10',
   'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level',
 ];
-const CONDITIONS = [
-  { value: 'Like New', desc: 'Unused, no marks' },
-  { value: 'Good', desc: 'Minor wear, no writing' },
-  { value: 'Fair', desc: 'Some marks or highlights' },
-  { value: 'Worn', desc: 'Heavy use but readable' },
+const CONDITIONS: Array<{ value: BookCondition; label: string; desc: string }> = [
+  { value: 'new', label: 'Like New', desc: 'Unused, no marks' },
+  { value: 'good', label: 'Good', desc: 'Minor wear, no writing' },
+  { value: 'fair', label: 'Fair', desc: 'Some marks or highlights' },
+  { value: 'worn', label: 'Worn', desc: 'Heavy use but readable' },
 ];
 const WEIGHTS = [
   { label: 'Under 200g', value: 0.15 },
@@ -43,9 +48,9 @@ const SellBook = () => {
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [bookName, setBookName] = useState('');
   const [author, setAuthor] = useState('');
-  const [curriculum, setCurriculum] = useState('');
+  const [curriculum, setCurriculum] = useState<Curriculum | ''>('');
   const [classLevel, setClassLevel] = useState('');
-  const [condition, setCondition] = useState('');
+  const [condition, setCondition] = useState<BookCondition | ''>('');
   const [weight, setWeight] = useState<number | null>(null);
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
@@ -242,7 +247,7 @@ const SellBook = () => {
             <label className="mb-2 block text-xs font-semibold text-[#3A3A3A]">Curriculum Type</label>
             <div className="flex gap-2">
               {CURRICULUMS.map((c) => (
-                <PillToggle key={c} active={curriculum === c} onClick={() => setCurriculum(c)}>{c}</PillToggle>
+                <PillToggle key={c.value} active={curriculum === c.value} onClick={() => setCurriculum(c.value)}>{c.label}</PillToggle>
               ))}
             </div>
           </div>
@@ -272,7 +277,7 @@ const SellBook = () => {
                       : 'border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.02)]'
                   }`}
                 >
-                  <p className={`text-xs font-bold ${condition === c.value ? 'text-[#E8357A]' : 'text-[#3A3A3A]'}`}>{c.value}</p>
+                  <p className={`text-xs font-bold ${condition === c.value ? 'text-[#E8357A]' : 'text-[#3A3A3A]'}`}>{c.label}</p>
                   <p className="mt-0.5 text-[10px] text-[#8A8A8A]">{c.desc}</p>
                 </motion.button>
               ))}
@@ -334,3 +339,4 @@ const PillToggle = ({ active, onClick, children }: { active: boolean; onClick: (
 );
 
 export default SellBook;
+

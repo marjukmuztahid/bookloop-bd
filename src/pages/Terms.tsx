@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import useDocumentTitle from '@/hooks/useDocumentTitle';
+import useSEO from '@/hooks/useSEO';
 
 const Terms = () => {
-  useDocumentTitle('Terms and Conditions — Book Loop BD');
+  useSEO({ title: 'Terms & Conditions — Book Loop BD', description: "Read the terms and conditions for using Book Loop BD, Bangladesh's student book marketplace." });
 
   return (
     <div className="min-h-screen bg-background">

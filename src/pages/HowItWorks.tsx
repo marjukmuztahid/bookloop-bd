@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { pageTransition, staggerContainer, fadeUp } from '@/lib/animations';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import useSEO from '@/hooks/useSEO';
 
 const BUYING_STEPS = [
   { icon: '🔍', title: 'Browse or Search', desc: 'Find books by class, curriculum, or condition using our search and filter tools.' },
@@ -31,6 +32,10 @@ const GOOD_TO_KNOW = [
 const HowItWorks = () => {
   const [tab, setTab] = useState<'buying' | 'selling'>('buying');
   const steps = tab === 'buying' ? BUYING_STEPS : SELLING_STEPS;
+  useSEO({
+    title: 'How It Works — Book Loop BD',
+    description: 'Learn how to buy and sell second-hand school books on Book Loop BD. Simple listings, admin approval, cash on delivery via Steadfast Courier.',
+  });
 
   return (
     <div className="min-h-screen bg-background">

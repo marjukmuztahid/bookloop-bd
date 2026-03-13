@@ -10,7 +10,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { SkeletonGrid } from '@/components/ui/SkeletonBookCard';
 import HowItWorksModal from '@/components/HowItWorksModal';
-import useDocumentTitle from '@/hooks/useDocumentTitle';
+import useSEO from '@/hooks/useSEO';
 import { supabase } from '@/integrations/supabase/client';
 
 const DISTRICTS = ['All', 'Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal', 'Rangpur', 'Mymensingh'];
@@ -56,7 +56,10 @@ const TypingText = ({ text }: { text: string }) => {
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  useDocumentTitle('');
+  useSEO({
+    title: 'Book Loop BD — Buy & Sell Second Hand School Books in Bangladesh',
+    description: "Bangladesh's student book marketplace. Buy and sell second-hand school and college books at affordable prices. Fast delivery across Bangladesh via Steadfast Courier.",
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [curriculum, setCurriculum] = useState('All');
   const [classLevel, setClassLevel] = useState('All');

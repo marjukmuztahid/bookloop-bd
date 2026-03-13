@@ -8,6 +8,7 @@ import { GlassBadge, type BadgeVariant } from '@/components/ui/GlassBadge';
 import { useAppToast } from '@/components/ui/GlassToast';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import useSEO from '@/hooks/useSEO';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
@@ -101,6 +102,16 @@ const ListingDetail = () => {
   const isSoldPending = listing?.status === 'sold_pending_delivery';
   const isSold = listing?.status === 'sold';
 
+  // Dynamic SEO
+  const seoTitle = listing
+    ? `${listing.book_name} — ${listing.curriculum} ${listing.class_level} | ${listing.condition} Condition | Book Loop BD`
+    : 'Book Listing — Book Loop BD';
+  const seoDesc = listing && seller
+    ? `Buy ${listing.book_name} second hand in ${seller.district}, Bangladesh. ${listing.condition} condition. Cash on delivery via Steadfast Courier. Listed on Book Loop BD.`
+    : 'View book listing on Book Loop BD.';
+  const seoImage = listing?.photos?.[0] || undefined;
+
+  useSEO({ title: seoTitle, description: seoDesc, ogImage: seoImage });
 
   if (loading) return <SkeletonDetail />;
 
@@ -135,7 +146,7 @@ const ListingDetail = () => {
                 <motion.img
                   key={activePhoto}
                   src={photos[activePhoto]}
-                  alt={listing.book_name}
+                  alt={`${listing.class_level} ${listing.book_name} ${listing.condition} condition — Book Loop BD`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}

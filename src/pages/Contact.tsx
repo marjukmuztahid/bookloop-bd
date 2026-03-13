@@ -1,10 +1,10 @@
 import { Mail, MessageSquare, AlertTriangle } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import useDocumentTitle from '@/hooks/useDocumentTitle';
+import useSEO from '@/hooks/useSEO';
 
 const Contact = () => {
-  useDocumentTitle('Contact / Report an Issue');
+  useSEO({ title: 'Contact Us — Book Loop BD', description: 'Have a question or need to report a problem? Contact the Book Loop BD team.' });
 
   return (
     <div className="min-h-screen bg-[#F9F9F9]">

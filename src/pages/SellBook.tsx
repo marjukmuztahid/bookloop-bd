@@ -52,8 +52,21 @@ const SellBook = () => {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  // Guard: still loading profile
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="flex min-h-[70vh] items-center justify-center px-4 pt-16">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#E8357A] border-t-transparent" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   // Guard: need payment info
-  if (profile && !profile.bkash_nagad_number) {
+  if (!profile.bkash_nagad_number) {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
@@ -70,7 +83,6 @@ const SellBook = () => {
       </div>
     );
   }
-
   const addPhotos = (files: FileList | null) => {
     if (!files) return;
     const newFiles = Array.from(files).filter(
@@ -105,7 +117,7 @@ const SellBook = () => {
     if (!condition) { showToast('Select a condition', 'error'); return; }
     if (weight === null) { showToast('Select a weight', 'error'); return; }
     if (priceNum < 10) { showToast('Minimum price is ৳ 10', 'error'); return; }
-    if (!user) return;
+    if (!user) { showToast('Please log in first', 'error'); return; }
 
     setSubmitting(true);
     try {
@@ -140,6 +152,7 @@ const SellBook = () => {
       if (error) throw error;
       setSuccess(true);
     } catch (err: any) {
+      console.error('Listing submission error:', err);
       showToast(err.message || 'Something went wrong', 'error');
     } finally {
       setSubmitting(false);

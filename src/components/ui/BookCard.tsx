@@ -14,6 +14,7 @@ export interface BookCardData {
   display_price: number;
   photos: string[];
   seller_district: string;
+  status?: string;
 }
 
 const curriculumLabels: Record<Curriculum, string> = {

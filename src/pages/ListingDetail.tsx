@@ -180,7 +180,7 @@ const ListingDetail = () => {
 
             <div>
               <p className="text-2xl font-extrabold text-[#E8357A]">{formatPrice(listing.display_price)}</p>
-              <p className="mt-0.5 text-xs text-[#8A8A8A]">Includes 5% platform fee</p>
+              
             </div>
 
             {/* Delivery charge */}

@@ -109,6 +109,7 @@ const Home = () => {
       book_name: l.book_name,
       author_publisher: l.author_publisher,
       curriculum: l.curriculum,
+      class_level: l.class_level,
       condition: l.condition,
       display_price: l.display_price,
       photos: l.photos || [],

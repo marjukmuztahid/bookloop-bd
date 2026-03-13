@@ -127,6 +127,7 @@ export const mockBooks: BookCardData[] = [
     book_name: 'Economics — O-Level',
     author_publisher: 'Susan Grant',
     curriculum: 'english_medium',
+    class_level: 'O-Level',
     condition: 'worn',
     display_price: 500,
     photos: [],

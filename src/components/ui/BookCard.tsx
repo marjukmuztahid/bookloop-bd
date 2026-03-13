@@ -53,7 +53,10 @@ const BookCard = ({ book }: { book: BookCardData }) => {
       <h3 className="mb-0.5 truncate text-sm font-bold text-[#1A1A1A]">{book.book_name}</h3>
 
       {/* Author */}
-      <p className="mb-2 truncate text-xs text-[#8A8A8A]">{book.author_publisher}</p>
+      <p className="mb-1 truncate text-xs text-[#8A8A8A]">{book.author_publisher}</p>
+
+      {/* Class */}
+      <p className="mb-2 truncate text-[11px] font-medium text-[#3A3A3A]">{book.class_level}</p>
 
       {/* Badges */}
       <div className="mb-2 flex flex-wrap gap-1.5">

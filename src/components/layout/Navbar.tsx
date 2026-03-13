@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Search, Menu, X, User, LogOut, LayoutDashboard, UserCircle } from 'lucide-react';
+import { Menu, X, User, LogOut, LayoutDashboard, UserCircle } from 'lucide-react';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { useAuth } from '@/hooks/useAuth';
 import NotificationBell from '@/components/layout/NotificationBell';

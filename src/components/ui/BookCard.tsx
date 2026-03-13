@@ -38,7 +38,7 @@ const BookCard = ({ book }: { book: BookCardData }) => {
       <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-[14px]">
         <img
           src={book.photos[0] || '/placeholder.svg'}
-          alt={book.book_name}
+          alt={`${book.class_level} ${book.book_name} ${book.condition} condition — Book Loop BD`}
           width={300}
           height={400}
           loading="lazy"

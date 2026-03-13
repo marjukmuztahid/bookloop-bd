@@ -81,7 +81,7 @@ const App = () => (
               </Suspense>
             </BrowserRouter>
           </ToastProvider>
-          <Analytics />
+          <VercelAnalytics />
           <SpeedInsights />
         </AuthProvider>
       </TooltipProvider>

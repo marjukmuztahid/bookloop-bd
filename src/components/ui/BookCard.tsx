@@ -10,6 +10,7 @@ export interface BookCardData {
   book_name: string;
   author_publisher: string;
   curriculum: Curriculum;
+  class_level: string;
   condition: BookCondition;
   display_price: number;
   photos: string[];

@@ -45,6 +45,28 @@ const ActiveDeliveries = () => {
         await notifyUser(l.seller_id, `Your book "${l.book_name}" was delivered successfully. Your payment of ${formatPrice(sellerAmount)} will be sent to your bKash/Nagad shortly.`);
       }
       showToast('Delivery confirmed', 'success');
+
+      // Send delivery success emails (non-blocking)
+      const bookTitle = l?.book_name || 'your book';
+      const sellerName = (l?.users?.full_name || 'Seller').split(' ')[0];
+      const buyerName = (o.buyer?.full_name || 'Customer').split(' ')[0];
+      const price = l?.seller_price || 0;
+      const payoutAmount = Math.round(price * 0.95);
+
+      if (l?.seller_id) {
+        getUserEmail(l.seller_id).then((email) => {
+          if (email) {
+            const { subject, html } = sellerDeliverySuccessful(sellerName, bookTitle, payoutAmount);
+            sendEmail(email, subject, html);
+          }
+        });
+      }
+      getUserEmail(o.buyer_id).then((email) => {
+        if (email) {
+          const { subject, html } = buyerDeliverySuccessful(buyerName, bookTitle);
+          sendEmail(email, subject, html);
+        }
+      });
     } else {
       await supabase.from('orders').update({ status: 'unsuccessful' }).eq('id', o.id);
       await supabase.from('listings').update({ status: 'available' }).eq('id', o.listing_id);
@@ -54,6 +76,26 @@ const ActiveDeliveries = () => {
         await notifyUser(l.seller_id, `Delivery of your book "${l.book_name}" was unsuccessful. Your listing is live again.`);
       }
       showToast('Marked as unsuccessful', 'info');
+
+      // Send delivery unsuccessful emails (non-blocking)
+      const bookTitleFail = l?.book_name || 'your book';
+      const sellerNameFail = (l?.users?.full_name || 'Seller').split(' ')[0];
+      const buyerNameFail = (o.buyer?.full_name || 'Customer').split(' ')[0];
+
+      if (l?.seller_id) {
+        getUserEmail(l.seller_id).then((email) => {
+          if (email) {
+            const { subject, html } = sellerDeliveryUnsuccessful(sellerNameFail, bookTitleFail);
+            sendEmail(email, subject, html);
+          }
+        });
+      }
+      getUserEmail(o.buyer_id).then((email) => {
+        if (email) {
+          const { subject, html } = buyerDeliveryUnsuccessful(buyerNameFail, bookTitleFail);
+          sendEmail(email, subject, html);
+        }
+      });
     }
     setActionModal(null);
     fetch();

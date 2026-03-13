@@ -56,6 +56,27 @@ const OrdersQueue = () => {
     }
     showToast('Order approved', 'success');
     fetch();
+
+    // Send emails in background (non-blocking)
+    const bookTitle = o.listings?.book_name || 'your book';
+    const sellerId = o.listings?.seller_id;
+    const sellerName = (o.listings?.users?.full_name || 'Seller').split(' ')[0];
+    const buyerName = (o.buyer?.full_name || 'Customer').split(' ')[0];
+
+    if (sellerId) {
+      getUserEmail(sellerId).then((sellerEmail) => {
+        if (sellerEmail) {
+          const { subject, html } = sellerOrderApproved(sellerName, bookTitle);
+          sendEmail(sellerEmail, subject, html);
+        }
+      });
+    }
+    getUserEmail(o.buyer_id).then((buyerEmail) => {
+      if (buyerEmail) {
+        const { subject, html } = buyerOrderApproved(buyerName, bookTitle, o.delivery_address, o.total_amount);
+        sendEmail(buyerEmail, subject, html);
+      }
+    });
   };
 
   const confirmReject = async () => {

@@ -8,7 +8,7 @@ import ProtectedRoute from "@/components/layout/ProtectedRoute";
 import AdminProtectedRoute from "@/components/admin/AdminProtectedRoute";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import TopProgressBar from "@/components/layout/TopProgressBar";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 // Lazy loaded pages

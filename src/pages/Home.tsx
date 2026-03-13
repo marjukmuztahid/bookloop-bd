@@ -137,9 +137,7 @@ const Home = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/listings?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
+    setPage(1);
   };
 
   const scrollToGrid = () => {

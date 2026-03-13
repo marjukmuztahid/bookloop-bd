@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Heart, Loader2 } from 'lucide-react';
 import { pageTransition, fadeUp } from '@/lib/animations';
-import { calculateDeliveryCharge } from '@/lib/utils';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassBadge, type BadgeVariant } from '@/components/ui/GlassBadge';
 import { useAppToast } from '@/components/ui/GlassToast';
@@ -102,10 +101,6 @@ const ListingDetail = () => {
   const isSoldPending = listing?.status === 'sold_pending_delivery';
   const isSold = listing?.status === 'sold';
 
-  const deliveryCharge =
-    listing && profile && seller
-      ? calculateDeliveryCharge(listing.weight_kg, seller.district, profile.district)
-      : null;
 
   if (loading) return <SkeletonDetail />;
 
@@ -190,26 +185,8 @@ const ListingDetail = () => {
 
             {/* Delivery charge */}
             <div className="glass-panel-sm p-4">
-              {user && profile && deliveryCharge !== null ? (
-                <p className="text-sm text-[#3A3A3A]">
-                  Delivery to {profile.district}: <span className="font-bold">{formatPrice(deliveryCharge)}</span>
-                </p>
-              ) : (
-                <p className="text-sm text-[#8A8A8A]">
-                  <Link to="/login" className="font-semibold text-[#E8357A]">Login</Link> to see delivery charge
-                </p>
-              )}
+              <p className="text-sm text-[#8A8A8A]">Delivery charge calculated at checkout</p>
             </div>
-
-            {/* Total estimate */}
-            {deliveryCharge !== null && (
-              <div className="glass-panel-sm p-4">
-                <p className="text-sm text-[#8A8A8A]">
-                  Estimated total (COD):{' '}
-                  <span className="font-bold text-[#1A1A1A]">{formatPrice(listing.display_price + deliveryCharge)}</span>
-                </p>
-              </div>
-            )}
 
             {/* Seller info */}
             {seller && (

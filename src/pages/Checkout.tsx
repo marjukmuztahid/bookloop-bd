@@ -139,6 +139,10 @@ const Checkout = () => {
       });
 
       if (error) throw error;
+
+      // Mark listing as unavailable
+      await supabase.from('listings').update({ status: 'sold_pending_delivery' }).eq('id', listing.id);
+
       setSuccess(true);
     } catch (err: any) {
       showToast('Something went wrong. Please try again.', 'error');

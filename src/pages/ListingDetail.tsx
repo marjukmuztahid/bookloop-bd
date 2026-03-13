@@ -165,7 +165,7 @@ const ListingDetail = () => {
                       i === activePhoto ? 'border-[#E8357A]' : 'border-transparent'
                     }`}
                   >
-                    <img src={p} alt="" className="h-full w-full object-cover" />
+                    <img src={p} alt="" className="h-full w-full object-cover" width={64} height={64} loading="lazy" />
                   </button>
                 ))}
               </div>

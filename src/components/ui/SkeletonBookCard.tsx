@@ -1,8 +1,6 @@
-import { cn } from '@/lib/utils';
-
 const SkeletonBookCard = () => (
-  <div className="glass-panel overflow-hidden p-3">
-    <div className="mb-3 animate-pulse rounded-[14px] bg-[rgba(0,0,0,0.06)]" style={{ aspectRatio: '3/4' }} />
+  <div className="glass-panel overflow-hidden p-3" style={{ minHeight: 340 }}>
+    <div className="mb-3 aspect-[3/4] animate-pulse rounded-[14px] bg-[rgba(0,0,0,0.06)]" />
     <div className="mb-2 h-4 w-3/4 animate-pulse rounded bg-[rgba(0,0,0,0.06)]" />
     <div className="mb-3 h-3 w-1/2 animate-pulse rounded bg-[rgba(0,0,0,0.06)]" />
     <div className="mb-3 flex gap-1.5">

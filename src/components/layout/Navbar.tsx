@@ -61,7 +61,7 @@ const Navbar = () => {
       >
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4">
           <Link to="/" className="flex-shrink-0">
-            <img src={logo} alt="Book Loop BD" className="h-[56px] w-auto" loading="lazy" />
+            <img src={logo} alt="Book Loop BD" className="h-[56px] w-auto" width={112} height={56} loading="eager" fetchPriority="high" />
           </Link>
 
           <form onSubmit={handleSearch} className="mx-8 hidden flex-1 max-w-md md:block">

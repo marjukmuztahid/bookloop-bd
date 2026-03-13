@@ -1,22 +1,26 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { pageTransition, staggerContainer, fadeUp } from '@/lib/animations';
 import { GlassButton } from '@/components/ui/GlassButton';
 import BookCard from '@/components/ui/BookCard';
+import type { BookCardData } from '@/components/ui/BookCard';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { mockBooks } from '@/data/mockBooks';
 import { SkeletonGrid } from '@/components/ui/SkeletonBookCard';
 import HowItWorksModal from '@/components/HowItWorksModal';
 import useDocumentTitle from '@/hooks/useDocumentTitle';
+import { supabase } from '@/integrations/supabase/client';
 
 const DISTRICTS = ['All', 'Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal', 'Rangpur', 'Mymensingh'];
-const CURRICULA = ['All', 'Bangla Version', 'English Version', 'English Medium'];
-const CONDITIONS = ['All', 'New', 'Good', 'Fair', 'Worn'];
+const CURRICULA_MAP: Record<string, string> = { 'All': 'All', 'Bangla Version': 'bangla_version', 'English Version': 'english_version', 'English Medium': 'english_medium' };
+const CURRICULA = Object.keys(CURRICULA_MAP);
+const CONDITIONS_MAP: Record<string, string> = { 'All': 'All', 'New': 'new', 'Good': 'good', 'Fair': 'fair', 'Worn': 'worn' };
+const CONDITIONS = Object.keys(CONDITIONS_MAP);
 const CLASSES = ['All', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
 const BROWSE_CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
+const PAGE_SIZE = 12;
 
 const TypingText = ({ text }: { text: string }) => {
   const [displayed, setDisplayed] = useState('');
@@ -63,6 +67,9 @@ const Home = () => {
   const [activeClassPill, setActiveClassPill] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
+  const [books, setBooks] = useState<BookCardData[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   // Show walkthrough after signup
   useEffect(() => {
@@ -70,17 +77,47 @@ const Home = () => {
     if (state?.showWalkthrough && localStorage.getItem('howItWorksShown') === 'false') {
       setShowWalkthrough(true);
       localStorage.setItem('howItWorksShown', 'true');
-      // Clean up location state
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
 
-  // Simulate loading
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
+  const fetchListings = useCallback(async () => {
+    setIsLoading(true);
+    let q = supabase
+      .from('listings')
+      .select('id, book_name, author_publisher, curriculum, condition, display_price, photos, users!listings_seller_id_fkey(district)', { count: 'exact' })
+      .eq('status', 'available')
+      .order('created_at', { ascending: false });
 
+    if (curriculum !== 'All') q = q.eq('curriculum', CURRICULA_MAP[curriculum]);
+    if (classLevel !== 'All') q = q.eq('class_level', classLevel);
+    if (condition !== 'All') q = q.eq('condition', CONDITIONS_MAP[condition]);
+    if (district !== 'All') q = q.eq('users.district', district);
+    if (minPrice) q = q.gte('display_price', Number(minPrice));
+    if (maxPrice) q = q.lte('display_price', Number(maxPrice));
+
+    const from = (page - 1) * PAGE_SIZE;
+    q = q.range(from, from + PAGE_SIZE - 1);
+
+    const { data, count } = await q;
+    const mapped: BookCardData[] = (data || []).map((l: any) => ({
+      id: l.id,
+      book_name: l.book_name,
+      author_publisher: l.author_publisher,
+      curriculum: l.curriculum,
+      condition: l.condition,
+      display_price: l.display_price,
+      photos: l.photos || [],
+      seller_district: l.users?.district || 'Unknown',
+    }));
+    setBooks(mapped);
+    setTotalCount(count || 0);
+    setIsLoading(false);
+  }, [curriculum, classLevel, condition, district, minPrice, maxPrice, page]);
+
+  useEffect(() => { fetchListings(); }, [fetchListings]);
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const hasActiveFilter = curriculum !== 'All' || classLevel !== 'All' || condition !== 'All' || district !== 'All' || minPrice || maxPrice;
 
   const clearFilters = () => {
@@ -90,6 +127,7 @@ const Home = () => {
     setDistrict('All');
     setMinPrice('');
     setMaxPrice('');
+    setPage(1);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -188,6 +226,8 @@ const Home = () => {
           <h2 className="mb-6 text-xl font-bold text-[#1A1A1A]">Available Books</h2>
           {isLoading ? (
             <SkeletonGrid count={8} />
+          ) : books.length === 0 ? (
+            <p className="py-10 text-center text-sm text-[#8A8A8A]">No books found. Check back soon!</p>
           ) : (
             <motion.div
               variants={staggerContainer}
@@ -195,33 +235,44 @@ const Home = () => {
               animate="animate"
               className="grid grid-cols-2 gap-4 md:grid-cols-4"
             >
-              {mockBooks.map((book) => (
+              {books.map((book) => (
                 <BookCard key={book.id} book={book} />
               ))}
             </motion.div>
           )}
 
-          {/* Pagination placeholder */}
-          <div className="mt-8 flex items-center justify-center gap-2">
-            <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A]">
-              <ChevronLeft size={16} />
-            </button>
-            {[1, 2, 3].map((p) => (
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-2">
               <button
-                key={p}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl border text-sm font-semibold transition-colors ${
-                  p === 1
-                    ? 'border-[rgba(232,53,122,0.30)] bg-[rgba(232,53,122,0.12)] text-[#E8357A]'
-                    : 'border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#3A3A3A] hover:text-[#E8357A]'
-                }`}
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A] disabled:opacity-40"
               >
-                {p}
+                <ChevronLeft size={16} />
               </button>
-            ))}
-            <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A]">
-              <ChevronRight size={16} />
-            </button>
-          </div>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).slice(0, 5).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`flex h-9 w-9 items-center justify-center rounded-xl border text-sm font-semibold transition-colors ${
+                    p === page
+                      ? 'border-[rgba(232,53,122,0.30)] bg-[rgba(232,53,122,0.12)] text-[#E8357A]'
+                      : 'border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#3A3A3A] hover:text-[#E8357A]'
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+              <button
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A] disabled:opacity-40"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
         </section>
 
         {/* Browse by Class */}

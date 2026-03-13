@@ -20,7 +20,7 @@ const AdminDashboard = () => {
       supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
       supabase.from('orders').select('id', { count: 'exact', head: true }).in('status', ['pickup_scheduled', 'in_transit']),
       supabase.from('users').select('id', { count: 'exact', head: true }),
-      supabase.from('orders').select('listings(display_price, seller_price)').eq('status', 'delivered'),
+      supabase.from('orders').select('listings(seller_price)').eq('status', 'delivered'),
       supabase.from('activity_log').select('*').order('created_at', { ascending: false }).limit(10),
     ]);
 

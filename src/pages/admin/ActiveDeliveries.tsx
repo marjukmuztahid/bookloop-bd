@@ -5,6 +5,7 @@ import { GlassBadge } from '@/components/ui/GlassBadge';
 import { useAppToast } from '@/components/ui/GlassToast';
 import { supabase } from '@/integrations/supabase/client';
 import { logActivity, notifyUser } from '@/hooks/useAdmin';
+import { calculatePlatformFee } from '@/lib/utils';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { sendEmail, getUserEmail, sellerDeliverySuccessful, sellerDeliveryUnsuccessful, buyerDeliverySuccessful, buyerDeliveryUnsuccessful } from '@/lib/email';
 

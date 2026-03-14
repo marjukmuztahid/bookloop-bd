@@ -28,7 +28,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Book Loop BD <noreply@bookloopbd.com>',
+        from: 'Book Loop BD <noreply@order.bookloopbd.com>',
         to: [to],
         subject,
         html,

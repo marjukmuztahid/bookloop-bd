@@ -141,10 +141,11 @@ const OrdersQueue = () => {
                 <div className="min-w-0 flex-1">
                   <h4 className="truncate text-sm font-bold text-[#1A1A1A]">{l?.book_name}</h4>
                   <p className="text-xs text-[#8A8A8A]">Buyer: {o.buyer?.full_name} ({o.buyer?.district}) • Seller: {l?.users?.full_name} ({l?.users?.district})</p>
-                  <div className="mt-1 flex items-center gap-2">
-                    <span className="text-sm font-bold text-[#E8357A]">COD {formatPrice(o.total_amount)}</span>
-                    <span className="text-xs text-[#8A8A8A]">Del: {formatPrice(o.delivery_charge)}</span>
-                  </div>
+                    <div className="mt-1 flex items-center gap-2">
+                      <span className="text-sm font-bold text-[#E8357A]">COD {formatPrice(o.total_amount)}</span>
+                      <span className="text-xs text-[#8A8A8A]">Del: {formatPrice(o.delivery_charge)}</span>
+                      <span className="text-xs text-[#30D158]">Fee: {formatPrice(calculatePlatformFee(l?.seller_price || 0))}</span>
+                    </div>
                 </div>
                 <div className="flex flex-shrink-0 flex-col items-end gap-2">
                   {statusBadge(o.status)}

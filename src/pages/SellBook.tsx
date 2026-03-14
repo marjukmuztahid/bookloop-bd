@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Upload, X, CheckCircle, Loader2 } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 import { pageTransition, springButton } from '@/lib/animations';
+import { calculateDisplayPrice } from '@/lib/utils';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { useAppToast } from '@/components/ui/GlassToast';
 import { useAuth } from '@/hooks/useAuth';

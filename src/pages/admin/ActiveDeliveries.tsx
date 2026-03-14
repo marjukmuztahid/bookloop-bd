@@ -41,8 +41,8 @@ const ActiveDeliveries = () => {
       await notifyUser(o.buyer_id, `Your book "${l?.book_name}" has been delivered! Enjoy your studies.`);
     if (l?.seller_id) {
         const price = l.seller_price || 0;
-        const feeRate = price <= 500 ? 0.07 : 0.05;
-        const sellerAmount = Math.round(price - price * feeRate);
+        const fee = calculatePlatformFee(price);
+        const sellerAmount = price; // Seller gets their full asking price
         await notifyUser(l.seller_id, `Your book "${l.book_name}" was delivered successfully. Your payment of ${formatPrice(sellerAmount)} will be sent to your bKash/Nagad shortly.`);
       }
       showToast('Delivery confirmed', 'success');

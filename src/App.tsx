@@ -30,6 +30,7 @@ const ListingsQueue = lazy(() => import("./pages/admin/ListingsQueue"));
 const OrdersQueue = lazy(() => import("./pages/admin/OrdersQueue"));
 const ActiveDeliveries = lazy(() => import("./pages/admin/ActiveDeliveries"));
 const UsersPage = lazy(() => import("./pages/admin/Users"));
+const Revenue = lazy(() => import("./pages/admin/Revenue"));
 const Analytics = lazy(() => import("./pages/admin/Analytics"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 

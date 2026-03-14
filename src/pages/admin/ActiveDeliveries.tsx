@@ -128,6 +128,7 @@ const ActiveDeliveries = () => {
                     </div>
                     <div className="mt-2 flex items-center gap-2">
                       <span className="text-sm font-bold text-[#E8357A]">COD {formatPrice(o.total_amount)}</span>
+                      <span className="text-xs text-[#30D158]">Fee: {formatPrice(calculatePlatformFee(l?.seller_price || 0))}</span>
                       <GlassBadge variant={o.status === 'in_transit' ? 'good' : 'fair'}>
                         {o.status === 'in_transit' ? 'In Transit' : 'Pickup Scheduled'}
                       </GlassBadge>

@@ -316,6 +316,11 @@ const SellBook = () => {
             <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Your Price (৳)</label>
             <input type="number" value={price} onChange={(e) => setPrice(e.target.value)}
               className={INPUT_CLASS} placeholder="Enter amount in BDT" min={10} />
+            {priceNum >= 10 && (
+              <p className="mt-1 text-xs text-[#8A8A8A]">
+                Buyers will see this book at <span className="font-semibold text-[#E8357A]">৳ {calculateDisplayPrice(priceNum).toLocaleString('en-BD')}</span>
+              </p>
+            )}
           </div>
 
           {/* 9. Description */}

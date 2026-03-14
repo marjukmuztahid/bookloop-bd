@@ -5,6 +5,7 @@ import { GlassBadge } from '@/components/ui/GlassBadge';
 import { useAppToast } from '@/components/ui/GlassToast';
 import { supabase } from '@/integrations/supabase/client';
 import { logActivity, notifyUser } from '@/hooks/useAdmin';
+import { calculatePlatformFee } from '@/lib/utils';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { sendEmail, getUserEmail, sellerDeliverySuccessful, sellerDeliveryUnsuccessful, buyerDeliverySuccessful, buyerDeliveryUnsuccessful } from '@/lib/email';
 
@@ -40,8 +41,8 @@ const ActiveDeliveries = () => {
       await notifyUser(o.buyer_id, `Your book "${l?.book_name}" has been delivered! Enjoy your studies.`);
     if (l?.seller_id) {
         const price = l.seller_price || 0;
-        const feeRate = price <= 500 ? 0.07 : 0.05;
-        const sellerAmount = Math.round(price - price * feeRate);
+        const fee = calculatePlatformFee(price);
+        const sellerAmount = price; // Seller gets their full asking price
         await notifyUser(l.seller_id, `Your book "${l.book_name}" was delivered successfully. Your payment of ${formatPrice(sellerAmount)} will be sent to your bKash/Nagad shortly.`);
       }
       showToast('Delivery confirmed', 'success');
@@ -51,7 +52,7 @@ const ActiveDeliveries = () => {
       const sellerName = (l?.users?.full_name || 'Seller').split(' ')[0];
       const buyerName = (o.buyer?.full_name || 'Customer').split(' ')[0];
       const price = l?.seller_price || 0;
-      const payoutAmount = Math.round(price * 0.95);
+      const payoutAmount = price; // Seller gets their full asking price
 
       if (l?.seller_id) {
         getUserEmail(l.seller_id).then((email) => {
@@ -127,6 +128,7 @@ const ActiveDeliveries = () => {
                     </div>
                     <div className="mt-2 flex items-center gap-2">
                       <span className="text-sm font-bold text-[#E8357A]">COD {formatPrice(o.total_amount)}</span>
+                      <span className="text-xs text-[#30D158]">Fee: {formatPrice(calculatePlatformFee(l?.seller_price || 0))}</span>
                       <GlassBadge variant={o.status === 'in_transit' ? 'good' : 'fair'}>
                         {o.status === 'in_transit' ? 'In Transit' : 'Pickup Scheduled'}
                       </GlassBadge>

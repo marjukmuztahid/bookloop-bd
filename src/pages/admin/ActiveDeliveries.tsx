@@ -52,7 +52,7 @@ const ActiveDeliveries = () => {
       const sellerName = (l?.users?.full_name || 'Seller').split(' ')[0];
       const buyerName = (o.buyer?.full_name || 'Customer').split(' ')[0];
       const price = l?.seller_price || 0;
-      const payoutAmount = Math.round(price * 0.95);
+      const payoutAmount = price; // Seller gets their full asking price
 
       if (l?.seller_id) {
         getUserEmail(l.seller_id).then((email) => {

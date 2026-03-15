@@ -395,11 +395,20 @@ const MyOrders = () => {
                 <div className="min-w-0 flex-1">
                   <h4 className="truncate text-sm font-bold text-[#1A1A1A]">{listing?.book_name}</h4>
                   <p className="text-xs text-[#8A8A8A]">{new Date(o.created_at).toLocaleDateString()}</p>
-                  <div className="mt-1">{statusLabel(o.status, subTab === 'selling')}</div>
+                <div className="mt-1">{statusLabel(o.status, subTab === 'selling')}</div>
                 </div>
                 {subTab === 'buying' && o.status === 'pending' && (
                   <GlassButton variant="destructive" className="flex-shrink-0 text-xs"
                     onClick={() => setConfirmCancel(o.id)}>Cancel</GlassButton>
+                )}
+                {subTab === 'selling' && (o.status === 'delivered' || o.status === 'cancelled') && (
+                  <button
+                    onClick={() => setConfirmHide(o.id)}
+                    className="flex-shrink-0 rounded-lg p-1.5 text-[#8A8A8A] transition-colors hover:bg-[rgba(232,53,122,0.06)] hover:text-[#E8357A]"
+                    title="Remove from history"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 )}
               </div>
             );

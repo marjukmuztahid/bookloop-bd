@@ -207,9 +207,7 @@ const MyListings = () => {
               {openMenu === l.id && (
                 <div className="glass-panel-sm absolute right-0 top-8 z-10 w-44 p-1">
                   <MenuBtn label="View on Marketplace" onClick={() => { navigate(`/listings/${l.id}`); setOpenMenu(null); }} />
-                  {(l.status === 'available' || l.status === 'sold' || l.status === 'sold_pending_delivery') && (
-                    <MenuBtn label="Update Stock" onClick={() => { setStockModal(l); setStockQty(l.quantity ?? 1); setOpenMenu(null); }} />
-                  )}
+                  <MenuBtn label="Update Stock" onClick={() => { setStockModal(l); setStockQty(l.quantity ?? 1); setOpenMenu(null); }} />
                   {l.status === 'available' && (
                     <MenuBtn label="Remove Listing" danger onClick={() => { setConfirmDelete(l.id); setOpenMenu(null); }} />
                   )}

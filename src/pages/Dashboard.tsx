@@ -341,6 +341,14 @@ const MyOrders = () => {
     fetchOrders();
   };
 
+  const hideSellerOrder = async (orderId: string) => {
+    const { error } = await supabase.from('orders').update({ seller_hidden: true } as any).eq('id', orderId);
+    if (error) { showToast('Failed to remove order', 'error'); return; }
+    showToast('Order removed from your history', 'success');
+    setConfirmHide(null);
+    setOrders((prev) => prev.filter((o) => o.id !== orderId));
+  };
+
   const statusLabel = (status: string, isSelling: boolean) => {
     const labels: Record<string, [string, BadgeVariant]> = isSelling ? {
       pending: ['Pending buyer approval', 'good'],

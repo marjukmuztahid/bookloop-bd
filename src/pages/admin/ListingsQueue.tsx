@@ -74,7 +74,7 @@ const ListingsQueue = () => {
     <AdminLayout title="Listings Queue">
       {/* Filters */}
       <div className="mb-4 flex flex-wrap gap-2">
-        {['all', 'pending', 'available', 'rejected'].map((f) => (
+        {['all', 'pending', 'available', 'rejected', 'sold', 'deleted', 'expired'].map((f) => (
           <button key={f} onClick={() => setFilter(f)}
             className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${filter === f ? 'bg-[rgba(232,53,122,0.12)] text-[#E8357A]' : 'bg-[rgba(0,0,0,0.04)] text-[#8A8A8A]'}`}>
             {f.charAt(0).toUpperCase() + f.slice(1)}

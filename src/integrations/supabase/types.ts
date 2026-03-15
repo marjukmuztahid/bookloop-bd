@@ -67,6 +67,7 @@ export type Database = {
           expiry_warning_sent: boolean
           id: string
           photos: string[]
+          quantity: number
           rejection_reason: string | null
           seller_id: string
           seller_price: number
@@ -86,6 +87,7 @@ export type Database = {
           expiry_warning_sent?: boolean
           id?: string
           photos?: string[]
+          quantity?: number
           rejection_reason?: string | null
           seller_id: string
           seller_price: number
@@ -105,6 +107,7 @@ export type Database = {
           expiry_warning_sent?: boolean
           id?: string
           photos?: string[]
+          quantity?: number
           rejection_reason?: string | null
           seller_id?: string
           seller_price?: number

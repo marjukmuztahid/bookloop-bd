@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { LayoutDashboard, ClipboardList, Package, Truck, Users, BarChart3, DollarSign, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, ClipboardList, Package, Truck, Users, BarChart3, DollarSign, Star, LogOut, Menu, X } from 'lucide-react';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassBadge } from '@/components/ui/GlassBadge';
 import { useAuth } from '@/hooks/useAuth';

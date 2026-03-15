@@ -21,6 +21,7 @@ const ListingsQueue = () => {
   const [search, setSearch] = useState('');
   const [rejectModal, setRejectModal] = useState<{ id: string; name: string; sellerId: string } | null>(null);
   const [removeModal, setRemoveModal] = useState<{ id: string; name: string; sellerId: string } | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{ id: string; name: string } | null>(null);
   const [rejectReason, setRejectReason] = useState('');
 
   const fetch = useCallback(async () => {
@@ -56,11 +57,22 @@ const ListingsQueue = () => {
 
   const confirmRemove = async () => {
     if (!removeModal) return;
-    await supabase.from('listings').delete().eq('id', removeModal.id);
+    await supabase.from('listings').update({ status: 'deleted' } as any).eq('id', removeModal.id);
     await logActivity('listing_removed', `Listing "${removeModal.name}" removed by admin`);
     await notifyUser(removeModal.sellerId, `Your listing for "${removeModal.name}" has been removed by the admin.`);
     showToast('Listing removed', 'success');
     setRemoveModal(null);
+    fetch();
+  };
+
+  const confirmPermanentDelete = async () => {
+    if (!deleteModal) return;
+    // Remove related wishlists first to avoid FK issues
+    await supabase.from('wishlists').delete().eq('listing_id', deleteModal.id);
+    await supabase.from('listings').delete().eq('id', deleteModal.id);
+    await logActivity('listing_permanently_deleted', `Listing "${deleteModal.name}" permanently deleted by admin`);
+    showToast('Listing permanently deleted', 'success');
+    setDeleteModal(null);
     fetch();
   };
 
@@ -118,6 +130,10 @@ const ListingsQueue = () => {
                   <GlassButton variant="destructive" className="py-1 text-[10px]"
                     onClick={() => setRemoveModal({ id: l.id, name: l.book_name, sellerId: l.seller_id })}>Remove</GlassButton>
                 )}
+                {['sold', 'deleted', 'rejected', 'expired'].includes(l.status) && (
+                  <GlassButton variant="destructive" className="py-1 text-[10px]"
+                    onClick={() => setDeleteModal({ id: l.id, name: l.book_name })}>Delete Permanently</GlassButton>
+                )}
               </div>
             </div>
           ))}
@@ -142,6 +158,16 @@ const ListingsQueue = () => {
         <div className="flex gap-2">
           <GlassButton variant="secondary" className="flex-1" onClick={() => setRemoveModal(null)}>Cancel</GlassButton>
           <GlassButton variant="destructive" className="flex-1" onClick={confirmRemove}>Remove</GlassButton>
+        </div>
+      </Modal>
+
+      {/* Permanent Delete Modal */}
+      <Modal open={!!deleteModal} onClose={() => setDeleteModal(null)}>
+        <h3 className="mb-2 text-base font-bold text-[#E8357A]">⚠️ Permanently Delete?</h3>
+        <p className="mb-4 text-sm text-[#3A3A3A]">This will permanently remove <strong>{deleteModal?.name}</strong> from the database. This action cannot be undone.</p>
+        <div className="flex gap-2">
+          <GlassButton variant="secondary" className="flex-1" onClick={() => setDeleteModal(null)}>Cancel</GlassButton>
+          <GlassButton variant="destructive" className="flex-1" onClick={confirmPermanentDelete}>Delete Forever</GlassButton>
         </div>
       </Modal>
     </AdminLayout>

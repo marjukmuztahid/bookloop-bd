@@ -21,6 +21,7 @@ const ListingsQueue = () => {
   const [search, setSearch] = useState('');
   const [rejectModal, setRejectModal] = useState<{ id: string; name: string; sellerId: string } | null>(null);
   const [removeModal, setRemoveModal] = useState<{ id: string; name: string; sellerId: string } | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{ id: string; name: string } | null>(null);
   const [rejectReason, setRejectReason] = useState('');
 
   const fetch = useCallback(async () => {

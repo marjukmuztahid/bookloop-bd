@@ -128,6 +128,7 @@ const MyListings = () => {
       .from('listings')
       .select('*')
       .eq('seller_id', user.id)
+      .neq('status', 'deleted')
       .order('created_at', { ascending: false });
     setListings(data || []);
     setLoading(false);
@@ -136,7 +137,7 @@ const MyListings = () => {
   useEffect(() => { fetch(); }, [fetch]);
 
   const removeListing = async (id: string) => {
-    const { error } = await supabase.from('listings').delete().eq('id', id);
+    const { error } = await supabase.from('listings').update({ status: 'deleted' } as any).eq('id', id);
     if (error) { showToast('Failed to delete listing', 'error'); return; }
     showToast('Listing deleted — your ratings are preserved', 'success');
     setConfirmDelete(null);

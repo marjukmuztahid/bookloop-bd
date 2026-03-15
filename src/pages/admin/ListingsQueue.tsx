@@ -130,6 +130,10 @@ const ListingsQueue = () => {
                   <GlassButton variant="destructive" className="py-1 text-[10px]"
                     onClick={() => setRemoveModal({ id: l.id, name: l.book_name, sellerId: l.seller_id })}>Remove</GlassButton>
                 )}
+                {['sold', 'deleted', 'rejected', 'expired'].includes(l.status) && (
+                  <GlassButton variant="destructive" className="py-1 text-[10px]"
+                    onClick={() => setDeleteModal({ id: l.id, name: l.book_name })}>Delete Permanently</GlassButton>
+                )}
               </div>
             </div>
           ))}

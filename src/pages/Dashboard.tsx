@@ -297,7 +297,7 @@ const MyOrders = () => {
   const [subTab, setSubTab] = useState<'buying' | 'selling'>('buying');
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [confirmCancel, setConfirmCancel] = useState<string | null>(null);
+  
   const [confirmHide, setConfirmHide] = useState<string | null>(null);
 
   const fetchOrders = useCallback(async () => {

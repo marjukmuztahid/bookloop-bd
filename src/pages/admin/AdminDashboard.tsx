@@ -15,29 +15,38 @@ const AdminDashboard = () => {
   const [activities, setActivities] = useState<any[]>([]);
 
   const fetchData = async () => {
-    const [pL, pO, aD, tU, rev, act] = await Promise.all([
-      supabase.from('listings').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('orders').select('id', { count: 'exact', head: true }).in('status', ['pickup_scheduled', 'in_transit']),
-      supabase.from('users').select('id', { count: 'exact', head: true }),
-      supabase.from('orders').select('listings(seller_price)').eq('status', 'delivered'),
-      supabase.from('activity_log').select('*').order('created_at', { ascending: false }).limit(10),
-    ]);
+    try {
+      const [pL, pO, aD, tU, rev, act] = await Promise.all([
+        supabase.from('listings').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('orders').select('id', { count: 'exact', head: true }).in('status', ['pickup_scheduled', 'in_transit']),
+        supabase.from('users').select('id', { count: 'exact', head: true }),
+        supabase.from('orders').select('listing_id, listings!orders_listing_id_fkey(seller_price)').eq('status', 'delivered'),
+        supabase.from('activity_log').select('*').order('created_at', { ascending: false }).limit(10),
+      ]);
 
-    const fee = (rev.data || []).reduce((sum: number, o: any) => {
-      const price = o.listings?.seller_price || 0;
-      const rate = price <= 500 ? 0.07 : 0.05;
-      return sum + Math.round(price * rate);
-    }, 0);
+      // Log any errors for debugging
+      [pL, pO, aD, tU, rev, act].forEach((r, i) => {
+        if (r.error) console.error(`Admin dashboard query ${i} error:`, r.error);
+      });
 
-    setStats({
-      pendingListings: pL.count || 0,
-      pendingOrders: pO.count || 0,
-      activeDeliveries: aD.count || 0,
-      totalUsers: tU.count || 0,
-      feeRevenue: fee,
-    });
-    setActivities(act.data || []);
+      const fee = (rev.data || []).reduce((sum: number, o: any) => {
+        const price = o.listings?.seller_price || 0;
+        const rate = price <= 500 ? 0.07 : 0.05;
+        return sum + Math.round(price * rate);
+      }, 0);
+
+      setStats({
+        pendingListings: pL.count ?? 0,
+        pendingOrders: pO.count ?? 0,
+        activeDeliveries: aD.count ?? 0,
+        totalUsers: tU.count ?? 0,
+        feeRevenue: fee,
+      });
+      setActivities(act.data || []);
+    } catch (err) {
+      console.error('Admin dashboard fetch error:', err);
+    }
   };
 
   useEffect(() => { fetchData(); const t = setInterval(fetchData, 60000); return () => clearInterval(t); }, []);

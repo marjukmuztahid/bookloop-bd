@@ -403,7 +403,7 @@ const MyOrders = () => {
                   <GlassButton variant="destructive" className="flex-shrink-0 text-xs"
                     onClick={() => setConfirmCancel(o.id)}>Cancel</GlassButton>
                 )}
-                {subTab === 'selling' && (o.status === 'delivered' || o.status === 'cancelled') && (
+                {(o.status === 'delivered' || o.status === 'cancelled') && (
                   <button
                     onClick={() => setConfirmHide(o.id)}
                     className="flex-shrink-0 rounded-lg p-1.5 text-[#8A8A8A] transition-colors hover:bg-[rgba(232,53,122,0.06)] hover:text-[#E8357A]"

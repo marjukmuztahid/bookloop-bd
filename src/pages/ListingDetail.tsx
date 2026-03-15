@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import useSEO from '@/hooks/useSEO';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { ReviewSection } from '@/components/reviews/ReviewSection';
 
 const conditionVariant = (c: string): BadgeVariant => {
   const map: Record<string, BadgeVariant> = { 'Like New': 'new', Good: 'good', Fair: 'fair', Worn: 'worn' };

@@ -33,7 +33,7 @@ const ActiveDeliveries = lazy(() => import("./pages/admin/ActiveDeliveries"));
 const UsersPage = lazy(() => import("./pages/admin/Users"));
 const Revenue = lazy(() => import("./pages/admin/Revenue"));
 const Analytics = lazy(() => import("./pages/admin/Analytics"));
-const AdminReviews = lazy(() => import("./pages/admin/Reviews"));
+
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();

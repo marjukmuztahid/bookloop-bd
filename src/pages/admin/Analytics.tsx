@@ -101,7 +101,8 @@ const Analytics = () => {
     loadData();
   }, []);
 
-  const cancelRate = stats.totalOrders > 0 ? Math.round((stats.cancelledOrders / stats.totalOrders) * 100) : 0;
+  const completedTotal = stats.deliveredOrders + stats.cancelledOrders;
+  const cancelRate = completedTotal > 0 ? Math.round((stats.cancelledOrders / completedTotal) * 100) : 0;
   const pieData = [
     { name: 'Delivered', value: stats.deliveredOrders, color: '#30D158' },
     { name: 'Cancelled', value: stats.cancelledOrders, color: '#FF453A' },

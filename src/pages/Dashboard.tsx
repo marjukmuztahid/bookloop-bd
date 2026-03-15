@@ -297,7 +297,7 @@ const MyOrders = () => {
   const [subTab, setSubTab] = useState<'buying' | 'selling'>('buying');
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [confirmCancel, setConfirmCancel] = useState<string | null>(null);
+  
   const [confirmHide, setConfirmHide] = useState<string | null>(null);
 
   const fetchOrders = useCallback(async () => {
@@ -333,13 +333,6 @@ const MyOrders = () => {
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
-  const cancelOrder = async (orderId: string) => {
-    const { error } = await supabase.from('orders').update({ status: 'cancelled' }).eq('id', orderId);
-    if (error) { showToast('Failed to cancel order', 'error'); return; }
-    showToast('Order cancelled', 'success');
-    setConfirmCancel(null);
-    fetchOrders();
-  };
 
   const hideOrder = async (orderId: string) => {
     const hiddenField = subTab === 'selling' ? 'seller_hidden' : 'buyer_hidden';
@@ -398,10 +391,6 @@ const MyOrders = () => {
                   <p className="text-xs text-[#8A8A8A]">{new Date(o.created_at).toLocaleDateString()}</p>
                 <div className="mt-1">{statusLabel(o.status, subTab === 'selling')}</div>
                 </div>
-                {subTab === 'buying' && o.status === 'pending' && (
-                  <GlassButton variant="destructive" className="flex-shrink-0 text-xs"
-                    onClick={() => setConfirmCancel(o.id)}>Cancel</GlassButton>
-                )}
                 {(o.status === 'delivered' || o.status === 'cancelled' || o.status === 'unsuccessful') && (
                   <button
                     onClick={() => setConfirmHide(o.id)}
@@ -417,24 +406,6 @@ const MyOrders = () => {
         </div>
       )}
 
-      <AnimatePresence>
-        {confirmCancel && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-            style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }}
-            onClick={() => setConfirmCancel(null)}>
-            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="glass-panel max-w-sm p-6 text-center" onClick={(e) => e.stopPropagation()}>
-              <h3 className="mb-2 text-base font-bold text-[#1A1A1A]">Cancel this order?</h3>
-              <p className="mb-5 text-sm text-[#8A8A8A]">The listing will become available again.</p>
-              <div className="flex gap-2">
-                <GlassButton variant="secondary" className="flex-1" onClick={() => setConfirmCancel(null)}>Keep Order</GlassButton>
-                <GlassButton variant="destructive" className="flex-1" onClick={() => cancelOrder(confirmCancel)}>Cancel Order</GlassButton>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <AnimatePresence>
         {confirmHide && (

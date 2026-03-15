@@ -185,7 +185,10 @@ const MyListings = () => {
   return (
     <div className="flex flex-col gap-3">
       {listings.map((l) => (
-        <div key={l.id} className="glass-panel-sm flex items-center gap-3 p-3">
+        <div
+          key={l.id}
+          className={`glass-panel-sm relative flex items-center gap-3 p-3 ${openMenu === l.id ? 'z-30' : 'z-0'}`}
+        >
           <img src={l.photos?.[0] || '/placeholder.svg'} alt={l.book_name}
             className="h-[72px] w-[72px] flex-shrink-0 rounded-[10px] object-cover" />
           <div className="min-w-0 flex-1">
@@ -205,7 +208,7 @@ const MyListings = () => {
                 <MoreVertical size={16} />
               </button>
               {openMenu === l.id && (
-                <div className="glass-panel-sm absolute right-0 top-8 z-10 w-44 p-1">
+                <div className="glass-panel-sm absolute right-0 top-8 z-50 w-44 p-1">
                   <MenuBtn label="View on Marketplace" onClick={() => { navigate(`/listings/${l.id}`); setOpenMenu(null); }} />
                   <MenuBtn label="Update Stock" onClick={() => { setStockModal(l); setStockQty(l.quantity ?? 1); setOpenMenu(null); }} />
                   {l.status === 'available' && (

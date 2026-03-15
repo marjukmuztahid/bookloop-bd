@@ -65,7 +65,7 @@ const ListingsQueue = () => {
   };
 
   const statusBadge = (s: string) => {
-    const map: Record<string, any> = { pending: ['Pending', 'good'], available: ['Available', 'new'], rejected: ['Rejected', 'fair'], sold: ['Sold', 'worn'], sold_pending_delivery: ['Order in Progress', 'fair'] };
+    const map: Record<string, any> = { pending: ['Pending', 'good'], available: ['Available', 'new'], rejected: ['Rejected', 'fair'], sold: ['Sold', 'worn'], sold_pending_delivery: ['Order in Progress', 'fair'], deleted: ['Deleted by Seller', 'worn'], expired: ['Expired', 'worn'] };
     const [label, variant] = map[s] || [s, 'worn'];
     return <GlassBadge variant={variant}>{label}</GlassBadge>;
   };

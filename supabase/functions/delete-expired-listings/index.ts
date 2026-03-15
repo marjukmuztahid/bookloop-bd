@@ -22,7 +22,7 @@ serve(async (req) => {
 
     for (const listing of expired) {
       // Delete listing
-      await supabase.from('listings').delete().eq('id', listing.id);
+      await supabase.from('listings').update({ status: 'expired' }).eq('id', listing.id);
 
       // Log activity
       await supabase.from('activity_log').insert({

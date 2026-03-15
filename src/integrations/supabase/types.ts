@@ -173,6 +173,7 @@ export type Database = {
           seller_hidden: boolean
           status: string
           total_amount: number
+          updated_at: string
         }
         Insert: {
           buyer_hidden?: boolean
@@ -187,6 +188,7 @@ export type Database = {
           seller_hidden?: boolean
           status?: string
           total_amount: number
+          updated_at?: string
         }
         Update: {
           buyer_hidden?: boolean
@@ -201,6 +203,7 @@ export type Database = {
           seller_hidden?: boolean
           status?: string
           total_amount?: number
+          updated_at?: string
         }
         Relationships: [
           {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { LayoutDashboard, ClipboardList, Package, Truck, Users, BarChart3, DollarSign, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, ClipboardList, Package, Truck, Users, BarChart3, DollarSign, LogOut, Menu, X, History } from 'lucide-react';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassBadge } from '@/components/ui/GlassBadge';
 import { useAuth } from '@/hooks/useAuth';
@@ -17,6 +17,7 @@ const NAV = [
   { path: '/admin/deliveries', label: 'Active Deliveries', icon: Truck },
   { path: '/admin/users', label: 'Users', icon: Users },
   
+  { path: '/admin/order-history', label: 'Order History', icon: History },
   { path: '/admin/revenue', label: 'Revenue', icon: DollarSign },
   { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
 ];

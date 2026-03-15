@@ -33,6 +33,7 @@ const ActiveDeliveries = lazy(() => import("./pages/admin/ActiveDeliveries"));
 const UsersPage = lazy(() => import("./pages/admin/Users"));
 const Revenue = lazy(() => import("./pages/admin/Revenue"));
 const Analytics = lazy(() => import("./pages/admin/Analytics"));
+const OrderHistory = lazy(() => import("./pages/admin/OrderHistory"));
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -79,6 +80,7 @@ const App = () => (
                   <Route path="/admin/deliveries" element={<AdminProtectedRoute><ActiveDeliveries /></AdminProtectedRoute>} />
                   <Route path="/admin/users" element={<AdminProtectedRoute><UsersPage /></AdminProtectedRoute>} />
                   
+                  <Route path="/admin/order-history" element={<AdminProtectedRoute><OrderHistory /></AdminProtectedRoute>} />
                   <Route path="/admin/revenue" element={<AdminProtectedRoute><Revenue /></AdminProtectedRoute>} />
                   <Route path="/admin/analytics" element={<AdminProtectedRoute><Analytics /></AdminProtectedRoute>} />
 

@@ -53,8 +53,8 @@ const OrdersQueue = () => {
     await supabase.from('orders').update({ status: 'approved' }).eq('id', o.id);
 
     if (currentQty > 1) {
-      // Decrement quantity, keep listing available
-      await supabase.from('listings').update({ quantity: currentQty - 1, status: 'sold_pending_delivery' } as any).eq('id', o.listing_id);
+      // Decrement quantity, keep listing available for remaining copies
+      await supabase.from('listings').update({ quantity: currentQty - 1 } as any).eq('id', o.listing_id);
     } else {
       // Last copy — mark sold_pending_delivery with quantity 0
       await supabase.from('listings').update({ status: 'sold_pending_delivery', quantity: 0 } as any).eq('id', o.listing_id);

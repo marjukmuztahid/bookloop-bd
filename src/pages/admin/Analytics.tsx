@@ -30,7 +30,7 @@ const Analytics = () => {
         ]);
 
         // Log errors for debugging
-        [users, listings, orders, delivered, cancelled, revenue].forEach((r, i) => {
+        [users, listings, orders, delivered, cancelled, unsuccessful, revenue].forEach((r, i) => {
           if (r.error) console.error(`Analytics query ${i} error:`, r.error);
         });
 

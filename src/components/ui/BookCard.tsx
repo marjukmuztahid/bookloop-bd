@@ -27,6 +27,7 @@ const curriculumLabels: Record<Curriculum, string> = {
 
 const BookCard = ({ book }: { book: BookCardData }) => {
   const navigate = useNavigate();
+  const qty = book.quantity ?? 1;
 
   return (
     <motion.div

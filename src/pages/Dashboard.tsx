@@ -213,7 +213,7 @@ const MyListings = () => {
                       <MenuBtn label="Remove Listing" danger onClick={() => { setConfirmDelete(l.id); setOpenMenu(null); }} />
                     </>
                   )}
-                  {l.status === 'sold' && (l.quantity ?? 0) === 0 && (
+                  {(l.status === 'sold' || l.status === 'sold_pending_delivery') && (l.quantity ?? 0) === 0 && (
                     <MenuBtn label="Restock" onClick={() => { setStockModal(l); setStockQty(1); setOpenMenu(null); }} />
                   )}
                 </div>

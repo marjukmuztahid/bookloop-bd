@@ -247,6 +247,38 @@ const MyListings = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Stock Update Modal */}
+      <AnimatePresence>
+        {stockModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }}
+            onClick={() => setStockModal(null)}>
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="glass-panel max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
+              <h3 className="mb-2 text-base font-bold text-[#1A1A1A]">
+                {stockModal.status === 'sold' ? 'Restock Listing' : 'Update Available Copies'}
+              </h3>
+              <p className="mb-3 text-sm text-[#8A8A8A]">Currently: {stockModal.quantity ?? 1} copies in stock</p>
+              <input type="number" value={stockQty} onChange={(e) => setStockQty(Math.max(1, Math.min(50, parseInt(e.target.value) || 1)))}
+                className={INPUT_CLASS} min={1} max={50} />
+              <div className="mt-4 flex gap-2">
+                <GlassButton variant="secondary" className="flex-1" onClick={() => setStockModal(null)}>Cancel</GlassButton>
+                <GlassButton className="flex-1" onClick={async () => {
+                  const updates: any = { quantity: stockQty };
+                  if (stockModal.status === 'sold' && stockQty >= 1) updates.status = 'available';
+                  const { error } = await supabase.from('listings').update(updates).eq('id', stockModal.id);
+                  if (error) { showToast('Failed to update stock', 'error'); return; }
+                  showToast('Stock updated successfully', 'success');
+                  setStockModal(null);
+                  fetch();
+                }}>Save</GlassButton>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

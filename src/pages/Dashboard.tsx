@@ -179,7 +179,8 @@ const MyListings = () => {
     if (l.status === 'pending') return <GlassBadge variant="good">Awaiting admin review</GlassBadge>;
     if (l.status === 'available' && daysLeft <= 7) return <GlassBadge variant="fair">Expiring Soon</GlassBadge>;
     if (l.status === 'available') return <GlassBadge variant="new">Live on marketplace</GlassBadge>;
-    if (l.status === 'sold' || l.status === 'sold_pending_delivery' || l.status === 'delivered') return <GlassBadge variant="worn">Sold & Delivered</GlassBadge>;
+    if (l.status === 'sold_pending_delivery') return <GlassBadge variant="fair">Order Placed</GlassBadge>;
+    if (l.status === 'sold' || l.status === 'delivered') return <GlassBadge variant="worn">Sold & Delivered</GlassBadge>;
     if (l.status === 'rejected') return <GlassBadge variant="fair">Rejected</GlassBadge>;
     return <GlassBadge variant="worn">{l.status}</GlassBadge>;
   };

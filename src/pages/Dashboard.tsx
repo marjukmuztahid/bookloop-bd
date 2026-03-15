@@ -128,6 +128,7 @@ const MyListings = () => {
       .from('listings')
       .select('*')
       .eq('seller_id', user.id)
+      .neq('status', 'deleted')
       .order('created_at', { ascending: false });
     setListings(data || []);
     setLoading(false);

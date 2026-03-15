@@ -564,11 +564,6 @@ const MyProfile = () => {
         </GlassButton>
       </div>
 
-      {/* Seller Rating */}
-      <div className="glass-panel p-6">
-        <h3 className="mb-3 text-base font-bold text-[#1A1A1A]">Seller Rating</h3>
-        {user && <SellerRatingDisplay sellerId={user.id} />}
-      </div>
 
       {/* Account Info */}
       <div className="glass-panel p-6">

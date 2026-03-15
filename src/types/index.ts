@@ -53,16 +53,3 @@ export interface Notification {
   created_at: string;
 }
 
-export interface Review {
-  id: string;
-  order_id: string;
-  listing_id: string;
-  buyer_id: string;
-  seller_id: string;
-  rating: number;
-  comment?: string;
-  created_at: string;
-  buyer?: {
-    name: string;
-  };
-}

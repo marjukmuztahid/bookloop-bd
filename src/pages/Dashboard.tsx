@@ -136,9 +136,9 @@ const MyListings = () => {
   useEffect(() => { fetch(); }, [fetch]);
 
   const removeListing = async (id: string) => {
-    const { error } = await supabase.from('listings').update({ status: 'removed' }).eq('id', id);
-    if (error) { showToast('Failed to remove listing', 'error'); return; }
-    showToast('Listing removed', 'success');
+    const { error } = await supabase.from('listings').delete().eq('id', id);
+    if (error) { showToast('Failed to delete listing', 'error'); return; }
+    showToast('Listing deleted', 'success');
     setConfirmDelete(null);
     fetch();
   };
@@ -212,9 +212,7 @@ const MyListings = () => {
                 <div className="glass-panel-sm absolute right-0 top-8 z-50 w-44 p-1">
                   <MenuBtn label="View on Marketplace" onClick={() => { navigate(`/listings/${l.id}`); setOpenMenu(null); }} />
                   <MenuBtn label="Update Stock" onClick={() => { setStockModal(l); setStockQty(l.quantity ?? 1); setOpenMenu(null); }} />
-                  {l.status === 'available' && (
-                    <MenuBtn label="Remove Listing" danger onClick={() => { setConfirmDelete(l.id); setOpenMenu(null); }} />
-                  )}
+                  <MenuBtn label="Delete Listing" danger onClick={() => { setConfirmDelete(l.id); setOpenMenu(null); }} />
                 </div>
               )}
             </div>
@@ -236,11 +234,11 @@ const MyListings = () => {
             onClick={() => setConfirmDelete(null)}>
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
               className="glass-panel max-w-sm p-6 text-center" onClick={(e) => e.stopPropagation()}>
-              <h3 className="mb-2 text-base font-bold text-[#1A1A1A]">Remove this listing?</h3>
-              <p className="mb-5 text-sm text-[#8A8A8A]">This will take it off the marketplace.</p>
+              <h3 className="mb-2 text-base font-bold text-[#1A1A1A]">Delete this listing?</h3>
+              <p className="mb-5 text-sm text-[#8A8A8A]">This will permanently remove the listing and cannot be undone.</p>
               <div className="flex gap-2">
                 <GlassButton variant="secondary" className="flex-1" onClick={() => setConfirmDelete(null)}>Cancel</GlassButton>
-                <GlassButton variant="destructive" className="flex-1" onClick={() => removeListing(confirmDelete)}>Remove</GlassButton>
+                <GlassButton variant="destructive" className="flex-1" onClick={() => removeListing(confirmDelete)}>Delete</GlassButton>
               </div>
             </motion.div>
           </motion.div>

@@ -128,7 +128,7 @@ const SellBook = () => {
   const resetForm = () => {
     setPhotos([]); setPhotoPreviews([]); setBookName(''); setAuthor('');
     setCurriculum(''); setClassLevel(''); setCondition(''); setWeight(null);
-    setPrice(''); setDescription(''); setSuccess(false);
+    setPrice(''); setQuantity(1); setDescription(''); setSuccess(false);
   };
 
   const handleSubmit = async () => {

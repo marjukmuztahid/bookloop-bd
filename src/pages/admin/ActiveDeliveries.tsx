@@ -36,7 +36,11 @@ const ActiveDeliveries = () => {
 
     if (action === 'delivered') {
       await supabase.from('orders').update({ status: 'delivered' }).eq('id', o.id);
-      await supabase.from('listings').update({ status: 'sold' }).eq('id', o.listing_id);
+      // If quantity is already 0 (last copy was sold at approval), delete the listing
+      const currentQtyForDelete = l?.quantity ?? 0;
+      if (currentQtyForDelete === 0) {
+        await supabase.from('listings').delete().eq('id', o.listing_id);
+      }
       await logActivity('delivery_confirmed', `"${l?.book_name}" delivered successfully`);
       await notifyUser(o.buyer_id, `Your book "${l?.book_name}" has been delivered! Enjoy your studies.`);
     if (l?.seller_id) {

@@ -1,6 +1,6 @@
 export type Curriculum = 'bangla_version' | 'english_version' | 'english_medium';
 export type BookCondition = 'new' | 'good' | 'fair' | 'worn';
-export type ListingStatus = 'pending' | 'available' | 'sold' | 'rejected';
+export type ListingStatus = 'pending' | 'available' | 'sold' | 'sold_pending_delivery' | 'rejected' | 'deleted' | 'expired';
 export type OrderStatus = 'pending' | 'approved' | 'pickup_scheduled' | 'in_transit' | 'delivered' | 'unsuccessful' | 'cancelled';
 
 export interface User {

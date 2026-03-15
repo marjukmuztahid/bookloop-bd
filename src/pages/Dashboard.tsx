@@ -236,6 +236,11 @@ const MyListings = () => {
                 <RefreshCw size={12} className="mr-1" /> Renew
               </GlassButton>
             )}
+            {isCompleted(l) && (
+              <GlassButton variant="secondary" className="mt-1 py-1 text-[10px]" onClick={() => relistBook(l)}>
+                <Plus size={12} className="mr-1" /> Relist
+              </GlassButton>
+            )}
           </div>
         </div>
       ))}

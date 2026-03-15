@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, ShoppingBag, User, Plus, MoreVertical, Heart, Trash2, ExternalLink, X as XIcon, RefreshCw } from 'lucide-react';
+import { SellerRatingDisplay } from '@/components/reviews/SellerRatingDisplay';
 import { pageTransition, fadeUp } from '@/lib/animations';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassBadge, type BadgeVariant } from '@/components/ui/GlassBadge';

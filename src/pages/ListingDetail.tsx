@@ -282,6 +282,11 @@ const ListingDetail = () => {
             )}
           </div>
         </div>
+
+        {/* Reviews Section */}
+        {listing && listing.seller_id && (
+          <ReviewSection listingId={listing.id} sellerId={listing.seller_id} />
+        )}
       </motion.main>
       <Footer />
     </div>

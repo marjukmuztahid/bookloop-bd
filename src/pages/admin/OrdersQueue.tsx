@@ -83,7 +83,12 @@ const OrdersQueue = () => {
   const confirmReject = async () => {
     if (!rejectModal) return;
     await supabase.from('orders').update({ status: 'cancelled' }).eq('id', rejectModal.id);
-    // No quantity/status restoration needed — pending orders never had quantity decremented
+    // Restore quantity since it was decremented at order placement
+    const currentQty = rejectModal.listings?.quantity ?? 0;
+    await supabase.from('listings').update({ 
+      quantity: currentQty + 1, 
+      status: 'available' 
+    } as any).eq('id', rejectModal.listing_id);
     await logActivity('order_rejected', `Order for "${rejectModal.listings?.book_name}" rejected`);
     await notifyUser(rejectModal.buyer_id, `Your order for "${rejectModal.listings?.book_name}" was not approved.`);
     showToast('Order rejected', 'success');

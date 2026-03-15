@@ -140,6 +140,7 @@ const SellBook = () => {
     if (!condition) { showToast('Select a condition', 'error'); return; }
     if (weight === null) { showToast('Select a weight', 'error'); return; }
     if (priceNum < 10) { showToast('Minimum price is ৳ 10', 'error'); return; }
+    if (!Number.isInteger(quantity) || quantity < 1) { showToast('Quantity must be at least 1', 'error'); return; }
     if (!user) { showToast('Please log in first', 'error'); return; }
 
     setSubmitting(true);

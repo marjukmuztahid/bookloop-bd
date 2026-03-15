@@ -5,7 +5,7 @@ import { GlassPanel } from '@/components/ui/GlassPanel';
 import { GlassBadge } from '@/components/ui/GlassBadge';
 import { supabase } from '@/integrations/supabase/client';
 import { calculatePlatformFee } from '@/lib/utils';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import useDocumentTitle from '@/hooks/useDocumentTitle';
 
 const PAGE_SIZE = 20;
 

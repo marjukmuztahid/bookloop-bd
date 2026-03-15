@@ -140,15 +140,8 @@ const Checkout = () => {
 
       if (error) throw error;
 
-      // Decrement quantity immediately on order placement
-      const newQty = (listing.quantity ?? 1) - 1;
-      await supabase
-        .from('listings')
-        .update({
-          quantity: newQty,
-          ...(newQty === 0 ? { status: 'sold_pending_delivery' } : {}),
-        } as any)
-        .eq('id', listing.id);
+      // Decrement quantity immediately on order placement (uses SECURITY DEFINER function)
+      await supabase.rpc('decrement_listing_quantity', { p_listing_id: listing.id });
 
       setSuccess(true);
     } catch (err: any) {

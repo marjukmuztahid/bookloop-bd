@@ -48,17 +48,8 @@ const OrdersQueue = () => {
   useEffect(() => { fetch(); }, [fetch]);
 
   const approveOrder = async (o: any) => {
-    const currentQty = o.listings?.quantity ?? 1;
-
     await supabase.from('orders').update({ status: 'approved' }).eq('id', o.id);
-
-    if (currentQty > 1) {
-      // Decrement quantity, keep listing available for remaining copies
-      await supabase.from('listings').update({ quantity: currentQty - 1 } as any).eq('id', o.listing_id);
-    } else {
-      // Last copy — mark sold_pending_delivery with quantity 0
-      await supabase.from('listings').update({ status: 'sold_pending_delivery', quantity: 0 } as any).eq('id', o.listing_id);
-    }
+    // Quantity already decremented at order placement — no listing update needed here
     await logActivity('order_approved', `Order for "${o.listings?.book_name}" approved`);
     await notifyUser(o.buyer_id, `Your order for "${o.listings?.book_name}" has been approved! Get ready to receive it.`);
     if (o.listings?.seller_id) {
@@ -92,7 +83,12 @@ const OrdersQueue = () => {
   const confirmReject = async () => {
     if (!rejectModal) return;
     await supabase.from('orders').update({ status: 'cancelled' }).eq('id', rejectModal.id);
-    // No quantity/status restoration needed — pending orders never had quantity decremented
+    // Restore quantity since it was decremented at order placement
+    const currentQty = rejectModal.listings?.quantity ?? 0;
+    await supabase.from('listings').update({ 
+      quantity: currentQty + 1, 
+      status: 'available' 
+    } as any).eq('id', rejectModal.listing_id);
     await logActivity('order_rejected', `Order for "${rejectModal.listings?.book_name}" rejected`);
     await notifyUser(rejectModal.buyer_id, `Your order for "${rejectModal.listings?.book_name}" was not approved.`);
     showToast('Order rejected', 'success');

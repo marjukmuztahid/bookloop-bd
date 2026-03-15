@@ -131,7 +131,7 @@ const Revenue = () => {
 
   return (
     <AdminLayout title="Revenue">
-      <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-6">
+      <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-6">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {cards.map(c => (

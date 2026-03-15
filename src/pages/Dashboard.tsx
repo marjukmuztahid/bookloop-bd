@@ -310,6 +310,7 @@ const MyOrders = () => {
         .from('orders')
         .select('*, listings(*)')
         .eq('buyer_id', user.id)
+        .eq('buyer_hidden', false)
         .order('created_at', { ascending: false });
       setOrders(data || []);
     } else {

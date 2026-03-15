@@ -194,6 +194,7 @@ const MyListings = () => {
             <div className="mt-1 flex flex-wrap items-center gap-1.5">
               <GlassBadge variant="curriculum" className="text-[10px]">{l.curriculum}</GlassBadge>
               <span className="text-sm font-bold text-[#E8357A]">{formatPrice(l.display_price)}</span>
+              {l.status === 'available' && <span className="text-[10px] text-[#8A8A8A]">Qty: {l.quantity ?? 1}</span>}
             </div>
           </div>
           <div className="flex flex-shrink-0 flex-col items-end gap-2">

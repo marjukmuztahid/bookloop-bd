@@ -40,12 +40,15 @@ const Analytics = () => {
           return sum + Math.round(price * rate);
         }, 0);
 
+        const totalCancelled = (cancelled.count ?? 0) + (unsuccessful.count ?? 0);
+        const totalDelivered = delivered.count ?? 0;
+
         setStats({
           totalUsers: users.count ?? 0,
           totalListings: listings.count ?? 0,
           totalOrders: orders.count ?? 0,
-          deliveredOrders: delivered.count ?? 0,
-          cancelledOrders: cancelled.count ?? 0,
+          deliveredOrders: totalDelivered,
+          cancelledOrders: totalCancelled,
           feeRevenue: fee,
         });
 

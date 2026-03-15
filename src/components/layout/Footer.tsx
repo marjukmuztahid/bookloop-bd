@@ -18,6 +18,7 @@ const Footer = () => {
 
             {/* Column 2 — Links */}
             <div className="flex flex-col gap-2">
+              <FooterLink to="/about" label="About" />
               <FooterLink to="/how-it-works" label="How It Works" />
               <FooterLink to="/listings" label="Browse Books" />
               <FooterLink to="/sell" label="Sell a Book" />

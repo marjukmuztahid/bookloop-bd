@@ -7,20 +7,6 @@ const Footer = () => {
       <div className="border-t border-[rgba(0,0,0,0.06)]" />
       <div className="glass-panel mx-auto mt-0 rounded-t-none border-t-0">
         <div className="mx-auto max-w-7xl px-6 py-10">
-          {/* About Section */}
-          <div className="mb-8">
-            <h3 className="mb-3 text-sm font-semibold text-heading">About Book Loop BD</h3>
-            <div className="space-y-3 text-sm text-muted-foreground">
-              <p>Book Loop BD is a second-hand textbook marketplace built specifically for students in Bangladesh. Our mission is simple: to give every book a second life while making education more affordable for everyone.</p>
-              <p>The idea came from a simple observation. Thousands of students across Bangladesh already buy and sell used textbooks through Facebook groups and informal networks. While the demand is huge, the experience is often unorganized, unreliable, and difficult to trust.</p>
-              <p>Founded by Marjuk Muztahid in March 2026, Book Loop BD was created to bring structure, trust, and simplicity to this process — giving students a dedicated platform to find, sell, and exchange textbooks.</p>
-              <p>Book Loop BD works as a student-to-student marketplace, allowing users to directly list and sell textbooks to other students, helping sellers recover costs while buyers access books at significantly lower prices.</p>
-              <p>Beyond affordability, Book Loop BD supports sustainability. Every reused textbook reduces the demand for new paper, minimizing waste and building a more resource-efficient education ecosystem.</p>
-              <p>At its core, Book Loop BD is about community, accessibility, and sustainability — empowering students while giving every book the chance to continue its journey.</p>
-            </div>
-          </div>
-
-          {/* Footer Columns */}
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Column 1 — Brand */}
             <div>

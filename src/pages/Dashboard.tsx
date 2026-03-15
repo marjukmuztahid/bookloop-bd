@@ -342,8 +342,9 @@ const MyOrders = () => {
     fetchOrders();
   };
 
-  const hideSellerOrder = async (orderId: string) => {
-    const { error } = await supabase.from('orders').update({ seller_hidden: true } as any).eq('id', orderId);
+  const hideOrder = async (orderId: string) => {
+    const hiddenField = subTab === 'selling' ? 'seller_hidden' : 'buyer_hidden';
+    const { error } = await supabase.from('orders').update({ [hiddenField]: true } as any).eq('id', orderId);
     if (error) { showToast('Failed to remove order', 'error'); return; }
     showToast('Order removed from your history', 'success');
     setConfirmHide(null);

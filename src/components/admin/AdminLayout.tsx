@@ -17,6 +17,7 @@ const NAV = [
   { path: '/admin/deliveries', label: 'Active Deliveries', icon: Truck },
   { path: '/admin/users', label: 'Users', icon: Users },
   
+  { path: '/admin/order-history', label: 'Order History', icon: History },
   { path: '/admin/revenue', label: 'Revenue', icon: DollarSign },
   { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
 ];

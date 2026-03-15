@@ -299,6 +299,7 @@ const MyOrders = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [confirmCancel, setConfirmCancel] = useState<string | null>(null);
+  const [confirmHide, setConfirmHide] = useState<string | null>(null);
 
   const fetchOrders = useCallback(async () => {
     if (!user) return;
@@ -323,6 +324,7 @@ const MyOrders = () => {
         .from('orders')
         .select('*, listings(*)')
         .in('listing_id', ids)
+        .eq('seller_hidden', false)
         .order('created_at', { ascending: false });
       setOrders(data || []);
     }
@@ -337,6 +339,14 @@ const MyOrders = () => {
     showToast('Order cancelled', 'success');
     setConfirmCancel(null);
     fetchOrders();
+  };
+
+  const hideSellerOrder = async (orderId: string) => {
+    const { error } = await supabase.from('orders').update({ seller_hidden: true } as any).eq('id', orderId);
+    if (error) { showToast('Failed to remove order', 'error'); return; }
+    showToast('Order removed from your history', 'success');
+    setConfirmHide(null);
+    setOrders((prev) => prev.filter((o) => o.id !== orderId));
   };
 
   const statusLabel = (status: string, isSelling: boolean) => {
@@ -385,11 +395,20 @@ const MyOrders = () => {
                 <div className="min-w-0 flex-1">
                   <h4 className="truncate text-sm font-bold text-[#1A1A1A]">{listing?.book_name}</h4>
                   <p className="text-xs text-[#8A8A8A]">{new Date(o.created_at).toLocaleDateString()}</p>
-                  <div className="mt-1">{statusLabel(o.status, subTab === 'selling')}</div>
+                <div className="mt-1">{statusLabel(o.status, subTab === 'selling')}</div>
                 </div>
                 {subTab === 'buying' && o.status === 'pending' && (
                   <GlassButton variant="destructive" className="flex-shrink-0 text-xs"
                     onClick={() => setConfirmCancel(o.id)}>Cancel</GlassButton>
+                )}
+                {subTab === 'selling' && (o.status === 'delivered' || o.status === 'cancelled') && (
+                  <button
+                    onClick={() => setConfirmHide(o.id)}
+                    className="flex-shrink-0 rounded-lg p-1.5 text-[#8A8A8A] transition-colors hover:bg-[rgba(232,53,122,0.06)] hover:text-[#E8357A]"
+                    title="Remove from history"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 )}
               </div>
             );
@@ -410,6 +429,25 @@ const MyOrders = () => {
               <div className="flex gap-2">
                 <GlassButton variant="secondary" className="flex-1" onClick={() => setConfirmCancel(null)}>Keep Order</GlassButton>
                 <GlassButton variant="destructive" className="flex-1" onClick={() => cancelOrder(confirmCancel)}>Cancel Order</GlassButton>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {confirmHide && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }}
+            onClick={() => setConfirmHide(null)}>
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="glass-panel max-w-sm p-6 text-center" onClick={(e) => e.stopPropagation()}>
+              <h3 className="mb-2 text-base font-bold text-[#1A1A1A]">Remove from order history?</h3>
+              <p className="mb-5 text-sm text-[#8A8A8A]">This will only remove this order from your view. The order record will still be kept for platform records.</p>
+              <div className="flex gap-2">
+                <GlassButton variant="secondary" className="flex-1" onClick={() => setConfirmHide(null)}>Cancel</GlassButton>
+                <GlassButton variant="destructive" className="flex-1" onClick={() => hideSellerOrder(confirmHide)}>Remove</GlassButton>
               </div>
             </motion.div>
           </motion.div>

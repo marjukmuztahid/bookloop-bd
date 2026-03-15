@@ -169,6 +169,7 @@ export type Database = {
           id: string
           listing_id: string
           pickup_scheduled_at: string | null
+          seller_hidden: boolean
           status: string
           total_amount: number
         }
@@ -181,6 +182,7 @@ export type Database = {
           id?: string
           listing_id: string
           pickup_scheduled_at?: string | null
+          seller_hidden?: boolean
           status?: string
           total_amount: number
         }
@@ -193,6 +195,7 @@ export type Database = {
           id?: string
           listing_id?: string
           pickup_scheduled_at?: string | null
+          seller_hidden?: boolean
           status?: string
           total_amount?: number
         }

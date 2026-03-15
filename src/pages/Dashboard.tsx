@@ -267,7 +267,7 @@ const MyListings = () => {
                 <GlassButton variant="secondary" className="flex-1" onClick={() => setStockModal(null)}>Cancel</GlassButton>
                 <GlassButton className="flex-1" onClick={async () => {
                   const updates: any = { quantity: stockQty };
-                  if (stockModal.status === 'sold' && stockQty >= 1) updates.status = 'available';
+                  if ((stockModal.status === 'sold' || stockModal.status === 'sold_pending_delivery') && stockQty >= 1) updates.status = 'available';
                   const { error } = await supabase.from('listings').update(updates).eq('id', stockModal.id);
                   if (error) { showToast('Failed to update stock', 'error'); return; }
                   showToast('Stock updated successfully', 'success');

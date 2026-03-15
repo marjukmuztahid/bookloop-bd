@@ -76,6 +76,7 @@ const ActiveDeliveries = () => {
       const currentQty = l?.quantity ?? 0;
       await supabase.from('orders').update({ status: 'unsuccessful' }).eq('id', o.id);
       await supabase.from('listings').update({ status: 'available', quantity: currentQty + 1 } as any).eq('id', o.listing_id);
+      // Note: this correctly restores quantity and sets status back to available
       await logActivity('delivery_unsuccessful', `Delivery failed for "${l?.book_name}"`);
       await notifyUser(o.buyer_id, `Delivery of "${l?.book_name}" was unsuccessful. Please contact us if you have questions.`);
       if (l?.seller_id) {

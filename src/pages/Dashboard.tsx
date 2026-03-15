@@ -238,7 +238,7 @@ const MyListings = () => {
               <p className="mb-5 text-sm text-[#8A8A8A]">This will permanently remove the listing and cannot be undone.</p>
               <div className="flex gap-2">
                 <GlassButton variant="secondary" className="flex-1" onClick={() => setConfirmDelete(null)}>Cancel</GlassButton>
-                <GlassButton variant="destructive" className="flex-1" onClick={() => removeListing(confirmDelete)}>Remove</GlassButton>
+                <GlassButton variant="destructive" className="flex-1" onClick={() => removeListing(confirmDelete)}>Delete</GlassButton>
               </div>
             </motion.div>
           </motion.div>

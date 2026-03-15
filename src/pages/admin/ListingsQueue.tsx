@@ -57,11 +57,22 @@ const ListingsQueue = () => {
 
   const confirmRemove = async () => {
     if (!removeModal) return;
-    await supabase.from('listings').delete().eq('id', removeModal.id);
+    await supabase.from('listings').update({ status: 'deleted' } as any).eq('id', removeModal.id);
     await logActivity('listing_removed', `Listing "${removeModal.name}" removed by admin`);
     await notifyUser(removeModal.sellerId, `Your listing for "${removeModal.name}" has been removed by the admin.`);
     showToast('Listing removed', 'success');
     setRemoveModal(null);
+    fetch();
+  };
+
+  const confirmPermanentDelete = async () => {
+    if (!deleteModal) return;
+    // Remove related wishlists first to avoid FK issues
+    await supabase.from('wishlists').delete().eq('listing_id', deleteModal.id);
+    await supabase.from('listings').delete().eq('id', deleteModal.id);
+    await logActivity('listing_permanently_deleted', `Listing "${deleteModal.name}" permanently deleted by admin`);
+    showToast('Listing permanently deleted', 'success');
+    setDeleteModal(null);
     fetch();
   };
 

@@ -324,6 +324,7 @@ const MyOrders = () => {
         .from('orders')
         .select('*, listings(*)')
         .in('listing_id', ids)
+        .eq('seller_hidden', false)
         .order('created_at', { ascending: false });
       setOrders(data || []);
     }

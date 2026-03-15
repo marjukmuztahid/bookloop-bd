@@ -449,7 +449,7 @@ const MyOrders = () => {
               <p className="mb-5 text-sm text-[#8A8A8A]">This will only remove this order from your view. The order record will still be kept for platform records.</p>
               <div className="flex gap-2">
                 <GlassButton variant="secondary" className="flex-1" onClick={() => setConfirmHide(null)}>Cancel</GlassButton>
-                <GlassButton variant="destructive" className="flex-1" onClick={() => hideSellerOrder(confirmHide)}>Remove</GlassButton>
+                <GlassButton variant="destructive" className="flex-1" onClick={() => hideOrder(confirmHide)}>Remove</GlassButton>
               </div>
             </motion.div>
           </motion.div>

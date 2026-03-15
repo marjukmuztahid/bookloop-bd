@@ -5,6 +5,7 @@ const BASE_URL = "https://bookloopbd.com";
 const STATIC_PAGES = [
   { loc: "/", priority: "1.0", changefreq: "daily" },
   { loc: "/how-it-works", priority: "0.7", changefreq: "monthly" },
+  { loc: "/about", priority: "0.6", changefreq: "monthly" },
   { loc: "/contact", priority: "0.5", changefreq: "monthly" },
   { loc: "/privacy-policy", priority: "0.3", changefreq: "yearly" },
   { loc: "/terms", priority: "0.3", changefreq: "yearly" },

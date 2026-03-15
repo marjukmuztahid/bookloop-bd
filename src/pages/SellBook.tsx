@@ -55,6 +55,7 @@ const SellBook = () => {
   const [condition, setCondition] = useState<BookCondition | ''>('');
   const [weight, setWeight] = useState<number | null>(null);
   const [price, setPrice] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);

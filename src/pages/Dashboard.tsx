@@ -258,7 +258,7 @@ const MyListings = () => {
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
               className="glass-panel max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
               <h3 className="mb-2 text-base font-bold text-[#1A1A1A]">
-                {stockModal.status === 'sold' ? 'Restock Listing' : 'Update Available Copies'}
+                {(stockModal.status === 'sold' || stockModal.status === 'sold_pending_delivery') ? 'Restock Listing' : 'Update Available Copies'}
               </h3>
               <p className="mb-3 text-sm text-[#8A8A8A]">Currently: {stockModal.quantity ?? 1} copies in stock</p>
               <input type="number" value={stockQty} onChange={(e) => setStockQty(Math.max(1, Math.min(50, parseInt(e.target.value) || 1)))}

@@ -136,9 +136,9 @@ const MyListings = () => {
   useEffect(() => { fetch(); }, [fetch]);
 
   const removeListing = async (id: string) => {
-    const { error } = await supabase.from('listings').update({ status: 'removed' }).eq('id', id);
-    if (error) { showToast('Failed to remove listing', 'error'); return; }
-    showToast('Listing removed', 'success');
+    const { error } = await supabase.from('listings').delete().eq('id', id);
+    if (error) { showToast('Failed to delete listing', 'error'); return; }
+    showToast('Listing deleted', 'success');
     setConfirmDelete(null);
     fetch();
   };

@@ -7,6 +7,20 @@ const Footer = () => {
       <div className="border-t border-[rgba(0,0,0,0.06)]" />
       <div className="glass-panel mx-auto mt-0 rounded-t-none border-t-0">
         <div className="mx-auto max-w-7xl px-6 py-10">
+          {/* About Section */}
+          <div className="mb-8">
+            <h3 className="mb-3 text-sm font-semibold text-heading">About Book Loop BD</h3>
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <p>Book Loop BD is a second-hand textbook marketplace built specifically for students in Bangladesh. Our mission is simple: to give every book a second life while making education more affordable for everyone.</p>
+              <p>The idea came from a simple observation. Thousands of students across Bangladesh already buy and sell used textbooks through Facebook groups and informal networks. While the demand is huge, the experience is often unorganized, unreliable, and difficult to trust.</p>
+              <p>Founded by Marjuk Muztahid in March 2026, Book Loop BD was created to bring structure, trust, and simplicity to this process — giving students a dedicated platform to find, sell, and exchange textbooks.</p>
+              <p>Book Loop BD works as a student-to-student marketplace, allowing users to directly list and sell textbooks to other students, helping sellers recover costs while buyers access books at significantly lower prices.</p>
+              <p>Beyond affordability, Book Loop BD supports sustainability. Every reused textbook reduces the demand for new paper, minimizing waste and building a more resource-efficient education ecosystem.</p>
+              <p>At its core, Book Loop BD is about community, accessibility, and sustainability — empowering students while giving every book the chance to continue its journey.</p>
+            </div>
+          </div>
+
+          {/* Footer Columns */}
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Column 1 — Brand */}
             <div>
@@ -40,7 +54,7 @@ const Footer = () => {
                   aria-label="Facebook"
                   className="group"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-[#8A8A8A] transition-colors duration-200 group-hover:text-[#1877F2]">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-muted-foreground transition-colors duration-200 group-hover:text-[#1877F2]">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                   </svg>
                 </a>
@@ -51,7 +65,7 @@ const Footer = () => {
                   aria-label="Instagram"
                   className="group"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-[#8A8A8A] transition-colors duration-200 group-hover:text-[#E1306C]">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-muted-foreground transition-colors duration-200 group-hover:text-[#E1306C]">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
                   </svg>
                 </a>

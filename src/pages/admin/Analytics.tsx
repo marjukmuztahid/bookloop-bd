@@ -19,12 +19,13 @@ const Analytics = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [users, listings, orders, delivered, cancelled, revenue] = await Promise.all([
+        const [users, listings, orders, delivered, cancelled, unsuccessful, revenue] = await Promise.all([
           supabase.from('users').select('id', { count: 'exact', head: true }),
           supabase.from('listings').select('id', { count: 'exact', head: true }),
           supabase.from('orders').select('id', { count: 'exact', head: true }),
           supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'delivered'),
           supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'cancelled'),
+          supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'unsuccessful'),
           supabase.from('orders').select('listing_id, listings!orders_listing_id_fkey(seller_price)').eq('status', 'delivered'),
         ]);
 

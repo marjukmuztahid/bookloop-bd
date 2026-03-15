@@ -219,48 +219,6 @@ export type Database = {
           },
         ]
       }
-      seller_ratings: {
-        Row: {
-          buyer_id: string
-          created_at: string | null
-          id: string
-          listing_id: string
-          rating: number
-          seller_id: string
-        }
-        Insert: {
-          buyer_id: string
-          created_at?: string | null
-          id?: string
-          listing_id: string
-          rating: number
-          seller_id: string
-        }
-        Update: {
-          buyer_id?: string
-          created_at?: string | null
-          id?: string
-          listing_id?: string
-          rating?: number
-          seller_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "seller_ratings_buyer_id_fkey"
-            columns: ["buyer_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "seller_ratings_seller_id_fkey"
-            columns: ["seller_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       users: {
         Row: {
           bkash_nagad_number: string | null

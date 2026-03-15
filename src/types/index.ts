@@ -27,6 +27,7 @@ export interface Listing {
   description: string | null;
   photos: string[];
   status: ListingStatus;
+  quantity: number;
   created_at: string;
   expires_at: string;
 }

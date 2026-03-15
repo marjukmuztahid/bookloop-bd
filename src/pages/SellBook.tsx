@@ -326,7 +326,15 @@ const SellBook = () => {
             )}
           </div>
 
-          {/* 9. Description */}
+          {/* 9. Quantity */}
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">How many copies do you have?</label>
+            <input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, Math.min(50, parseInt(e.target.value) || 1)))}
+              className={INPUT_CLASS} min={1} max={50} />
+            <p className="mt-1 text-xs text-[#8A8A8A]">You can update this number later from your dashboard.</p>
+          </div>
+
+          {/* 10. Description */}
           <div>
             <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Description (optional)</label>
             <textarea value={description} onChange={(e) => setDescription(e.target.value.slice(0, 300))}

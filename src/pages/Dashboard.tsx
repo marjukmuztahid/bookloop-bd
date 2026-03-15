@@ -391,10 +391,6 @@ const MyOrders = () => {
                   <p className="text-xs text-[#8A8A8A]">{new Date(o.created_at).toLocaleDateString()}</p>
                 <div className="mt-1">{statusLabel(o.status, subTab === 'selling')}</div>
                 </div>
-                {subTab === 'buying' && o.status === 'pending' && (
-                  <GlassButton variant="destructive" className="flex-shrink-0 text-xs"
-                    onClick={() => setConfirmCancel(o.id)}>Cancel</GlassButton>
-                )}
                 {(o.status === 'delivered' || o.status === 'cancelled' || o.status === 'unsuccessful') && (
                   <button
                     onClick={() => setConfirmHide(o.id)}

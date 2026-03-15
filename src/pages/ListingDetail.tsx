@@ -98,9 +98,10 @@ const ListingDetail = () => {
     navigate(`/checkout/${id}`);
   };
 
-  const isAvailable = listing?.status === 'available';
+  const quantity = listing?.quantity ?? 1;
+  const isAvailable = listing?.status === 'available' && quantity > 0;
   const isSoldPending = listing?.status === 'sold_pending_delivery';
-  const isSold = listing?.status === 'sold';
+  const isSold = listing?.status === 'sold' || (listing?.status === 'available' && quantity === 0);
 
   // Dynamic SEO
   const seoTitle = listing
@@ -156,12 +157,12 @@ const ListingDetail = () => {
                   height={800}
                   loading="eager"
                   fetchPriority="high"
-                />
+               />
               </AnimatePresence>
-              {!isAvailable && (
+              {(isSoldPending) && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                   <span className="rounded-full bg-white/90 px-5 py-2 text-sm font-bold text-[#3A3A3A]">
-                    {isSoldPending ? 'Currently Unavailable' : isSold ? 'Sold' : 'Unavailable'}
+                    Currently Unavailable
                   </span>
                 </div>
               )}
@@ -191,6 +192,19 @@ const ListingDetail = () => {
             <div className="flex flex-wrap gap-2">
               <GlassBadge variant="curriculum">{listing.curriculum}</GlassBadge>
               <GlassBadge variant={conditionVariant(listing.condition)}>{listing.condition}</GlassBadge>
+            </div>
+
+            {/* Stock availability */}
+            <div>
+              {quantity >= 2 && (
+                <GlassBadge variant="new">🟢 {quantity} copies available</GlassBadge>
+              )}
+              {quantity === 1 && listing.status === 'available' && (
+                <GlassBadge variant="fair">🟡 Last copy</GlassBadge>
+              )}
+              {(quantity === 0 || listing.status === 'sold') && (
+                <GlassBadge variant="worn">🔴 Unavailable</GlassBadge>
+              )}
             </div>
 
             <div>

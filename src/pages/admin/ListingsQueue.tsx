@@ -101,6 +101,7 @@ const ListingsQueue = () => {
                   <GlassBadge variant="curriculum" className="text-[10px]">{l.curriculum}</GlassBadge>
                   <GlassBadge variant="worn" className="text-[10px]">{l.class_level}</GlassBadge>
                   <span className="text-xs font-bold text-[#E8357A]">{formatPrice(l.display_price)}</span>
+                  <span className="text-[10px] text-[#8A8A8A]">Qty: {l.quantity ?? 1}</span>
                 </div>
               </div>
               <div className="flex flex-shrink-0 flex-col items-end gap-2">

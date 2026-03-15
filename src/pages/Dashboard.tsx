@@ -118,6 +118,8 @@ const MyListings = () => {
   const [loading, setLoading] = useState(true);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [stockModal, setStockModal] = useState<any>(null);
+  const [stockQty, setStockQty] = useState(1);
 
   const fetch = useCallback(async () => {
     if (!user) return;
@@ -192,6 +194,7 @@ const MyListings = () => {
             <div className="mt-1 flex flex-wrap items-center gap-1.5">
               <GlassBadge variant="curriculum" className="text-[10px]">{l.curriculum}</GlassBadge>
               <span className="text-sm font-bold text-[#E8357A]">{formatPrice(l.display_price)}</span>
+              {l.status === 'available' && <span className="text-[10px] text-[#8A8A8A]">Qty: {l.quantity ?? 1}</span>}
             </div>
           </div>
           <div className="flex flex-shrink-0 flex-col items-end gap-2">
@@ -205,7 +208,13 @@ const MyListings = () => {
                 <div className="glass-panel-sm absolute right-0 top-8 z-10 w-44 p-1">
                   <MenuBtn label="View on Marketplace" onClick={() => { navigate(`/listings/${l.id}`); setOpenMenu(null); }} />
                   {l.status === 'available' && (
-                    <MenuBtn label="Remove Listing" danger onClick={() => { setConfirmDelete(l.id); setOpenMenu(null); }} />
+                    <>
+                      <MenuBtn label="Update Stock" onClick={() => { setStockModal(l); setStockQty(l.quantity ?? 1); setOpenMenu(null); }} />
+                      <MenuBtn label="Remove Listing" danger onClick={() => { setConfirmDelete(l.id); setOpenMenu(null); }} />
+                    </>
+                  )}
+                  {l.status === 'sold' && (l.quantity ?? 0) === 0 && (
+                    <MenuBtn label="Restock" onClick={() => { setStockModal(l); setStockQty(1); setOpenMenu(null); }} />
                   )}
                 </div>
               )}
@@ -233,6 +242,38 @@ const MyListings = () => {
               <div className="flex gap-2">
                 <GlassButton variant="secondary" className="flex-1" onClick={() => setConfirmDelete(null)}>Cancel</GlassButton>
                 <GlassButton variant="destructive" className="flex-1" onClick={() => removeListing(confirmDelete)}>Remove</GlassButton>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Stock Update Modal */}
+      <AnimatePresence>
+        {stockModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }}
+            onClick={() => setStockModal(null)}>
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="glass-panel max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
+              <h3 className="mb-2 text-base font-bold text-[#1A1A1A]">
+                {stockModal.status === 'sold' ? 'Restock Listing' : 'Update Available Copies'}
+              </h3>
+              <p className="mb-3 text-sm text-[#8A8A8A]">Currently: {stockModal.quantity ?? 1} copies in stock</p>
+              <input type="number" value={stockQty} onChange={(e) => setStockQty(Math.max(1, Math.min(50, parseInt(e.target.value) || 1)))}
+                className={INPUT_CLASS} min={1} max={50} />
+              <div className="mt-4 flex gap-2">
+                <GlassButton variant="secondary" className="flex-1" onClick={() => setStockModal(null)}>Cancel</GlassButton>
+                <GlassButton className="flex-1" onClick={async () => {
+                  const updates: any = { quantity: stockQty };
+                  if (stockModal.status === 'sold' && stockQty >= 1) updates.status = 'available';
+                  const { error } = await supabase.from('listings').update(updates).eq('id', stockModal.id);
+                  if (error) { showToast('Failed to update stock', 'error'); return; }
+                  showToast('Stock updated successfully', 'success');
+                  setStockModal(null);
+                  fetch();
+                }}>Save</GlassButton>
               </div>
             </motion.div>
           </motion.div>

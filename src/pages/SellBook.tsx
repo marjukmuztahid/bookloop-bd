@@ -55,6 +55,7 @@ const SellBook = () => {
   const [condition, setCondition] = useState<BookCondition | ''>('');
   const [weight, setWeight] = useState<number | null>(null);
   const [price, setPrice] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -127,7 +128,7 @@ const SellBook = () => {
   const resetForm = () => {
     setPhotos([]); setPhotoPreviews([]); setBookName(''); setAuthor('');
     setCurriculum(''); setClassLevel(''); setCondition(''); setWeight(null);
-    setPrice(''); setDescription(''); setSuccess(false);
+    setPrice(''); setQuantity(1); setDescription(''); setSuccess(false);
   };
 
   const handleSubmit = async () => {
@@ -139,6 +140,7 @@ const SellBook = () => {
     if (!condition) { showToast('Select a condition', 'error'); return; }
     if (weight === null) { showToast('Select a weight', 'error'); return; }
     if (priceNum < 10) { showToast('Minimum price is ৳ 10', 'error'); return; }
+    if (!Number.isInteger(quantity) || quantity < 1) { showToast('Quantity must be at least 1', 'error'); return; }
     if (!user) { showToast('Please log in first', 'error'); return; }
 
     setSubmitting(true);
@@ -168,6 +170,7 @@ const SellBook = () => {
         seller_price: priceNum,
         photos: photoUrls,
         description: description.trim() || null,
+        quantity,
         status: 'pending',
       });
 
@@ -323,7 +326,15 @@ const SellBook = () => {
             )}
           </div>
 
-          {/* 9. Description */}
+          {/* 9. Quantity */}
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">How many copies do you have?</label>
+            <input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, Math.min(50, parseInt(e.target.value) || 1)))}
+              className={INPUT_CLASS} min={1} max={50} />
+            <p className="mt-1 text-xs text-[#8A8A8A]">You can update this number later from your dashboard.</p>
+          </div>
+
+          {/* 10. Description */}
           <div>
             <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Description (optional)</label>
             <textarea value={description} onChange={(e) => setDescription(e.target.value.slice(0, 300))}

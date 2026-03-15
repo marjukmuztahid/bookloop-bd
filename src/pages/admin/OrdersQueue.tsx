@@ -48,8 +48,17 @@ const OrdersQueue = () => {
   useEffect(() => { fetch(); }, [fetch]);
 
   const approveOrder = async (o: any) => {
+    const currentQty = o.listings?.quantity ?? 1;
+
     await supabase.from('orders').update({ status: 'approved' }).eq('id', o.id);
-    await supabase.from('listings').update({ status: 'sold_pending_delivery' }).eq('id', o.listing_id);
+
+    if (currentQty > 1) {
+      // Decrement quantity, keep listing available for remaining copies
+      await supabase.from('listings').update({ quantity: currentQty - 1 } as any).eq('id', o.listing_id);
+    } else {
+      // Last copy — mark sold_pending_delivery with quantity 0
+      await supabase.from('listings').update({ status: 'sold_pending_delivery', quantity: 0 } as any).eq('id', o.listing_id);
+    }
     await logActivity('order_approved', `Order for "${o.listings?.book_name}" approved`);
     await notifyUser(o.buyer_id, `Your order for "${o.listings?.book_name}" has been approved! Get ready to receive it.`);
     if (o.listings?.seller_id) {

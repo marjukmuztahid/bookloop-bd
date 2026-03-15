@@ -71,7 +71,7 @@ const Checkout = () => {
         return;
       }
 
-      if (listingData.status !== 'available') {
+      if (listingData.status !== 'available' || (listingData.quantity ?? 1) === 0) {
         showToast('Sorry, this book is no longer available', 'error');
         navigate(`/listings/${listingId}`);
         return;

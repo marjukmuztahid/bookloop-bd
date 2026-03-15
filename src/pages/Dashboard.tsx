@@ -310,6 +310,7 @@ const MyOrders = () => {
         .from('orders')
         .select('*, listings(*)')
         .eq('buyer_id', user.id)
+        .eq('buyer_hidden', false)
         .order('created_at', { ascending: false });
       setOrders(data || []);
     } else {
@@ -341,8 +342,9 @@ const MyOrders = () => {
     fetchOrders();
   };
 
-  const hideSellerOrder = async (orderId: string) => {
-    const { error } = await supabase.from('orders').update({ seller_hidden: true } as any).eq('id', orderId);
+  const hideOrder = async (orderId: string) => {
+    const hiddenField = subTab === 'selling' ? 'seller_hidden' : 'buyer_hidden';
+    const { error } = await supabase.from('orders').update({ [hiddenField]: true } as any).eq('id', orderId);
     if (error) { showToast('Failed to remove order', 'error'); return; }
     showToast('Order removed from your history', 'success');
     setConfirmHide(null);
@@ -401,7 +403,7 @@ const MyOrders = () => {
                   <GlassButton variant="destructive" className="flex-shrink-0 text-xs"
                     onClick={() => setConfirmCancel(o.id)}>Cancel</GlassButton>
                 )}
-                {subTab === 'selling' && (o.status === 'delivered' || o.status === 'cancelled') && (
+                {(o.status === 'delivered' || o.status === 'cancelled') && (
                   <button
                     onClick={() => setConfirmHide(o.id)}
                     className="flex-shrink-0 rounded-lg p-1.5 text-[#8A8A8A] transition-colors hover:bg-[rgba(232,53,122,0.06)] hover:text-[#E8357A]"
@@ -447,7 +449,7 @@ const MyOrders = () => {
               <p className="mb-5 text-sm text-[#8A8A8A]">This will only remove this order from your view. The order record will still be kept for platform records.</p>
               <div className="flex gap-2">
                 <GlassButton variant="secondary" className="flex-1" onClick={() => setConfirmHide(null)}>Cancel</GlassButton>
-                <GlassButton variant="destructive" className="flex-1" onClick={() => hideSellerOrder(confirmHide)}>Remove</GlassButton>
+                <GlassButton variant="destructive" className="flex-1" onClick={() => hideOrder(confirmHide)}>Remove</GlassButton>
               </div>
             </motion.div>
           </motion.div>

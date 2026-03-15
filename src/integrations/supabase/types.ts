@@ -161,6 +161,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          buyer_hidden: boolean
           buyer_id: string
           created_at: string
           delivery_address: string
@@ -174,6 +175,7 @@ export type Database = {
           total_amount: number
         }
         Insert: {
+          buyer_hidden?: boolean
           buyer_id: string
           created_at?: string
           delivery_address: string
@@ -187,6 +189,7 @@ export type Database = {
           total_amount: number
         }
         Update: {
+          buyer_hidden?: boolean
           buyer_id?: string
           created_at?: string
           delivery_address?: string

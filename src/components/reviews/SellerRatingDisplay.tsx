@@ -10,7 +10,7 @@ export const SellerRatingDisplay = ({ sellerId }: { sellerId: string }) => {
   useEffect(() => {
     if (!sellerId) return;
     supabase
-      .from('reviews')
+      .from('seller_ratings')
       .select('rating')
       .eq('seller_id', sellerId)
       .then(({ data }) => {
@@ -23,7 +23,7 @@ export const SellerRatingDisplay = ({ sellerId }: { sellerId: string }) => {
   }, [sellerId]);
 
   if (loading) return null;
-  if (!count) return <p className="text-xs text-[#8A8A8A]">No reviews yet</p>;
+  if (!count) return <p className="text-xs text-[#8A8A8A]">No ratings yet</p>;
 
   return (
     <div className="flex items-center gap-1.5">
@@ -33,7 +33,7 @@ export const SellerRatingDisplay = ({ sellerId }: { sellerId: string }) => {
         ))}
       </div>
       <span className="text-sm font-bold text-[#1A1A1A]">{avg.toFixed(1)}</span>
-      <span className="text-xs text-[#8A8A8A]">({count})</span>
+      <span className="text-xs text-[#8A8A8A]">({count} rating{count !== 1 ? 's' : ''})</span>
     </div>
   );
 };

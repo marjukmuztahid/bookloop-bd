@@ -160,6 +160,16 @@ const ListingsQueue = () => {
           <GlassButton variant="destructive" className="flex-1" onClick={confirmRemove}>Remove</GlassButton>
         </div>
       </Modal>
+
+      {/* Permanent Delete Modal */}
+      <Modal open={!!deleteModal} onClose={() => setDeleteModal(null)}>
+        <h3 className="mb-2 text-base font-bold text-[#E8357A]">⚠️ Permanently Delete?</h3>
+        <p className="mb-4 text-sm text-[#3A3A3A]">This will permanently remove <strong>{deleteModal?.name}</strong> from the database. This action cannot be undone.</p>
+        <div className="flex gap-2">
+          <GlassButton variant="secondary" className="flex-1" onClick={() => setDeleteModal(null)}>Cancel</GlassButton>
+          <GlassButton variant="destructive" className="flex-1" onClick={confirmPermanentDelete}>Delete Forever</GlassButton>
+        </div>
+      </Modal>
     </AdminLayout>
   );
 };

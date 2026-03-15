@@ -101,7 +101,7 @@ const ListingDetail = () => {
   const quantity = listing?.quantity ?? 1;
   const isAvailable = listing?.status === 'available' && quantity > 0;
   const isSoldPending = listing?.status === 'sold_pending_delivery';
-  const isSold = listing?.status === 'sold' || (listing?.status === 'available' && quantity === 0);
+  const isSold = listing?.status === 'sold' || isSoldPending || (listing?.status === 'available' && quantity === 0);
 
   // Dynamic SEO
   const seoTitle = listing

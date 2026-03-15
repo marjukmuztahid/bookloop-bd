@@ -138,7 +138,7 @@ const MyListings = () => {
   const removeListing = async (id: string) => {
     const { error } = await supabase.from('listings').delete().eq('id', id);
     if (error) { showToast('Failed to delete listing', 'error'); return; }
-    showToast('Listing deleted', 'success');
+    showToast('Listing deleted — your ratings are preserved', 'success');
     setConfirmDelete(null);
     fetch();
   };
@@ -154,12 +154,27 @@ const MyListings = () => {
     fetch();
   };
 
+  const relistBook = (l: any) => {
+    const params = new URLSearchParams({
+      bookName: l.book_name || '',
+      author: l.author_publisher || '',
+      curriculum: l.curriculum || '',
+      classLevel: l.class_level || '',
+      condition: l.condition || '',
+      weight: String(l.weight_kg || ''),
+      price: String(l.seller_price || ''),
+    });
+    navigate(`/sell?${params.toString()}`);
+  };
+
+  const isCompleted = (l: any) => l.status === 'sold' || l.status === 'delivered';
+
   const getStatusBadge = (l: any) => {
     const daysLeft = Math.ceil((new Date(l.expires_at).getTime() - Date.now()) / 86400000);
     if (l.status === 'pending') return <GlassBadge variant="good">Awaiting admin review</GlassBadge>;
     if (l.status === 'available' && daysLeft <= 7) return <GlassBadge variant="fair">Expiring Soon</GlassBadge>;
     if (l.status === 'available') return <GlassBadge variant="new">Live on marketplace</GlassBadge>;
-    if (l.status === 'sold' || l.status === 'sold_pending_delivery') return <GlassBadge variant="worn">Sold</GlassBadge>;
+    if (l.status === 'sold' || l.status === 'sold_pending_delivery' || l.status === 'delivered') return <GlassBadge variant="worn">Sold & Delivered</GlassBadge>;
     if (l.status === 'rejected') return <GlassBadge variant="fair">Rejected</GlassBadge>;
     return <GlassBadge variant="worn">{l.status}</GlassBadge>;
   };
@@ -219,6 +234,11 @@ const MyListings = () => {
             {isExpiringSoon(l) && (
               <GlassButton variant="secondary" className="mt-1 py-1 text-[10px]" onClick={() => renewListing(l.id)}>
                 <RefreshCw size={12} className="mr-1" /> Renew
+              </GlassButton>
+            )}
+            {isCompleted(l) && (
+              <GlassButton variant="secondary" className="mt-1 py-1 text-[10px]" onClick={() => relistBook(l)}>
+                <Plus size={12} className="mr-1" /> Relist
               </GlassButton>
             )}
           </div>

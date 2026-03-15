@@ -33,7 +33,7 @@ const ActiveDeliveries = lazy(() => import("./pages/admin/ActiveDeliveries"));
 const UsersPage = lazy(() => import("./pages/admin/Users"));
 const Revenue = lazy(() => import("./pages/admin/Revenue"));
 const Analytics = lazy(() => import("./pages/admin/Analytics"));
-const AdminReviews = lazy(() => import("./pages/admin/Reviews"));
+
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -78,7 +78,7 @@ const App = () => (
                   <Route path="/admin/orders" element={<AdminProtectedRoute><OrdersQueue /></AdminProtectedRoute>} />
                   <Route path="/admin/deliveries" element={<AdminProtectedRoute><ActiveDeliveries /></AdminProtectedRoute>} />
                   <Route path="/admin/users" element={<AdminProtectedRoute><UsersPage /></AdminProtectedRoute>} />
-                  <Route path="/admin/reviews" element={<AdminProtectedRoute><AdminReviews /></AdminProtectedRoute>} />
+                  
                   <Route path="/admin/revenue" element={<AdminProtectedRoute><Revenue /></AdminProtectedRoute>} />
                   <Route path="/admin/analytics" element={<AdminProtectedRoute><Analytics /></AdminProtectedRoute>} />
 

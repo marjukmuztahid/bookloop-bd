@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Upload, X, CheckCircle, Loader2 } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
@@ -42,6 +42,7 @@ const formatPrice = (n: number) => `৳ ${n.toLocaleString('en-BD')}`;
 
 const SellBook = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, profile } = useAuth();
   const { showToast } = useAppToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,6 +60,17 @@ const SellBook = () => {
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  // Pre-fill from URL params (relist flow)
+  useEffect(() => {
+    if (searchParams.get('bookName')) setBookName(searchParams.get('bookName')!);
+    if (searchParams.get('author')) setAuthor(searchParams.get('author')!);
+    if (searchParams.get('curriculum')) setCurriculum(searchParams.get('curriculum') as Curriculum);
+    if (searchParams.get('classLevel')) setClassLevel(searchParams.get('classLevel')!);
+    if (searchParams.get('condition')) setCondition(searchParams.get('condition') as BookCondition);
+    if (searchParams.get('weight')) setWeight(parseFloat(searchParams.get('weight')!));
+    if (searchParams.get('price')) setPrice(searchParams.get('price')!);
+  }, []);
 
   // Guard: still loading profile
   if (!profile) {

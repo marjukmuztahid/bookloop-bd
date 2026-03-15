@@ -17,75 +17,84 @@ const Analytics = () => {
   const [classLevels, setClassLevels] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetch = async () => {
-      const [users, listings, orders, delivered, cancelled, revenue] = await Promise.all([
-        supabase.from('users').select('id', { count: 'exact', head: true }),
-        supabase.from('listings').select('id', { count: 'exact', head: true }),
-        supabase.from('orders').select('id', { count: 'exact', head: true }),
-        supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'delivered'),
-        supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'cancelled'),
-        supabase.from('orders').select('listings(seller_price)').eq('status', 'delivered'),
-      ]);
+    const loadData = async () => {
+      try {
+        const [users, listings, orders, delivered, cancelled, revenue] = await Promise.all([
+          supabase.from('users').select('id', { count: 'exact', head: true }),
+          supabase.from('listings').select('id', { count: 'exact', head: true }),
+          supabase.from('orders').select('id', { count: 'exact', head: true }),
+          supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'delivered'),
+          supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'cancelled'),
+          supabase.from('orders').select('listing_id, listings!orders_listing_id_fkey(seller_price)').eq('status', 'delivered'),
+        ]);
 
-      const fee = (revenue.data || []).reduce((sum: number, o: any) => {
-        const price = o.listings?.seller_price || 0;
-        const rate = price <= 500 ? 0.07 : 0.05;
-        return sum + Math.round(price * rate);
-      }, 0);
+        // Log errors for debugging
+        [users, listings, orders, delivered, cancelled, revenue].forEach((r, i) => {
+          if (r.error) console.error(`Analytics query ${i} error:`, r.error);
+        });
 
-      setStats({
-        totalUsers: users.count || 0,
-        totalListings: listings.count || 0,
-        totalOrders: orders.count || 0,
-        deliveredOrders: delivered.count || 0,
-        cancelledOrders: cancelled.count || 0,
-        feeRevenue: fee,
-      });
+        const fee = (revenue.data || []).reduce((sum: number, o: any) => {
+          const price = o.listings?.seller_price || 0;
+          const rate = price <= 500 ? 0.07 : 0.05;
+          return sum + Math.round(price * rate);
+        }, 0);
 
-      // Orders over last 30 days
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
-      const { data: recentOrders } = await supabase.from('orders').select('created_at').gte('created_at', thirtyDaysAgo);
-      const dayMap: Record<string, number> = {};
-      for (let i = 29; i >= 0; i--) {
-        const d = new Date(Date.now() - i * 86400000);
-        dayMap[d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })] = 0;
+        setStats({
+          totalUsers: users.count ?? 0,
+          totalListings: listings.count ?? 0,
+          totalOrders: orders.count ?? 0,
+          deliveredOrders: delivered.count ?? 0,
+          cancelledOrders: cancelled.count ?? 0,
+          feeRevenue: fee,
+        });
+
+        // Orders over last 30 days
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
+        const { data: recentOrders } = await supabase.from('orders').select('created_at').gte('created_at', thirtyDaysAgo);
+        const dayMap: Record<string, number> = {};
+        for (let i = 29; i >= 0; i--) {
+          const d = new Date(Date.now() - i * 86400000);
+          dayMap[d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })] = 0;
+        }
+        (recentOrders || []).forEach((o: any) => {
+          const key = new Date(o.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          if (key in dayMap) dayMap[key]++;
+        });
+        setOrdersOverTime(Object.entries(dayMap).map(([date, count]) => ({ date, count })));
+
+        // Categories
+        const { data: allListings } = await supabase.from('listings').select('curriculum, class_level');
+        const currMap: Record<string, number> = {};
+        const classMap: Record<string, number> = {};
+        const distMap: Record<string, number> = {};
+        (allListings || []).forEach((l: any) => {
+          currMap[l.curriculum] = (currMap[l.curriculum] || 0) + 1;
+          classMap[l.class_level] = (classMap[l.class_level] || 0) + 1;
+        });
+        setCategories(Object.entries(currMap).map(([name, count]) => ({ name, count })));
+        setClassLevels(
+          Object.entries(classMap)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([name, count]) => ({ name, count }))
+        );
+
+        // Districts from users
+        const { data: allUsers } = await supabase.from('users').select('district');
+        (allUsers || []).forEach((u: any) => {
+          distMap[u.district] = (distMap[u.district] || 0) + 1;
+        });
+        setDistricts(
+          Object.entries(distMap)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 8)
+            .map(([name, count]) => ({ name, count }))
+        );
+      } catch (err) {
+        console.error('Analytics fetch error:', err);
       }
-      (recentOrders || []).forEach((o: any) => {
-        const key = new Date(o.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        if (key in dayMap) dayMap[key]++;
-      });
-      setOrdersOverTime(Object.entries(dayMap).map(([date, count]) => ({ date, count })));
-
-      // Categories
-      const { data: allListings } = await supabase.from('listings').select('curriculum, class_level');
-      const currMap: Record<string, number> = {};
-      const classMap: Record<string, number> = {};
-      const distMap: Record<string, number> = {};
-      (allListings || []).forEach((l: any) => {
-        currMap[l.curriculum] = (currMap[l.curriculum] || 0) + 1;
-        classMap[l.class_level] = (classMap[l.class_level] || 0) + 1;
-      });
-      setCategories(Object.entries(currMap).map(([name, count]) => ({ name, count })));
-      setClassLevels(
-        Object.entries(classMap)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 5)
-          .map(([name, count]) => ({ name, count }))
-      );
-
-      // Districts from users
-      const { data: allUsers } = await supabase.from('users').select('district');
-      (allUsers || []).forEach((u: any) => {
-        distMap[u.district] = (distMap[u.district] || 0) + 1;
-      });
-      setDistricts(
-        Object.entries(distMap)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 8)
-          .map(([name, count]) => ({ name, count }))
-      );
     };
-    fetch();
+    loadData();
   }, []);
 
   const cancelRate = stats.totalOrders > 0 ? Math.round((stats.cancelledOrders / stats.totalOrders) * 100) : 0;

@@ -43,10 +43,16 @@ const Revenue = () => {
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('orders')
-        .select('id, created_at, listing_id, buyer_id, listings(book_name, seller_price, seller_id)')
+        .select('id, created_at, listing_id, buyer_id, listings!orders_listing_id_fkey(book_name, seller_price, seller_id)')
         .eq('status', 'delivered');
+
+      if (error) {
+        console.error('Revenue orders query error:', error);
+        setLoading(false);
+        return;
+      }
 
       if (!data || data.length === 0) { setOrders([]); setLoading(false); return; }
 
@@ -54,7 +60,9 @@ const Revenue = () => {
       const buyerIds = [...new Set((data as any[]).map(o => o.buyer_id).filter(Boolean))];
       const allIds = [...new Set([...sellerIds, ...buyerIds])];
 
-      const { data: users } = await supabase.from('users').select('id, full_name').in('id', allIds);
+      const { data: users, error: usersError } = await supabase.from('users').select('id, full_name').in('id', allIds);
+      if (usersError) console.error('Revenue users query error:', usersError);
+      
       const userMap: Record<string, string> = {};
       (users || []).forEach(u => { userMap[u.id] = u.full_name; });
 

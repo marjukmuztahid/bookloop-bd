@@ -194,6 +194,19 @@ const ListingDetail = () => {
               <GlassBadge variant={conditionVariant(listing.condition)}>{listing.condition}</GlassBadge>
             </div>
 
+            {/* Stock availability */}
+            <div>
+              {quantity >= 2 && (
+                <GlassBadge variant="new">🟢 {quantity} copies available</GlassBadge>
+              )}
+              {quantity === 1 && listing.status === 'available' && (
+                <GlassBadge variant="fair">🟡 Last copy</GlassBadge>
+              )}
+              {(quantity === 0 || listing.status === 'sold') && (
+                <GlassBadge variant="worn">🔴 Unavailable</GlassBadge>
+              )}
+            </div>
+
             <div>
               <p className="text-2xl font-extrabold text-[#E8357A]">{formatPrice(listing.display_price)}</p>
               

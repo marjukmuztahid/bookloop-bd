@@ -137,9 +137,13 @@ const MyListings = () => {
   useEffect(() => { fetch(); }, [fetch]);
 
   const removeListing = async (id: string) => {
-    const { error } = await supabase.from('listings').update({ status: 'deleted' } as any).eq('id', id);
-    if (error) { showToast('Failed to delete listing', 'error'); return; }
-    showToast('Listing deleted — your ratings are preserved', 'success');
+    const { error } = await supabase.from('listings').update({ status: 'deleted' }).eq('id', id).eq('seller_id', user!.id);
+    if (error) { 
+      console.error('Delete listing error:', error);
+      showToast('Failed to delete listing', 'error'); 
+      return; 
+    }
+    showToast('Listing removed from your dashboard', 'success');
     setConfirmDelete(null);
     fetch();
   };

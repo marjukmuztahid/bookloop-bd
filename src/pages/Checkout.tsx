@@ -173,10 +173,16 @@ const Checkout = () => {
               <CheckCircle size={32} className="text-[#30D158]" />
             </motion.div>
             <h2 className="mb-2 text-xl font-bold text-[#1A1A1A]">Order Placed Successfully!</h2>
-            <p className="mb-6 text-sm text-[#8A8A8A]">
+            <p className="mb-4 text-sm text-[#8A8A8A]">
               We'll review your order and notify you by email once it's approved. Get ready to pay{' '}
               <span className="font-semibold text-[#E8357A]">{formatPrice(totalAmount)}</span> to the Steadfast courier.
             </p>
+            <div className="mb-4 rounded-2xl border border-[rgba(59,130,246,0.15)] bg-[rgba(59,130,246,0.06)] p-3 text-left">
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                📧 A confirmation email will be sent to your email if Admin approves your order. You will also receive a notification on the website. If you don't see it, check your spam folder and mark{' '}
+                <span className="font-semibold text-foreground">noreply@order.bookloopbd.com</span> as Not Spam.
+              </p>
+            </div>
             <div className="flex flex-col gap-2">
               <GlassButton className="w-full" onClick={() => navigate('/')}>Browse More Books</GlassButton>
               <GlassButton variant="secondary" className="w-full" onClick={() => navigate('/dashboard')}>View My Orders</GlassButton>

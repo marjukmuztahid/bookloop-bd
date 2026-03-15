@@ -157,12 +157,12 @@ const ListingDetail = () => {
                   height={800}
                   loading="eager"
                   fetchPriority="high"
-                />
+               />
               </AnimatePresence>
-              {!isAvailable && (
+              {(isSoldPending) && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                   <span className="rounded-full bg-white/90 px-5 py-2 text-sm font-bold text-[#3A3A3A]">
-                    {isSoldPending ? 'Currently Unavailable' : isSold ? 'Sold' : 'Unavailable'}
+                    Currently Unavailable
                   </span>
                 </div>
               )}

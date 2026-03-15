@@ -47,9 +47,18 @@ const BookCard = ({ book }: { book: BookCardData }) => {
           decoding="async"
           className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
         />
-        {book.status === 'sold_pending_delivery' && (
+        {(book.status === 'sold_pending_delivery' || book.status === 'sold' || qty === 0) && (
           <div className="absolute inset-0 flex items-end justify-center bg-black/30 pb-3">
-            <span className="rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold text-[#3A3A3A]">Currently Unavailable</span>
+            <span className="rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold text-[#3A3A3A]">
+              {book.status === 'sold' || qty === 0 ? 'Sold' : 'Currently Unavailable'}
+            </span>
+          </div>
+        )}
+        {qty === 1 && book.status === 'available' && (
+          <div className="absolute bottom-2 left-2">
+            <span className="rounded-full border border-[rgba(255,159,10,0.30)] bg-[rgba(255,159,10,0.12)] px-2 py-0.5 text-[9px] font-bold text-[#A0600A] backdrop-blur-[8px]">
+              Last copy
+            </span>
           </div>
         )}
       </div>

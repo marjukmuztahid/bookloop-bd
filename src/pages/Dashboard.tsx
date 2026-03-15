@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, ShoppingBag, User, Plus, MoreVertical, Heart, Trash2, ExternalLink, X as XIcon, RefreshCw } from 'lucide-react';
+import { SellerRatingDisplay } from '@/components/reviews/SellerRatingDisplay';
 import { pageTransition, fadeUp } from '@/lib/animations';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassBadge, type BadgeVariant } from '@/components/ui/GlassBadge';
@@ -572,6 +573,12 @@ const MyProfile = () => {
         <GlassButton className="mt-3 w-full" onClick={savePayment} disabled={savingPayment}>
           {savingPayment ? 'Saving...' : 'Save Payment Info'}
         </GlassButton>
+      </div>
+
+      {/* Seller Rating */}
+      <div className="glass-panel p-6">
+        <h3 className="mb-3 text-base font-bold text-[#1A1A1A]">Seller Rating</h3>
+        {user && <SellerRatingDisplay sellerId={user.id} />}
       </div>
 
       {/* Account Info */}

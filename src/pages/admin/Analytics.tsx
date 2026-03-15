@@ -19,17 +19,18 @@ const Analytics = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [users, listings, orders, delivered, cancelled, revenue] = await Promise.all([
+        const [users, listings, orders, delivered, cancelled, unsuccessful, revenue] = await Promise.all([
           supabase.from('users').select('id', { count: 'exact', head: true }),
           supabase.from('listings').select('id', { count: 'exact', head: true }),
           supabase.from('orders').select('id', { count: 'exact', head: true }),
           supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'delivered'),
           supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'cancelled'),
+          supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'unsuccessful'),
           supabase.from('orders').select('listing_id, listings!orders_listing_id_fkey(seller_price)').eq('status', 'delivered'),
         ]);
 
         // Log errors for debugging
-        [users, listings, orders, delivered, cancelled, revenue].forEach((r, i) => {
+        [users, listings, orders, delivered, cancelled, unsuccessful, revenue].forEach((r, i) => {
           if (r.error) console.error(`Analytics query ${i} error:`, r.error);
         });
 
@@ -39,12 +40,15 @@ const Analytics = () => {
           return sum + Math.round(price * rate);
         }, 0);
 
+        const totalCancelled = (cancelled.count ?? 0) + (unsuccessful.count ?? 0);
+        const totalDelivered = delivered.count ?? 0;
+
         setStats({
           totalUsers: users.count ?? 0,
           totalListings: listings.count ?? 0,
           totalOrders: orders.count ?? 0,
-          deliveredOrders: delivered.count ?? 0,
-          cancelledOrders: cancelled.count ?? 0,
+          deliveredOrders: totalDelivered,
+          cancelledOrders: totalCancelled,
           feeRevenue: fee,
         });
 
@@ -97,7 +101,8 @@ const Analytics = () => {
     loadData();
   }, []);
 
-  const cancelRate = stats.totalOrders > 0 ? Math.round((stats.cancelledOrders / stats.totalOrders) * 100) : 0;
+  const completedTotal = stats.deliveredOrders + stats.cancelledOrders;
+  const cancelRate = completedTotal > 0 ? Math.round((stats.cancelledOrders / completedTotal) * 100) : 0;
   const pieData = [
     { name: 'Delivered', value: stats.deliveredOrders, color: '#30D158' },
     { name: 'Cancelled', value: stats.cancelledOrders, color: '#FF453A' },

@@ -118,6 +118,8 @@ const MyListings = () => {
   const [loading, setLoading] = useState(true);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [stockModal, setStockModal] = useState<any>(null);
+  const [stockQty, setStockQty] = useState(1);
 
   const fetch = useCallback(async () => {
     if (!user) return;

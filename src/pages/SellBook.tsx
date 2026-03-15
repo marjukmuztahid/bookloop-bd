@@ -170,6 +170,7 @@ const SellBook = () => {
         seller_price: priceNum,
         photos: photoUrls,
         description: description.trim() || null,
+        quantity,
         status: 'pending',
       });
 

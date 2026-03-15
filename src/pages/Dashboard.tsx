@@ -234,8 +234,8 @@ const MyListings = () => {
             onClick={() => setConfirmDelete(null)}>
             <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
               className="glass-panel max-w-sm p-6 text-center" onClick={(e) => e.stopPropagation()}>
-              <h3 className="mb-2 text-base font-bold text-[#1A1A1A]">Remove this listing?</h3>
-              <p className="mb-5 text-sm text-[#8A8A8A]">This will take it off the marketplace.</p>
+              <h3 className="mb-2 text-base font-bold text-[#1A1A1A]">Delete this listing?</h3>
+              <p className="mb-5 text-sm text-[#8A8A8A]">This will permanently remove the listing and cannot be undone.</p>
               <div className="flex gap-2">
                 <GlassButton variant="secondary" className="flex-1" onClick={() => setConfirmDelete(null)}>Cancel</GlassButton>
                 <GlassButton variant="destructive" className="flex-1" onClick={() => removeListing(confirmDelete)}>Remove</GlassButton>

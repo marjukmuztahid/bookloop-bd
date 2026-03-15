@@ -213,7 +213,13 @@ const SellBook = () => {
             <p className="mb-6 text-sm text-[#8A8A8A]">
               Our team will review your listing and notify you by email once it's approved. This usually takes a few hours.
             </p>
-            <div className="flex flex-col gap-2">
+            <div className="mt-2 rounded-2xl border border-[rgba(59,130,246,0.15)] bg-[rgba(59,130,246,0.06)] p-3 text-left">
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                📧 A confirmation email will be sent to your email if someone orders your book. You will also receive a notification on the website. If you don't see it, check your spam folder and mark{' '}
+                <span className="font-semibold text-foreground">noreply@order.bookloopbd.com</span> as Not Spam.
+              </p>
+            </div>
+            <div className="mt-4 flex flex-col gap-2">
               <GlassButton className="w-full" onClick={() => navigate('/dashboard')}>View My Listings</GlassButton>
               <GlassButton variant="secondary" className="w-full" onClick={resetForm}>List Another Book</GlassButton>
             </div>

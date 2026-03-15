@@ -299,6 +299,7 @@ const MyOrders = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [confirmCancel, setConfirmCancel] = useState<string | null>(null);
+  const [confirmHide, setConfirmHide] = useState<string | null>(null);
 
   const fetchOrders = useCallback(async () => {
     if (!user) return;

@@ -2,9 +2,46 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png?v=4" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=4" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=4" />
+    <link rel="icon" type="image/png" href="/favicon.png?v=5" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=5" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=5" />
+    <script>
+      // Protect favicon from being overridden by external scripts
+      (function() {
+        var FAVICON_URL = '/favicon.png?v=5';
+        function enforceFavicon() {
+          var links = document.querySelectorAll('link[rel*="icon"]');
+          links.forEach(function(link) {
+            if (link.getAttribute('href') && link.getAttribute('href').indexOf('favicon.png') === -1 && link.getAttribute('href').indexOf('favicon.ico') === -1 && link.getAttribute('href').indexOf('apple-touch-icon') === -1) {
+              link.setAttribute('href', FAVICON_URL);
+            }
+          });
+        }
+        var observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(m) {
+            m.addedNodes.forEach(function(node) {
+              if (node.tagName === 'LINK' && node.getAttribute('rel') && node.getAttribute('rel').indexOf('icon') !== -1) {
+                var href = node.getAttribute('href') || '';
+                if (href.indexOf('favicon.png') === -1 && href.indexOf('favicon.ico') === -1 && href.indexOf('apple-touch-icon') === -1) {
+                  node.setAttribute('href', FAVICON_URL);
+                }
+              }
+            });
+            if (m.type === 'attributes' && m.target.tagName === 'LINK' && m.target.getAttribute('rel') && m.target.getAttribute('rel').indexOf('icon') !== -1) {
+              var href = m.target.getAttribute('href') || '';
+              if (href.indexOf('favicon.png') === -1 && href.indexOf('favicon.ico') === -1 && href.indexOf('apple-touch-icon') === -1) {
+                m.target.setAttribute('href', FAVICON_URL);
+              }
+            }
+          });
+        });
+        observer.observe(document.head, { childList: true, subtree: true, attributes: true, attributeFilter: ['href'] });
+        document.addEventListener('DOMContentLoaded', enforceFavicon);
+        setTimeout(enforceFavicon, 500);
+        setTimeout(enforceFavicon, 1500);
+        setTimeout(enforceFavicon, 3000);
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Book Loop BD — Buy & Sell School Books in Bangladesh</title>
     <meta name="description" content="Bangladesh's student marketplace for second-hand school and college books. Buy and sell textbooks safely across all 64 districts." />

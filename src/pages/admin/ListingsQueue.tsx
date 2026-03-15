@@ -67,9 +67,14 @@ const ListingsQueue = () => {
 
   const confirmPermanentDelete = async () => {
     if (!deleteModal) return;
-    // Remove related wishlists first to avoid FK issues
+    // Remove related records first to avoid FK constraint issues
     await supabase.from('wishlists').delete().eq('listing_id', deleteModal.id);
-    await supabase.from('listings').delete().eq('id', deleteModal.id);
+    await supabase.from('orders').delete().eq('listing_id', deleteModal.id);
+    const { error } = await supabase.from('listings').delete().eq('id', deleteModal.id);
+    if (error) {
+      showToast(`Failed to delete: ${error.message}`, 'error');
+      return;
+    }
     await logActivity('listing_permanently_deleted', `Listing "${deleteModal.name}" permanently deleted by admin`);
     showToast('Listing permanently deleted', 'success');
     setDeleteModal(null);

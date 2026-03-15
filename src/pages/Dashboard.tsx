@@ -333,13 +333,6 @@ const MyOrders = () => {
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
-  const cancelOrder = async (orderId: string) => {
-    const { error } = await supabase.from('orders').update({ status: 'cancelled' }).eq('id', orderId);
-    if (error) { showToast('Failed to cancel order', 'error'); return; }
-    showToast('Order cancelled', 'success');
-    setConfirmCancel(null);
-    fetchOrders();
-  };
 
   const hideOrder = async (orderId: string) => {
     const hiddenField = subTab === 'selling' ? 'seller_hidden' : 'buyer_hidden';

@@ -135,7 +135,7 @@ const Home = () => {
     setBooks(mapped);
     setTotalCount(count || 0);
     setIsLoading(false);
-  }, [curriculum, classLevel, condition, district, minPrice, maxPrice, page, searchQuery]);
+  }, [curriculum, classLevel, condition, district, minPrice, maxPrice, page, searchQuery, sortBy]);
 
   useEffect(() => { fetchListings(); }, [fetchListings]);
 

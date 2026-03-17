@@ -140,7 +140,7 @@ const Home = () => {
   useEffect(() => { fetchListings(); }, [fetchListings]);
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-  const hasActiveFilter = curriculum !== 'All' || classLevel !== 'All' || condition !== 'All' || district !== 'All' || minPrice || maxPrice;
+  const hasActiveFilter = curriculum !== 'All' || classLevel !== 'All' || condition !== 'All' || district !== 'All' || minPrice || maxPrice || sortBy !== 'Default';
 
   const clearFilters = () => {
     setCurriculum('All');

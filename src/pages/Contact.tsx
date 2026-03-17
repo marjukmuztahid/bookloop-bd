@@ -1,4 +1,4 @@
-import { Mail, MessageSquare, AlertTriangle } from 'lucide-react';
+import { Mail, MessageSquare, AlertTriangle, Phone } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import useSEO from '@/hooks/useSEO';
@@ -30,6 +30,28 @@ const Contact = () => {
                 className="mt-2 inline-block text-sm font-medium text-[#E8357A] transition-colors hover:text-[#c42a65]"
               >
                 bookloopbd.com@gmail.com
+              </a>
+            </div>
+          </div>
+
+          <div className="h-px bg-[rgba(0,0,0,0.06)]" />
+
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[rgba(37,211,102,0.10)]">
+              <Phone size={20} className="text-[#25D366]" />
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold text-[#1A1A1A]">WhatsApp</h2>
+              <p className="mt-1 text-sm text-[#8A8A8A]">
+                Chat with us directly on WhatsApp for quick support:
+              </p>
+              <a
+                href="https://wa.me/8801743661887"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-block text-sm font-medium text-[#25D366] transition-colors hover:text-[#1da851]"
+              >
+                +8801743-661887
               </a>
             </div>
           </div>

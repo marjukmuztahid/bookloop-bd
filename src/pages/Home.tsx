@@ -21,6 +21,7 @@ const CONDITIONS_MAP: Record<string, string> = { 'All': 'All', 'New': 'new', 'Go
 const CONDITIONS = Object.keys(CONDITIONS_MAP);
 const CLASSES = ['All', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
 const BROWSE_CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
+const SORT_OPTIONS = ['Default', 'Price: Low to High', 'Price: High to Low'];
 const PAGE_SIZE = 12;
 
 const TypingText = ({ text }: { text: string }) => {

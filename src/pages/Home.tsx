@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { pageTransition, staggerContainer, fadeUp } from '@/lib/animations';
 import { GlassButton } from '@/components/ui/GlassButton';
 import BookCard from '@/components/ui/BookCard';

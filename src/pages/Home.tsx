@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { pageTransition, staggerContainer, fadeUp } from '@/lib/animations';
 import { GlassButton } from '@/components/ui/GlassButton';
 import BookCard from '@/components/ui/BookCard';
@@ -21,6 +21,7 @@ const CONDITIONS_MAP: Record<string, string> = { 'All': 'All', 'New': 'new', 'Go
 const CONDITIONS = Object.keys(CONDITIONS_MAP);
 const CLASSES = ['All', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
 const BROWSE_CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
+const SORT_OPTIONS = ['Default', 'Price: Low to High', 'Price: High to Low'];
 const PAGE_SIZE = 12;
 
 const TypingText = ({ text }: { text: string }) => {
@@ -69,6 +70,7 @@ const Home = () => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [activeClassPill, setActiveClassPill] = useState('');
+  const [sortBy, setSortBy] = useState('Default');
   const [isLoading, setIsLoading] = useState(true);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [books, setBooks] = useState<BookCardData[]>([]);
@@ -93,8 +95,15 @@ const Home = () => {
     let q = supabase
       .from('listings')
       .select(`id, book_name, author_publisher, curriculum, class_level, condition, display_price, photos, status, ${userJoin}`, { count: 'exact' })
-      .in('status', ['available', 'sold_pending_delivery'])
-      .order('created_at', { ascending: false });
+      .in('status', ['available', 'sold_pending_delivery']);
+
+    if (sortBy === 'Price: Low to High') {
+      q = q.order('display_price', { ascending: true });
+    } else if (sortBy === 'Price: High to Low') {
+      q = q.order('display_price', { ascending: false });
+    } else {
+      q = q.order('created_at', { ascending: false });
+    }
 
     if (curriculum !== 'All') q = q.eq('curriculum', CURRICULA_MAP[curriculum]);
     if (classLevel !== 'All') q = q.eq('class_level', classLevel);
@@ -126,12 +135,12 @@ const Home = () => {
     setBooks(mapped);
     setTotalCount(count || 0);
     setIsLoading(false);
-  }, [curriculum, classLevel, condition, district, minPrice, maxPrice, page, searchQuery]);
+  }, [curriculum, classLevel, condition, district, minPrice, maxPrice, page, searchQuery, sortBy]);
 
   useEffect(() => { fetchListings(); }, [fetchListings]);
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-  const hasActiveFilter = curriculum !== 'All' || classLevel !== 'All' || condition !== 'All' || district !== 'All' || minPrice || maxPrice;
+  const hasActiveFilter = curriculum !== 'All' || classLevel !== 'All' || condition !== 'All' || district !== 'All' || minPrice || maxPrice || sortBy !== 'Default';
 
   const clearFilters = () => {
     setCurriculum('All');
@@ -140,6 +149,7 @@ const Home = () => {
     setDistrict('All');
     setMinPrice('');
     setMaxPrice('');
+    setSortBy('Default');
     setPage(1);
   };
 
@@ -205,6 +215,23 @@ const Home = () => {
               <GlassSelect label="Class" value={classLevel} onChange={setClassLevel} options={CLASSES} active={classLevel !== 'All'} />
               <GlassSelect label="Condition" value={condition} onChange={setCondition} options={CONDITIONS} active={condition !== 'All'} />
               <GlassSelect label="District" value={district} onChange={setDistrict} options={DISTRICTS} active={district !== 'All'} />
+
+              {/* Sort dropdown */}
+              <div className="relative flex-shrink-0">
+                <select
+                  value={sortBy}
+                  onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
+                  aria-label="Sort by"
+                  className={`cursor-pointer appearance-none rounded-[10px] border bg-[rgba(0,0,0,0.04)] py-2 pl-8 pr-3 text-xs font-medium text-[#3A3A3A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] ${
+                    sortBy !== 'Default' ? 'border-[rgba(232,53,122,0.30)] text-[#E8357A]' : 'border-[rgba(0,0,0,0.08)]'
+                  }`}
+                >
+                  {SORT_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>{opt === 'Default' ? 'Sort: Default' : opt}</option>
+                  ))}
+                </select>
+                <ArrowUpDown size={13} className={`pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 ${sortBy !== 'Default' ? 'text-[#E8357A]' : 'text-[#8A8A8A]'}`} />
+              </div>
 
               <div className="flex items-center gap-2">
                 <input

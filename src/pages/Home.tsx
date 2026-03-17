@@ -149,6 +149,7 @@ const Home = () => {
     setDistrict('All');
     setMinPrice('');
     setMaxPrice('');
+    setSortBy('Default');
     setPage(1);
   };
 

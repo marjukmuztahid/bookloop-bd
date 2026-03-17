@@ -95,8 +95,15 @@ const Home = () => {
     let q = supabase
       .from('listings')
       .select(`id, book_name, author_publisher, curriculum, class_level, condition, display_price, photos, status, ${userJoin}`, { count: 'exact' })
-      .in('status', ['available', 'sold_pending_delivery'])
-      .order('created_at', { ascending: false });
+      .in('status', ['available', 'sold_pending_delivery']);
+
+    if (sortBy === 'Price: Low to High') {
+      q = q.order('display_price', { ascending: true });
+    } else if (sortBy === 'Price: High to Low') {
+      q = q.order('display_price', { ascending: false });
+    } else {
+      q = q.order('created_at', { ascending: false });
+    }
 
     if (curriculum !== 'All') q = q.eq('curriculum', CURRICULA_MAP[curriculum]);
     if (classLevel !== 'All') q = q.eq('class_level', classLevel);

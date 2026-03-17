@@ -70,6 +70,7 @@ const Home = () => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [activeClassPill, setActiveClassPill] = useState('');
+  const [sortBy, setSortBy] = useState('Default');
   const [isLoading, setIsLoading] = useState(true);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [books, setBooks] = useState<BookCardData[]>([]);

@@ -216,6 +216,23 @@ const Home = () => {
               <GlassSelect label="Condition" value={condition} onChange={setCondition} options={CONDITIONS} active={condition !== 'All'} />
               <GlassSelect label="District" value={district} onChange={setDistrict} options={DISTRICTS} active={district !== 'All'} />
 
+              {/* Sort dropdown */}
+              <div className="relative flex-shrink-0">
+                <select
+                  value={sortBy}
+                  onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
+                  aria-label="Sort by"
+                  className={`cursor-pointer appearance-none rounded-[10px] border bg-[rgba(0,0,0,0.04)] py-2 pl-8 pr-3 text-xs font-medium text-[#3A3A3A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] ${
+                    sortBy !== 'Default' ? 'border-[rgba(232,53,122,0.30)] text-[#E8357A]' : 'border-[rgba(0,0,0,0.08)]'
+                  }`}
+                >
+                  {SORT_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>{opt === 'Default' ? 'Sort: Default' : opt}</option>
+                  ))}
+                </select>
+                <ArrowUpDown size={13} className={`pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 ${sortBy !== 'Default' ? 'text-[#E8357A]' : 'text-[#8A8A8A]'}`} />
+              </div>
+
               <div className="flex items-center gap-2">
                 <input
                   type="number"

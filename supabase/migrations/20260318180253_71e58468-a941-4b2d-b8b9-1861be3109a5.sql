@@ -1,0 +1,1 @@
+INSERT INTO public.admin_users (id, email) VALUES ('72c0c6b2-89c8-441d-a9ab-e200f969595d', 'bookloopbd.com@gmail.com') ON CONFLICT (id) DO NOTHING;

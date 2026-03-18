@@ -11,6 +11,13 @@ import logo from '@/assets/logo.png';
 const INPUT_CLASS =
   'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
 
+const ForgotPasswordLink = () => {
+  const { showToast } = useAppToast();
+  const [sending, setSending] = useState(false);
+
+  return null; // placeholder replaced below
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();

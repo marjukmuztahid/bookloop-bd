@@ -11,13 +11,6 @@ import logo from '@/assets/logo.png';
 const INPUT_CLASS =
   'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
 
-const ForgotPasswordLink = () => {
-  const { showToast } = useAppToast();
-  const [sending, setSending] = useState(false);
-
-  return null; // placeholder replaced below
-};
-
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,6 +22,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +41,25 @@ const Login = () => {
       showToast('Incorrect email or password', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      showToast('Please enter your email address first', 'error');
+      return;
+    }
+    setResetLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      showToast('Password reset link sent! Check your email.', 'success');
+    } catch (err: any) {
+      showToast(err.message || 'Failed to send reset email', 'error');
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -77,7 +90,10 @@ const Login = () => {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            <ForgotPasswordLink />
+            <button type="button" onClick={handleForgotPassword} disabled={resetLoading}
+              className="mt-1.5 text-xs text-[#8A8A8A] transition-colors hover:text-[#E8357A] disabled:opacity-50">
+              {resetLoading ? 'Sending reset link...' : 'Forgot password?'}
+            </button>
           </div>
 
           <GlassButton type="submit" className="mt-2 w-full py-3" disabled={loading}>

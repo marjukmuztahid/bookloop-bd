@@ -35,6 +35,7 @@ const Revenue = lazy(() => import("./pages/admin/Revenue"));
 const Analytics = lazy(() => import("./pages/admin/Analytics"));
 const OrderHistory = lazy(() => import("./pages/admin/OrderHistory"));
 
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ const App = () => (
                   <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/about" element={<About />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
 
                   {/* User protected */}
                   <Route path="/checkout/:listingId" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />

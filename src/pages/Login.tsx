@@ -22,6 +22,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +41,25 @@ const Login = () => {
       showToast('Incorrect email or password', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      showToast('Please enter your email address first', 'error');
+      return;
+    }
+    setResetLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      showToast('Password reset link sent! Check your email.', 'success');
+    } catch (err: any) {
+      showToast(err.message || 'Failed to send reset email', 'error');
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -70,9 +90,9 @@ const Login = () => {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            <button type="button" onClick={() => showToast('Password reset coming soon', 'info')}
-              className="mt-1.5 text-xs text-[#8A8A8A] transition-colors hover:text-[#E8357A]">
-              Forgot password?
+            <button type="button" onClick={handleForgotPassword} disabled={resetLoading}
+              className="mt-1.5 text-xs text-[#8A8A8A] transition-colors hover:text-[#E8357A] disabled:opacity-50">
+              {resetLoading ? 'Sending reset link...' : 'Forgot password?'}
             </button>
           </div>
 

@@ -70,10 +70,7 @@ const Login = () => {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            <button type="button" onClick={() => showToast('Password reset coming soon', 'info')}
-              className="mt-1.5 text-xs text-[#8A8A8A] transition-colors hover:text-[#E8357A]">
-              Forgot password?
-            </button>
+            <ForgotPasswordLink />
           </div>
 
           <GlassButton type="submit" className="mt-2 w-full py-3" disabled={loading}>

@@ -508,7 +508,8 @@ const MyProfile = () => {
     setSavingPayment(true);
     const { error } = await supabase.from('users').update({
       bkash_nagad_number: paymentNumber.trim() || null,
-    }).eq('id', user.id);
+      payment_method: paymentMethod,
+    } as any).eq('id', user.id);
     setSavingPayment(false);
     if (error) { showToast('Failed to save', 'error'); return; }
     showToast('Payment info saved', 'success');

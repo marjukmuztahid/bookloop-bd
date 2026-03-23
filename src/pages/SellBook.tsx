@@ -63,7 +63,7 @@ const SellBook = () => {
     if (searchParams.get('curriculum')) setCurriculum(searchParams.get('curriculum') as Curriculum);
     if (searchParams.get('classLevel')) setClassLevel(searchParams.get('classLevel')!);
     if (searchParams.get('condition')) setCondition(searchParams.get('condition') as BookCondition);
-    if (searchParams.get('weight')) setWeight(parseFloat(searchParams.get('weight')!));
+    if (searchParams.get('weight')) setWeight(searchParams.get('weight')!);
     if (searchParams.get('price')) setPrice(searchParams.get('price')!);
   }, []);
 

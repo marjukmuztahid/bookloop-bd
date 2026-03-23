@@ -495,7 +495,8 @@ const MyProfile = () => {
       full_name: personalForm.fullName.trim(),
       phone: personalForm.phone.trim(),
       district: personalForm.district,
-    }).eq('id', user.id);
+      detailed_address: personalForm.detailedAddress.trim() || null,
+    } as any).eq('id', user.id);
     setSavingPersonal(false);
     if (error) { showToast('Failed to save', 'error'); return; }
     showToast('Profile updated', 'success');

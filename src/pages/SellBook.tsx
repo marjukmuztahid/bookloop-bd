@@ -145,7 +145,8 @@ const SellBook = () => {
     if (!curriculum) { showToast('Select a curriculum', 'error'); return; }
     if (!classLevel) { showToast('Select a class level', 'error'); return; }
     if (!condition) { showToast('Select a condition', 'error'); return; }
-    if (weight === null) { showToast('Select a weight', 'error'); return; }
+    const weightNum = parseFloat(weight);
+    if (!weight || isNaN(weightNum) || weightNum <= 0) { showToast('Enter a valid weight', 'error'); return; }
     if (priceNum < 10) { showToast('Minimum price is ৳ 10', 'error'); return; }
     if (!Number.isInteger(quantity) || quantity < 1) { showToast('Quantity must be at least 1', 'error'); return; }
     if (!user) { showToast('Please log in first', 'error'); return; }

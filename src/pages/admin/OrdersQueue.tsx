@@ -141,31 +141,58 @@ const OrdersQueue = () => {
           {orders.map((o) => {
             const l = o.listings;
             return (
-              <div key={o.id} className="glass-panel-sm flex flex-wrap items-center gap-3 p-3">
-                <img src={l?.photos?.[0] || '/placeholder.svg'} alt="" className="h-14 w-14 flex-shrink-0 rounded-lg object-cover" />
-                <div className="min-w-0 flex-1">
-                  <h4 className="truncate text-sm font-bold text-[#1A1A1A]">{l?.book_name}</h4>
-                  <p className="text-xs text-[#8A8A8A]">Buyer: {o.buyer?.full_name} ({o.buyer?.district}) • Seller: {l?.users?.full_name} ({l?.users?.district})</p>
-                    <div className="mt-1 flex items-center gap-2">
-                      <span className="text-sm font-bold text-[#E8357A]">COD {formatPrice(o.total_amount)}</span>
-                      <span className="text-xs text-[#8A8A8A]">Del: {formatPrice(o.delivery_charge)}</span>
-                      <span className="text-xs text-[#30D158]">Fee: {formatPrice(calculatePlatformFee(l?.seller_price || 0))}</span>
+              <div key={o.id} className="glass-panel-sm p-4">
+                {/* Header: Book info + status */}
+                <div className="mb-3 flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <img src={l?.photos?.[0] || '/placeholder.svg'} alt="" className="h-14 w-14 flex-shrink-0 rounded-lg object-cover" />
+                    <div>
+                      <h4 className="text-sm font-bold text-[#1A1A1A]">{l?.book_name}</h4>
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-bold text-[#E8357A]">{formatPrice(l?.display_price || 0)}</span>
+                        <span className="text-xs text-[#8A8A8A]">Del: {formatPrice(o.delivery_charge)}</span>
+                        <span className="text-xs text-[#8A8A8A]">Weight: {l?.weight_kg} kg</span>
+                      </div>
                     </div>
+                  </div>
+                  <div className="flex flex-shrink-0 flex-col items-end gap-1.5">
+                    {statusBadge(o.status)}
+                    <p className="text-[10px] text-[#8A8A8A]">{new Date(o.created_at).toLocaleDateString()}</p>
+                  </div>
                 </div>
-                <div className="flex flex-shrink-0 flex-col items-end gap-2">
-                  {statusBadge(o.status)}
-                  <p className="text-[10px] text-[#8A8A8A]">{new Date(o.created_at).toLocaleDateString()}</p>
-                  {o.status === 'pending' && (
-                    <div className="flex gap-1.5">
-                      <GlassButton variant="success" className="py-1 text-[10px]" onClick={() => approveOrder(o)}>Approve</GlassButton>
-                      <GlassButton variant="destructive" className="py-1 text-[10px]" onClick={() => setRejectModal(o)}>Reject</GlassButton>
-                    </div>
-                  )}
-                  {o.status === 'approved' && (
-                    <GlassButton className="py-1 text-[10px]" onClick={() => setPickupModal(o)}>
-                      <CalendarDays size={12} className="mr-1" /> Schedule Pickup
-                    </GlassButton>
-                  )}
+
+                {/* Seller & Buyer details */}
+                <div className="grid grid-cols-1 gap-2 rounded-xl bg-[rgba(0,0,0,0.03)] p-3 text-xs sm:grid-cols-2">
+                  <div>
+                    <p className="mb-1 font-semibold text-[#3A3A3A]">Seller</p>
+                    <p className="text-[#5A5A5A]">{l?.users?.full_name}</p>
+                    <p className="text-[#8A8A8A]">{l?.users?.district}</p>
+                    <p className="text-[#8A8A8A]">{l?.users?.phone}</p>
+                  </div>
+                  <div>
+                    <p className="mb-1 font-semibold text-[#3A3A3A]">Buyer</p>
+                    <p className="text-[#5A5A5A]">{o.buyer?.full_name}</p>
+                    <p className="text-[#8A8A8A]">{o.delivery_address}</p>
+                    <p className="text-[#8A8A8A]">{o.delivery_phone}</p>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-xs font-semibold text-[#3A3A3A]">COD Total: <span className="text-[#E8357A]">{formatPrice(o.total_amount)}</span></span>
+                  <div className="flex gap-1.5">
+                    {o.status === 'pending' && (
+                      <>
+                        <GlassButton variant="success" className="py-1 text-[10px]" onClick={() => approveOrder(o)}>Approve</GlassButton>
+                        <GlassButton variant="destructive" className="py-1 text-[10px]" onClick={() => setRejectModal(o)}>Reject</GlassButton>
+                      </>
+                    )}
+                    {o.status === 'approved' && (
+                      <GlassButton className="py-1 text-[10px]" onClick={() => setPickupModal(o)}>
+                        <CalendarDays size={12} className="mr-1" /> Schedule Pickup
+                      </GlassButton>
+                    )}
+                  </div>
                 </div>
               </div>
             );

@@ -226,28 +226,34 @@ export type Database = {
         Row: {
           bkash_nagad_number: string | null
           created_at: string
+          detailed_address: string | null
           district: string
           full_name: string
           id: string
           is_banned: boolean
+          payment_method: string | null
           phone: string
         }
         Insert: {
           bkash_nagad_number?: string | null
           created_at?: string
+          detailed_address?: string | null
           district: string
           full_name: string
           id: string
           is_banned?: boolean
+          payment_method?: string | null
           phone: string
         }
         Update: {
           bkash_nagad_number?: string | null
           created_at?: string
+          detailed_address?: string | null
           district?: string
           full_name?: string
           id?: string
           is_banned?: boolean
+          payment_method?: string | null
           phone?: string
         }
         Relationships: []

@@ -320,12 +320,14 @@ const SellBook = () => {
 
           {/* 7. Weight */}
           <div>
-            <label className="mb-2 block text-xs font-semibold text-[#3A3A3A]">Approximate Weight</label>
-            <div className="flex gap-2">
-              {WEIGHTS.map((w) => (
-                <PillToggle key={w.label} active={weight === w.value} onClick={() => setWeight(w.value)}>{w.label}</PillToggle>
-              ))}
-            </div>
+            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Approximate Weight (kg)</label>
+            <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)}
+              className={INPUT_CLASS} placeholder="e.g. 1.5" min={0.1} step={0.1} />
+            {parseFloat(weight) > 0 && (
+              <p className="mt-1 text-xs text-[#8A8A8A]">
+                Delivery tier: {parseFloat(weight) < 2 ? 'Under 2 kg' : parseFloat(weight) < 4 ? '2 – 4 kg' : 'Above 4 kg'}
+              </p>
+            )}
           </div>
 
           {/* 8. Price */}

@@ -49,7 +49,7 @@ const SellBook = () => {
   const [curriculum, setCurriculum] = useState<Curriculum | ''>('');
   const [classLevel, setClassLevel] = useState('');
   const [condition, setCondition] = useState<BookCondition | ''>('');
-  const [weight, setWeight] = useState<number | null>(null);
+  const [weight, setWeight] = useState<string>('');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [description, setDescription] = useState('');

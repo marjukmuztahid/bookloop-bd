@@ -456,8 +456,9 @@ const MyProfile = () => {
   const { showToast } = useAppToast();
   const navigate = useNavigate();
 
-  const [personalForm, setPersonalForm] = useState({ fullName: '', phone: '', district: '' });
+  const [personalForm, setPersonalForm] = useState({ fullName: '', phone: '', district: '', detailedAddress: '' });
   const [paymentNumber, setPaymentNumber] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'bkash' | 'nagad'>('bkash');
   const [savingPersonal, setSavingPersonal] = useState(false);
   const [savingPayment, setSavingPayment] = useState(false);
 

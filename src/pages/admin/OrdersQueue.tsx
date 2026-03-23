@@ -168,6 +168,12 @@ const OrdersQueue = () => {
                     <p className="text-[#5A5A5A]">{l?.users?.full_name}</p>
                     <p className="text-[#8A8A8A]">{l?.users?.district}</p>
                     <p className="text-[#8A8A8A]">{l?.users?.phone}</p>
+                    {l?.users?.detailed_address && <p className="text-[#8A8A8A]">{l.users.detailed_address}</p>}
+                    {l?.users?.payment_method && l?.users?.bkash_nagad_number && (
+                      <p className="mt-1 text-[#5A5A5A]">
+                        <span className="font-medium">{l.users.payment_method === 'bkash' ? 'bKash' : 'Nagad'}:</span> {l.users.bkash_nagad_number}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <p className="mb-1 font-semibold text-[#3A3A3A]">Buyer</p>

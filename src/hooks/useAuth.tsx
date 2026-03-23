@@ -8,6 +8,8 @@ interface Profile {
   phone: string;
   district: string;
   bkash_nagad_number: string | null;
+  payment_method: string | null;
+  detailed_address: string | null;
   is_banned: boolean;
   created_at: string;
 }

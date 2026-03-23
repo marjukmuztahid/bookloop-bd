@@ -30,7 +30,7 @@ const OrdersQueue = () => {
   const fetch = useCallback(async () => {
     setLoading(true);
     let q = supabase.from('orders')
-      .select('*, listings(*, users!listings_seller_id_fkey(full_name, district)), buyer:users!orders_buyer_id_fkey(full_name, district)')
+      .select('*, listings(*, users!listings_seller_id_fkey(full_name, district, phone)), buyer:users!orders_buyer_id_fkey(full_name, district, phone)')
       .order('created_at', { ascending: false });
     if (filter !== 'all') q = q.eq('status', filter);
     const { data } = await q;

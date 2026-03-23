@@ -174,7 +174,7 @@ const SellBook = () => {
         curriculum,
         class_level: classLevel,
         condition,
-        weight_kg: weight,
+        weight_kg: weightNum,
         seller_price: priceNum,
         photos: photoUrls,
         description: description.trim() || null,

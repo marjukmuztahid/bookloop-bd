@@ -472,8 +472,10 @@ const MyProfile = () => {
         fullName: profile.full_name || '',
         phone: profile.phone || '',
         district: profile.district || '',
+        detailedAddress: (profile as any).detailed_address || '',
       });
       setPaymentNumber(profile.bkash_nagad_number || '');
+      setPaymentMethod(((profile as any).payment_method as 'bkash' | 'nagad') || 'bkash');
     }
   }, [profile]);
 

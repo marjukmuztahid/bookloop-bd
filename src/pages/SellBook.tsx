@@ -32,11 +32,6 @@ const CONDITIONS: Array<{ value: BookCondition; label: string; desc: string }> =
   { value: 'fair', label: 'Fair', desc: 'Some marks or highlights' },
   { value: 'worn', label: 'Worn', desc: 'Heavy use but readable' },
 ];
-const WEIGHTS = [
-  { label: 'Under 2 kg', value: 1 },
-  { label: '2 – 4 kg', value: 3 },
-  { label: 'Above 4 kg', value: 5 },
-];
 
 const formatPrice = (n: number) => `৳ ${n.toLocaleString('en-BD')}`;
 

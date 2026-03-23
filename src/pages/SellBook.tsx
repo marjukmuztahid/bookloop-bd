@@ -80,16 +80,19 @@ const SellBook = () => {
     );
   }
 
-  // Guard: need payment info
-  if (!profile.bkash_nagad_number) {
+  // Guard: need payment info and detailed address
+  if (!profile.bkash_nagad_number || !(profile as any).detailed_address) {
+    const missingItems: string[] = [];
+    if (!profile.bkash_nagad_number) missingItems.push('bKash or Nagad number');
+    if (!(profile as any).detailed_address) missingItems.push('detailed address');
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
         <main className="flex min-h-[70vh] items-center justify-center px-4 pt-16">
           <div className="glass-panel max-w-md p-8 text-center">
-            <h2 className="mb-2 text-lg font-bold text-[#1A1A1A]">Add Payment Info First</h2>
+            <h2 className="mb-2 text-lg font-bold text-[#1A1A1A]">Complete Your Profile First</h2>
             <p className="mb-5 text-sm text-[#8A8A8A]">
-              You need to add your bKash or Nagad number before listing a book. This is where we'll send your payment after delivery.
+              You need to add your {missingItems.join(' and ')} before listing a book.
             </p>
             <GlassButton onClick={() => navigate('/dashboard?tab=profile')}>Go to Profile Settings</GlassButton>
           </div>

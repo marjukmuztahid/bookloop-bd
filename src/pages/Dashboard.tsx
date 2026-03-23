@@ -456,8 +456,9 @@ const MyProfile = () => {
   const { showToast } = useAppToast();
   const navigate = useNavigate();
 
-  const [personalForm, setPersonalForm] = useState({ fullName: '', phone: '', district: '' });
+  const [personalForm, setPersonalForm] = useState({ fullName: '', phone: '', district: '', detailedAddress: '' });
   const [paymentNumber, setPaymentNumber] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'bkash' | 'nagad'>('bkash');
   const [savingPersonal, setSavingPersonal] = useState(false);
   const [savingPayment, setSavingPayment] = useState(false);
 
@@ -471,8 +472,10 @@ const MyProfile = () => {
         fullName: profile.full_name || '',
         phone: profile.phone || '',
         district: profile.district || '',
+        detailedAddress: (profile as any).detailed_address || '',
       });
       setPaymentNumber(profile.bkash_nagad_number || '');
+      setPaymentMethod(((profile as any).payment_method as 'bkash' | 'nagad') || 'bkash');
     }
   }, [profile]);
 
@@ -492,7 +495,8 @@ const MyProfile = () => {
       full_name: personalForm.fullName.trim(),
       phone: personalForm.phone.trim(),
       district: personalForm.district,
-    }).eq('id', user.id);
+      detailed_address: personalForm.detailedAddress.trim() || null,
+    } as any).eq('id', user.id);
     setSavingPersonal(false);
     if (error) { showToast('Failed to save', 'error'); return; }
     showToast('Profile updated', 'success');
@@ -504,7 +508,8 @@ const MyProfile = () => {
     setSavingPayment(true);
     const { error } = await supabase.from('users').update({
       bkash_nagad_number: paymentNumber.trim() || null,
-    }).eq('id', user.id);
+      payment_method: paymentMethod,
+    } as any).eq('id', user.id);
     setSavingPayment(false);
     if (error) { showToast('Failed to save', 'error'); return; }
     showToast('Payment info saved', 'success');
@@ -540,6 +545,12 @@ const MyProfile = () => {
               {BANGLADESH_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
             </select>
           </div>
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Detailed Address</label>
+            <textarea value={personalForm.detailedAddress} onChange={(e) => setPersonalForm({ ...personalForm, detailedAddress: e.target.value.slice(0, 300) })}
+              className={`${INPUT_CLASS} min-h-[70px] resize-none`} placeholder="House, Road, Area, City (required for selling)" />
+            <p className="mt-1 text-right text-[10px] text-[#8A8A8A]">{personalForm.detailedAddress.length}/300</p>
+          </div>
           <GlassButton className="mt-1 w-full" onClick={savePersonal} disabled={savingPersonal}>
             {savingPersonal ? 'Saving...' : 'Save Changes'}
           </GlassButton>
@@ -555,7 +566,20 @@ const MyProfile = () => {
           <GlassBadge variant="fair" className="mb-3">⚠ Add payment info to start selling</GlassBadge>
         )}
         <div>
-          <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">bKash / Nagad Number</label>
+          <label className="mb-2 block text-xs font-semibold text-[#3A3A3A]">Payment Method</label>
+          <div className="mb-3 flex gap-2">
+            <button onClick={() => setPaymentMethod('bkash')}
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${paymentMethod === 'bkash' ? 'bg-[rgba(232,53,122,0.12)] text-[#E8357A]' : 'bg-[rgba(0,0,0,0.04)] text-[#8A8A8A] hover:text-[#3A3A3A]'}`}>
+              bKash
+            </button>
+            <button onClick={() => setPaymentMethod('nagad')}
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${paymentMethod === 'nagad' ? 'bg-[rgba(232,53,122,0.12)] text-[#E8357A]' : 'bg-[rgba(0,0,0,0.04)] text-[#8A8A8A] hover:text-[#3A3A3A]'}`}>
+              Nagad
+            </button>
+          </div>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">{paymentMethod === 'bkash' ? 'bKash' : 'Nagad'} Number</label>
           <input type="tel" value={paymentNumber} onChange={(e) => setPaymentNumber(e.target.value)}
             className={INPUT_CLASS} placeholder="01XXXXXXXXX" />
           <p className="mt-1 text-xs text-[#8A8A8A]">Required before you can post a listing. This is where we'll send your payments.</p>

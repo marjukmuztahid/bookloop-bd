@@ -32,11 +32,6 @@ const CONDITIONS: Array<{ value: BookCondition; label: string; desc: string }> =
   { value: 'fair', label: 'Fair', desc: 'Some marks or highlights' },
   { value: 'worn', label: 'Worn', desc: 'Heavy use but readable' },
 ];
-const WEIGHTS = [
-  { label: 'Under 2 kg', value: 1 },
-  { label: '2 – 4 kg', value: 3 },
-  { label: 'Above 4 kg', value: 5 },
-];
 
 const formatPrice = (n: number) => `৳ ${n.toLocaleString('en-BD')}`;
 
@@ -54,7 +49,7 @@ const SellBook = () => {
   const [curriculum, setCurriculum] = useState<Curriculum | ''>('');
   const [classLevel, setClassLevel] = useState('');
   const [condition, setCondition] = useState<BookCondition | ''>('');
-  const [weight, setWeight] = useState<number | null>(null);
+  const [weight, setWeight] = useState<string>('');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [description, setDescription] = useState('');
@@ -68,7 +63,7 @@ const SellBook = () => {
     if (searchParams.get('curriculum')) setCurriculum(searchParams.get('curriculum') as Curriculum);
     if (searchParams.get('classLevel')) setClassLevel(searchParams.get('classLevel')!);
     if (searchParams.get('condition')) setCondition(searchParams.get('condition') as BookCondition);
-    if (searchParams.get('weight')) setWeight(parseFloat(searchParams.get('weight')!));
+    if (searchParams.get('weight')) setWeight(searchParams.get('weight')!);
     if (searchParams.get('price')) setPrice(searchParams.get('price')!);
   }, []);
 
@@ -139,7 +134,7 @@ const SellBook = () => {
 
   const resetForm = () => {
     setPhotos([]); setPhotoPreviews([]); setBookName(''); setAuthor('');
-    setCurriculum(''); setClassLevel(''); setCondition(''); setWeight(null);
+    setCurriculum(''); setClassLevel(''); setCondition(''); setWeight('');
     setPrice(''); setQuantity(1); setDescription(''); setSuccess(false);
   };
 
@@ -150,7 +145,8 @@ const SellBook = () => {
     if (!curriculum) { showToast('Select a curriculum', 'error'); return; }
     if (!classLevel) { showToast('Select a class level', 'error'); return; }
     if (!condition) { showToast('Select a condition', 'error'); return; }
-    if (weight === null) { showToast('Select a weight', 'error'); return; }
+    const weightNum = parseFloat(weight);
+    if (!weight || isNaN(weightNum) || weightNum <= 0) { showToast('Enter a valid weight', 'error'); return; }
     if (priceNum < 10) { showToast('Minimum price is ৳ 10', 'error'); return; }
     if (!Number.isInteger(quantity) || quantity < 1) { showToast('Quantity must be at least 1', 'error'); return; }
     if (!user) { showToast('Please log in first', 'error'); return; }
@@ -178,7 +174,7 @@ const SellBook = () => {
         curriculum,
         class_level: classLevel,
         condition,
-        weight_kg: weight,
+        weight_kg: weightNum,
         seller_price: priceNum,
         photos: photoUrls,
         description: description.trim() || null,
@@ -324,12 +320,14 @@ const SellBook = () => {
 
           {/* 7. Weight */}
           <div>
-            <label className="mb-2 block text-xs font-semibold text-[#3A3A3A]">Approximate Weight</label>
-            <div className="flex gap-2">
-              {WEIGHTS.map((w) => (
-                <PillToggle key={w.label} active={weight === w.value} onClick={() => setWeight(w.value)}>{w.label}</PillToggle>
-              ))}
-            </div>
+            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Approximate Weight (kg)</label>
+            <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)}
+              className={INPUT_CLASS} placeholder="e.g. 1.5" min={0.1} step={0.1} />
+            {parseFloat(weight) > 0 && (
+              <p className="mt-1 text-xs text-[#8A8A8A]">
+                Delivery tier: {parseFloat(weight) < 2 ? 'Under 2 kg' : parseFloat(weight) < 4 ? '2 – 4 kg' : 'Above 4 kg'}
+              </p>
+            )}
           </div>
 
           {/* 8. Price */}

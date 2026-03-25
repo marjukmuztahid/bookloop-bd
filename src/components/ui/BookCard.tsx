@@ -54,13 +54,6 @@ const BookCard = ({ book }: { book: BookCardData }) => {
             </span>
           </div>
         )}
-        {qty === 1 && book.status === 'available' && (
-          <div className="absolute bottom-2 left-2">
-            <span className="rounded-full border border-[rgba(255,159,10,0.30)] bg-[rgba(255,159,10,0.12)] px-2 py-0.5 text-[9px] font-bold text-[#A0600A] backdrop-blur-[8px]">
-              Last copy
-            </span>
-          </div>
-        )}
       </div>
 
       {/* Book name */}

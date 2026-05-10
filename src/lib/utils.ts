@@ -6,12 +6,16 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Platform fee rate applied to every listing (flat 10%).
+ */
+export const PLATFORM_FEE_RATE = 0.10;
+
+/**
  * Calculate the platform fee based on the seller's price.
- * ≤ ৳500 → 7%, > ৳500 → 5%
+ * Flat 10% across all price ranges.
  */
 export function calculatePlatformFee(sellerPrice: number): number {
-  const rate = sellerPrice <= 500 ? 0.07 : 0.05;
-  return Math.round(sellerPrice * rate);
+  return Math.round(sellerPrice * PLATFORM_FEE_RATE);
 }
 
 /**

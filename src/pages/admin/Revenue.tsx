@@ -10,9 +10,6 @@ import { calculatePlatformFee } from '@/lib/utils';
 import {
   Table, TableHeader, TableBody, TableHead, TableRow, TableCell,
 } from '@/components/ui/table';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
 
 const formatPrice = (n: number) => `৳${n.toLocaleString('en-BD')}`;
 
@@ -30,14 +27,13 @@ interface RevenueOrder {
 
 type SortKey = 'date' | 'fee';
 type SortDir = 'asc' | 'desc';
-type FeeTier = 'all' | '5' | '7';
 
 const Revenue = () => {
   const [orders, setOrders] = useState<RevenueOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
-  const [feeTier, setFeeTier] = useState<FeeTier>('all');
+  
   const [sortKey, setSortKey] = useState<SortKey>('date');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
 
@@ -90,8 +86,6 @@ const Revenue = () => {
     if (dateFrom) result = result.filter(o => o.created_at >= dateFrom);
     if (dateTo) result = result.filter(o => o.created_at <= dateTo + 'T23:59:59');
 
-    if (feeTier === '7') result = result.filter(o => o.listing.seller_price <= 500);
-    if (feeTier === '5') result = result.filter(o => o.listing.seller_price > 500);
 
     result = [...result].sort((a, b) => {
       if (sortKey === 'date') {
@@ -105,7 +99,7 @@ const Revenue = () => {
     });
 
     return result;
-  }, [orders, dateFrom, dateTo, feeTier, sortKey, sortDir]);
+  }, [orders, dateFrom, dateTo, sortKey, sortDir]);
 
   const totalAllTime = orders.reduce((s, o) => s + calculatePlatformFee(o.listing.seller_price), 0);
 
@@ -171,17 +165,6 @@ const Revenue = () => {
               <label className="text-xs text-muted-foreground">To</label>
               <Input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="h-9 w-40 text-xs" />
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs text-muted-foreground">Fee Tier</label>
-              <Select value={feeTier} onValueChange={(v: FeeTier) => setFeeTier(v)}>
-                <SelectTrigger className="h-9 w-36 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="7">7% (≤ ৳500)</SelectItem>
-                  <SelectItem value="5">5% (&gt; ৳500)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </GlassPanel>
         </motion.div>
 
@@ -227,7 +210,6 @@ const Revenue = () => {
                     <TableBody>
                       {filtered.map(o => {
                         const fee = calculatePlatformFee(o.listing.seller_price);
-                        const pct = o.listing.seller_price <= 500 ? 7 : 5;
                         return (
                           <TableRow key={o.id} className="transition-colors hover:bg-muted/40">
                             <TableCell className="font-mono text-xs text-muted-foreground">{o.id.slice(0, 8)}…</TableCell>
@@ -236,12 +218,8 @@ const Revenue = () => {
                             <TableCell className="text-sm text-foreground">{o.buyer.full_name}</TableCell>
                             <TableCell className="text-right text-sm text-foreground">{formatPrice(o.listing.seller_price)}</TableCell>
                             <TableCell className="text-center">
-                              <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                                pct === 7
-                                  ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
-                                  : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
-                              }`}>
-                                {pct}%
+                              <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                10%
                               </span>
                             </TableCell>
                             <TableCell className="text-right text-sm font-semibold text-emerald-600">{formatPrice(fee)}</TableCell>

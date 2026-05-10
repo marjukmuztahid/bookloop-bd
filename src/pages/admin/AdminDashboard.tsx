@@ -32,8 +32,7 @@ const AdminDashboard = () => {
 
       const fee = (rev.data || []).reduce((sum: number, o: any) => {
         const price = o.listings?.seller_price || 0;
-        const rate = price <= 500 ? 0.07 : 0.05;
-        return sum + Math.round(price * rate);
+        return sum + Math.round(price * 0.10);
       }, 0);
 
       setStats({

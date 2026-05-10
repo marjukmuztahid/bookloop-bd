@@ -75,7 +75,7 @@ const Terms = () => {
               <li>Book Loop BD operates on a Cash on Delivery model only</li>
               <li>Buyers pay the full amount in cash directly to the Steadfast courier at the time of delivery</li>
               <li>No advance payment or online payment is required from the buyer at any point</li>
-              <li>Steadfast collects the payment and remits it to Book Loop BD, after which the seller is paid their amount minus the 5% platform fee via bKash or Nagad</li>
+              <li>Steadfast collects the payment and remits it to Book Loop BD, after which the seller is paid their original asking price via bKash or Nagad (the 10% platform fee is retained by Book Loop BD)</li>
             </ul>
           </Section>
 

@@ -30,7 +30,7 @@ interface RevenueOrder {
 
 type SortKey = 'date' | 'fee';
 type SortDir = 'asc' | 'desc';
-type FeeTier = 'all' | '5' | '7';
+type FeeTier = 'all';
 
 const Revenue = () => {
   const [orders, setOrders] = useState<RevenueOrder[]>([]);

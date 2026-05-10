@@ -214,7 +214,6 @@ const Revenue = () => {
                     <TableBody>
                       {filtered.map(o => {
                         const fee = calculatePlatformFee(o.listing.seller_price);
-                        const pct = o.listing.seller_price <= 500 ? 7 : 5;
                         return (
                           <TableRow key={o.id} className="transition-colors hover:bg-muted/40">
                             <TableCell className="font-mono text-xs text-muted-foreground">{o.id.slice(0, 8)}…</TableCell>
@@ -223,12 +222,8 @@ const Revenue = () => {
                             <TableCell className="text-sm text-foreground">{o.buyer.full_name}</TableCell>
                             <TableCell className="text-right text-sm text-foreground">{formatPrice(o.listing.seller_price)}</TableCell>
                             <TableCell className="text-center">
-                              <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                                pct === 7
-                                  ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
-                                  : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
-                              }`}>
-                                {pct}%
+                              <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                10%
                               </span>
                             </TableCell>
                             <TableCell className="text-right text-sm font-semibold text-emerald-600">{formatPrice(fee)}</TableCell>

@@ -90,8 +90,6 @@ const Revenue = () => {
     if (dateFrom) result = result.filter(o => o.created_at >= dateFrom);
     if (dateTo) result = result.filter(o => o.created_at <= dateTo + 'T23:59:59');
 
-    if (feeTier === '7') result = result.filter(o => o.listing.seller_price <= 500);
-    if (feeTier === '5') result = result.filter(o => o.listing.seller_price > 500);
 
     result = [...result].sort((a, b) => {
       if (sortKey === 'date') {

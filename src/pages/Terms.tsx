@@ -54,7 +54,7 @@ const Terms = () => {
           </Section>
 
           <Section title="5. Platform Fee">
-            <p>Book Loop BD charges a platform fee (7% ≤৳500, 5% &gt;৳500) on every successful sale. This fee is automatically included in the displayed price of your listing — you enter your desired selling price and the platform adds 5 or 7% on top for the buyer. When your sale is completed and delivery is confirmed, you will receive your original asking price minus the 5 or 7% fee via bKash or Nagad.</p>
+            <p>Book Loop BD charges a flat 10% platform fee on every successful sale. This fee is automatically added on top of your asking price in the buyer-facing displayed price — you enter your desired selling price and the platform adds 10% on top for the buyer. When your sale is completed and delivery is confirmed, you will receive your original asking price via bKash or Nagad.</p>
           </Section>
 
           <Section title="6. Delivery and Courier">

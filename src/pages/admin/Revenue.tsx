@@ -99,7 +99,7 @@ const Revenue = () => {
     });
 
     return result;
-  }, [orders, dateFrom, dateTo, feeTier, sortKey, sortDir]);
+  }, [orders, dateFrom, dateTo, sortKey, sortDir]);
 
   const totalAllTime = orders.reduce((s, o) => s + calculatePlatformFee(o.listing.seller_price), 0);
 

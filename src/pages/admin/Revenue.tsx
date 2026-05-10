@@ -10,9 +10,6 @@ import { calculatePlatformFee } from '@/lib/utils';
 import {
   Table, TableHeader, TableBody, TableHead, TableRow, TableCell,
 } from '@/components/ui/table';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
 
 const formatPrice = (n: number) => `৳${n.toLocaleString('en-BD')}`;
 

@@ -169,17 +169,6 @@ const Revenue = () => {
               <label className="text-xs text-muted-foreground">To</label>
               <Input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="h-9 w-40 text-xs" />
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs text-muted-foreground">Fee Tier</label>
-              <Select value={feeTier} onValueChange={(v: FeeTier) => setFeeTier(v)}>
-                <SelectTrigger className="h-9 w-36 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="7">7% (≤ ৳500)</SelectItem>
-                  <SelectItem value="5">5% (&gt; ৳500)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </GlassPanel>
         </motion.div>
 

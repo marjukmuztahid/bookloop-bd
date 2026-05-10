@@ -20,7 +20,7 @@ const SELLING_STEPS = [
   { icon: '✅', title: 'Admin Approves Listing', desc: 'We review and approve your listing — you\'ll get a notification when it\'s live.' },
   { icon: '📦', title: 'Buyer Places an Order', desc: 'When someone orders your book, admin schedules a Steadfast pickup from your location.' },
   { icon: '🚚', title: 'Courier Collects the Book', desc: 'Steadfast collects the book from you and delivers it to the buyer.' },
-  { icon: '💸', title: 'Receive Your Payment', desc: 'After delivery, you receive your payment via bKash/Nagad minus a small platform fee (7% under ৳500, 5% above).' },
+  { icon: '💸', title: 'Receive Your Payment', desc: 'After delivery, you receive your payment via bKash/Nagad. A flat 10% platform fee is added on top of your asking price for the buyer.' },
 ];
 
 const GOOD_TO_KNOW = [

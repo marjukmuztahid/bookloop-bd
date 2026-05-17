@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import React from 'react';
 
-type BadgeVariant = 'new' | 'good' | 'fair' | 'worn' | 'curriculum';
+type BadgeVariant = 'new' | 'good' | 'fair' | 'worn' | 'curriculum' | 'genre' | 'academic' | 'general';
 
 const variantStyles: Record<BadgeVariant, string> = {
   new: 'bg-[rgba(48,209,88,0.12)] border-[rgba(48,209,88,0.30)] text-[#1A7A35]',
@@ -9,6 +9,9 @@ const variantStyles: Record<BadgeVariant, string> = {
   fair: 'bg-[rgba(255,159,10,0.12)] border-[rgba(255,159,10,0.30)] text-[#A0600A]',
   worn: 'bg-[rgba(0,0,0,0.06)] border-[rgba(0,0,0,0.12)] text-[#5A5A5A]',
   curriculum: 'bg-[rgba(232,53,122,0.10)] border-[rgba(232,53,122,0.25)] text-[#E8357A]',
+  genre: 'bg-[rgba(139,92,246,0.10)] border-[rgba(139,92,246,0.25)] text-[#6D28D9]',
+  academic: 'bg-[rgba(10,132,255,0.10)] border-[rgba(10,132,255,0.25)] text-[#0A5AA8]',
+  general: 'bg-[rgba(139,92,246,0.10)] border-[rgba(139,92,246,0.25)] text-[#6D28D9]',
 };
 
 interface GlassBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {

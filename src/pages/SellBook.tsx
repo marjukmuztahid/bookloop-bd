@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Upload, X, CheckCircle, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Upload, X, CheckCircle, Loader2, ArrowLeft, BookOpen, BookMarked } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
-import { pageTransition, springButton } from '@/lib/animations';
+import { pageTransition, springButton, cardHover } from '@/lib/animations';
 import { calculateDisplayPrice } from '@/lib/utils';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { useAppToast } from '@/components/ui/GlassToast';
@@ -11,7 +11,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import type { BookCondition, Curriculum } from '@/types';
+import type { BookCondition, Curriculum, BookType, Genre } from '@/types';
+import { GENRES } from '@/data/genres';
 
 const INPUT_CLASS =
   'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
@@ -33,8 +34,6 @@ const CONDITIONS: Array<{ value: BookCondition; label: string; desc: string }> =
   { value: 'worn', label: 'Worn', desc: 'Heavy use but readable' },
 ];
 
-const formatPrice = (n: number) => `৳ ${n.toLocaleString('en-BD')}`;
-
 const SellBook = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -42,12 +41,15 @@ const SellBook = () => {
   const { showToast } = useAppToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [bookType, setBookType] = useState<BookType | null>(null);
+
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [bookName, setBookName] = useState('');
   const [author, setAuthor] = useState('');
   const [curriculum, setCurriculum] = useState<Curriculum | ''>('');
   const [classLevel, setClassLevel] = useState('');
+  const [genre, setGenre] = useState<Genre | ''>('');
   const [condition, setCondition] = useState<BookCondition | ''>('');
   const [weight, setWeight] = useState<string>('');
   const [price, setPrice] = useState('');
@@ -56,8 +58,10 @@ const SellBook = () => {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // Pre-fill from URL params (relist flow)
+  // Pre-fill from URL params (relist flow) — academic only
   useEffect(() => {
+    const hasParams = ['bookName', 'author', 'curriculum', 'classLevel', 'condition', 'weight', 'price'].some(k => searchParams.get(k));
+    if (hasParams) setBookType('academic');
     if (searchParams.get('bookName')) setBookName(searchParams.get('bookName')!);
     if (searchParams.get('author')) setAuthor(searchParams.get('author')!);
     if (searchParams.get('curriculum')) setCurriculum(searchParams.get('curriculum') as Curriculum);
@@ -101,6 +105,7 @@ const SellBook = () => {
       </div>
     );
   }
+
   const compressImage = async (file: File): Promise<File> => {
     const options = {
       maxSizeMB: 1,
@@ -137,16 +142,22 @@ const SellBook = () => {
 
   const resetForm = () => {
     setPhotos([]); setPhotoPreviews([]); setBookName(''); setAuthor('');
-    setCurriculum(''); setClassLevel(''); setCondition(''); setWeight('');
+    setCurriculum(''); setClassLevel(''); setGenre(''); setCondition(''); setWeight('');
     setPrice(''); setQuantity(1); setDescription(''); setSuccess(false);
+    setBookType(null);
   };
 
   const handleSubmit = async () => {
+    if (!bookType) { showToast('Pick a book type first', 'error'); return; }
     if (!photos.length) { showToast('Add at least 1 photo', 'error'); return; }
     if (!bookName.trim()) { showToast('Book name is required', 'error'); return; }
-    if (!author.trim()) { showToast('Author/Publisher is required', 'error'); return; }
-    if (!curriculum) { showToast('Select a curriculum', 'error'); return; }
-    if (!classLevel) { showToast('Select a class level', 'error'); return; }
+    if (bookType === 'academic') {
+      if (!author.trim()) { showToast('Author/Publisher is required', 'error'); return; }
+      if (!curriculum) { showToast('Select a curriculum', 'error'); return; }
+      if (!classLevel) { showToast('Select a class level', 'error'); return; }
+    } else {
+      if (!genre) { showToast('Select a genre', 'error'); return; }
+    }
     if (!condition) { showToast('Select a condition', 'error'); return; }
     const weightNum = parseFloat(weight);
     if (!weight || isNaN(weightNum) || weightNum <= 0) { showToast('Enter a valid weight', 'error'); return; }
@@ -170,12 +181,10 @@ const SellBook = () => {
       }
 
       // Insert listing
-      const { error } = await supabase.from('listings').insert({
+      const payload: any = {
         seller_id: user.id,
         book_name: bookName.trim(),
-        author_publisher: author.trim(),
-        curriculum,
-        class_level: classLevel,
+        author_publisher: author.trim() || (bookType === 'general' ? 'Unknown' : ''),
         condition,
         weight_kg: weightNum,
         seller_price: priceNum,
@@ -183,8 +192,19 @@ const SellBook = () => {
         description: description.trim() || null,
         quantity,
         status: 'pending',
-      });
+        book_type: bookType,
+      };
+      if (bookType === 'academic') {
+        payload.curriculum = curriculum;
+        payload.class_level = classLevel;
+        payload.genre = null;
+      } else {
+        payload.curriculum = null;
+        payload.class_level = null;
+        payload.genre = genre;
+      }
 
+      const { error } = await supabase.from('listings').insert(payload);
       if (error) throw error;
       setSuccess(true);
     } catch (err: any) {
@@ -229,145 +249,222 @@ const SellBook = () => {
     );
   }
 
+  // Step 1: Book type selection
+  if (!bookType) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <motion.main {...pageTransition} className="mx-auto max-w-2xl px-4 pb-16 pt-24">
+          <div className="glass-panel p-8 text-center">
+            <h1 className="mb-2 text-2xl font-extrabold text-[#1A1A1A]">What type of book are you selling?</h1>
+            <p className="mb-8 text-sm text-[#8A8A8A]">Choose a category to continue.</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <motion.button
+                {...cardHover}
+                onClick={() => setBookType('academic')}
+                className="glass-panel-sm flex flex-col items-center gap-3 p-6 text-center transition-all hover:border-[rgba(232,53,122,0.30)]"
+              >
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(10,132,255,0.10)]">
+                  <BookOpen size={28} className="text-[#0A5AA8]" />
+                </div>
+                <p className="text-base font-bold text-[#1A1A1A]">📚 Academic Book</p>
+                <p className="text-xs text-[#8A8A8A]">School or college textbooks, guides, notes</p>
+              </motion.button>
+
+              <motion.button
+                {...cardHover}
+                onClick={() => setBookType('general')}
+                className="glass-panel-sm flex flex-col items-center gap-3 p-6 text-center transition-all hover:border-[rgba(139,92,246,0.30)]"
+              >
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(139,92,246,0.10)]">
+                  <BookMarked size={28} className="text-[#6D28D9]" />
+                </div>
+                <p className="text-base font-bold text-[#1A1A1A]">📖 General Book</p>
+                <p className="text-xs text-[#8A8A8A]">Story books, self-help, religious, and more</p>
+              </motion.button>
+            </div>
+          </div>
+        </motion.main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Step 2: Form (with AnimatePresence so transition feels smooth)
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <motion.main {...pageTransition} className="mx-auto max-w-[640px] px-4 pb-16 pt-24">
-        <h1 className="mb-6 text-2xl font-extrabold text-[#1A1A1A]">List a Book for Sale</h1>
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={bookType}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.3 }}
+          className="mx-auto max-w-[640px] px-4 pb-16 pt-24"
+        >
+          <div className="mb-6 flex items-center gap-3">
+            <button
+              onClick={() => setBookType(null)}
+              className="flex items-center gap-1 text-xs font-semibold text-[#8A8A8A] transition-colors hover:text-[#E8357A]"
+            >
+              <ArrowLeft size={14} /> Change type
+            </button>
+            <h1 className="text-2xl font-extrabold text-[#1A1A1A]">
+              List a {bookType === 'academic' ? 'Academic' : 'General'} Book
+            </h1>
+          </div>
 
-        <div className="glass-panel flex flex-col gap-5 p-6">
-          {/* 1. Photos */}
-          <div>
-            <label className="mb-2 block text-xs font-semibold text-[#3A3A3A]">Photos (up to 3)</label>
-            {photoPreviews.length > 0 && (
-              <div className="mb-3 flex gap-2">
-                {photoPreviews.map((src, i) => (
-                  <div key={i} className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl">
-                    <img src={src} alt="" className="h-full w-full object-cover" />
-                    <button onClick={() => removePhoto(i)}
-                      className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/50 text-white">
-                      <X size={12} />
-                    </button>
+          <div className="glass-panel flex flex-col gap-5 p-6">
+            {/* 1. Photos */}
+            <div>
+              <label className="mb-2 block text-xs font-semibold text-[#3A3A3A]">Photos (up to 3)</label>
+              {photoPreviews.length > 0 && (
+                <div className="mb-3 flex gap-2">
+                  {photoPreviews.map((src, i) => (
+                    <div key={i} className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl">
+                      <img src={src} alt="" className="h-full w-full object-cover" />
+                      <button onClick={() => removePhoto(i)}
+                        className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/50 text-white">
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {photos.length < 3 && (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  onDrop={(e) => { e.preventDefault(); addPhotos(e.dataTransfer.files); }}
+                  onDragOver={(e) => e.preventDefault()}
+                  className="flex w-full cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-[rgba(232,53,122,0.30)] bg-[rgba(232,53,122,0.03)] p-6 transition-colors hover:border-[rgba(232,53,122,0.50)]"
+                >
+                  <Upload size={24} className="text-[#E8357A]" />
+                  <p className="text-xs text-[#8A8A8A]">Click or drag photos here (JPG, PNG, WEBP, max 5MB)</p>
+                </button>
+              )}
+              <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple
+                onChange={(e) => addPhotos(e.target.files)} className="hidden" />
+            </div>
+
+            {/* 2. Book Name */}
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Book Name</label>
+              <input value={bookName} onChange={(e) => setBookName(e.target.value)} className={INPUT_CLASS} placeholder="Enter book name" />
+            </div>
+
+            {/* 3. Author / Publisher */}
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">
+                Author / Publisher {bookType === 'general' && <span className="font-normal text-[#8A8A8A]">(optional)</span>}
+              </label>
+              <input value={author} onChange={(e) => setAuthor(e.target.value)} className={INPUT_CLASS}
+                placeholder={bookType === 'academic' ? 'e.g. NCTB, Oxford' : 'e.g. Humayun Ahmed'} />
+            </div>
+
+            {bookType === 'academic' ? (
+              <>
+                {/* 4. Curriculum */}
+                <div>
+                  <label className="mb-2 block text-xs font-semibold text-[#3A3A3A]">Curriculum Type</label>
+                  <div className="flex gap-2">
+                    {CURRICULUMS.map((c) => (
+                      <PillToggle key={c.value} active={curriculum === c.value} onClick={() => setCurriculum(c.value)}>{c.label}</PillToggle>
+                    ))}
                   </div>
-                ))}
+                </div>
+
+                {/* 5. Class Level */}
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Class Level</label>
+                  <select value={classLevel} onChange={(e) => setClassLevel(e.target.value)}
+                    className={`${INPUT_CLASS} appearance-none ${!classLevel ? 'text-[#8A8A8A]' : ''}`}>
+                    <option value="">Select class</option>
+                    {CLASS_LEVELS.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+              </>
+            ) : (
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Genre</label>
+                <select value={genre} onChange={(e) => setGenre(e.target.value as Genre)}
+                  className={`${INPUT_CLASS} appearance-none ${!genre ? 'text-[#8A8A8A]' : ''}`}>
+                  <option value="">Select genre</option>
+                  {GENRES.map((g) => <option key={g} value={g}>{g}</option>)}
+                </select>
               </div>
             )}
-            {photos.length < 3 && (
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                onDrop={(e) => { e.preventDefault(); addPhotos(e.dataTransfer.files); }}
-                onDragOver={(e) => e.preventDefault()}
-                className="flex w-full cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-[rgba(232,53,122,0.30)] bg-[rgba(232,53,122,0.03)] p-6 transition-colors hover:border-[rgba(232,53,122,0.50)]"
-              >
-                <Upload size={24} className="text-[#E8357A]" />
-                <p className="text-xs text-[#8A8A8A]">Click or drag photos here (JPG, PNG, WEBP, max 5MB)</p>
-              </button>
-            )}
-            <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple
-              onChange={(e) => addPhotos(e.target.files)} className="hidden" />
-          </div>
 
-          {/* 2. Book Name */}
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Book Name</label>
-            <input value={bookName} onChange={(e) => setBookName(e.target.value)} className={INPUT_CLASS} placeholder="Enter book name" />
-          </div>
-
-          {/* 3. Author / Publisher */}
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Author / Publisher</label>
-            <input value={author} onChange={(e) => setAuthor(e.target.value)} className={INPUT_CLASS} placeholder="e.g. NCTB, Oxford" />
-          </div>
-
-          {/* 4. Curriculum */}
-          <div>
-            <label className="mb-2 block text-xs font-semibold text-[#3A3A3A]">Curriculum Type</label>
-            <div className="flex gap-2">
-              {CURRICULUMS.map((c) => (
-                <PillToggle key={c.value} active={curriculum === c.value} onClick={() => setCurriculum(c.value)}>{c.label}</PillToggle>
-              ))}
+            {/* Condition */}
+            <div>
+              <label className="mb-2 block text-xs font-semibold text-[#3A3A3A]">Book Condition</label>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {CONDITIONS.map((c) => (
+                  <motion.button
+                    key={c.value}
+                    {...springButton}
+                    onClick={() => setCondition(c.value)}
+                    className={`rounded-2xl border p-3 text-left transition-all ${
+                      condition === c.value
+                        ? 'border-[rgba(232,53,122,0.40)] bg-[rgba(232,53,122,0.06)]'
+                        : 'border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.02)]'
+                    }`}
+                  >
+                    <p className={`text-xs font-bold ${condition === c.value ? 'text-[#E8357A]' : 'text-[#3A3A3A]'}`}>{c.label}</p>
+                    <p className="mt-0.5 text-[10px] text-[#8A8A8A]">{c.desc}</p>
+                  </motion.button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* 5. Class Level */}
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Class Level</label>
-            <select value={classLevel} onChange={(e) => setClassLevel(e.target.value)}
-              className={`${INPUT_CLASS} appearance-none ${!classLevel ? 'text-[#8A8A8A]' : ''}`}>
-              <option value="">Select class</option>
-              {CLASS_LEVELS.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </div>
-
-          {/* 6. Condition */}
-          <div>
-            <label className="mb-2 block text-xs font-semibold text-[#3A3A3A]">Book Condition</label>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {CONDITIONS.map((c) => (
-                <motion.button
-                  key={c.value}
-                  {...springButton}
-                  onClick={() => setCondition(c.value)}
-                  className={`rounded-2xl border p-3 text-left transition-all ${
-                    condition === c.value
-                      ? 'border-[rgba(232,53,122,0.40)] bg-[rgba(232,53,122,0.06)]'
-                      : 'border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.02)]'
-                  }`}
-                >
-                  <p className={`text-xs font-bold ${condition === c.value ? 'text-[#E8357A]' : 'text-[#3A3A3A]'}`}>{c.label}</p>
-                  <p className="mt-0.5 text-[10px] text-[#8A8A8A]">{c.desc}</p>
-                </motion.button>
-              ))}
+            {/* Weight */}
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Approximate Weight (kg)</label>
+              <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)}
+                className={INPUT_CLASS} placeholder="e.g. 1.5" min={0.1} step={0.1} />
+              {parseFloat(weight) > 0 && (
+                <p className="mt-1 text-xs text-[#8A8A8A]">
+                  Delivery tier: {parseFloat(weight) < 2 ? 'Under 2 kg' : parseFloat(weight) < 4 ? '2 – 4 kg' : 'Above 4 kg'}
+                </p>
+              )}
             </div>
-          </div>
 
-          {/* 7. Weight */}
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Approximate Weight (kg)</label>
-            <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)}
-              className={INPUT_CLASS} placeholder="e.g. 1.5" min={0.1} step={0.1} />
-            {parseFloat(weight) > 0 && (
-              <p className="mt-1 text-xs text-[#8A8A8A]">
-                Delivery tier: {parseFloat(weight) < 2 ? 'Under 2 kg' : parseFloat(weight) < 4 ? '2 – 4 kg' : 'Above 4 kg'}
-              </p>
-            )}
-          </div>
+            {/* Price */}
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Your Price (৳)</label>
+              <input type="number" value={price} onChange={(e) => setPrice(e.target.value)}
+                className={INPUT_CLASS} placeholder="Enter amount in BDT" min={10} />
+              {priceNum >= 10 && (
+                <p className="mt-1 text-xs text-[#8A8A8A]">
+                  Buyers will see this book at <span className="font-semibold text-[#E8357A]">৳ {calculateDisplayPrice(priceNum).toLocaleString('en-BD')}</span>
+                </p>
+              )}
+            </div>
 
-          {/* 8. Price */}
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Your Price (৳)</label>
-            <input type="number" value={price} onChange={(e) => setPrice(e.target.value)}
-              className={INPUT_CLASS} placeholder="Enter amount in BDT" min={10} />
-            {priceNum >= 10 && (
-              <p className="mt-1 text-xs text-[#8A8A8A]">
-                Buyers will see this book at <span className="font-semibold text-[#E8357A]">৳ {calculateDisplayPrice(priceNum).toLocaleString('en-BD')}</span>
-              </p>
-            )}
-          </div>
+            {/* Quantity */}
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">How many copies do you have?</label>
+              <input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, Math.min(50, parseInt(e.target.value) || 1)))}
+                className={INPUT_CLASS} min={1} max={50} />
+              <p className="mt-1 text-xs text-[#8A8A8A]">You can update this number later from your dashboard.</p>
+            </div>
 
-          {/* 9. Quantity */}
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">How many copies do you have?</label>
-            <input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, Math.min(50, parseInt(e.target.value) || 1)))}
-              className={INPUT_CLASS} min={1} max={50} />
-            <p className="mt-1 text-xs text-[#8A8A8A]">You can update this number later from your dashboard.</p>
-          </div>
+            {/* Description */}
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Description (optional)</label>
+              <textarea value={description} onChange={(e) => setDescription(e.target.value.slice(0, 300))}
+                className={`${INPUT_CLASS} min-h-[80px] resize-none`}
+                placeholder="Any extra details about the book's condition, edition, or contents..." />
+              <p className="mt-1 text-right text-[10px] text-[#8A8A8A]">{description.length}/300</p>
+            </div>
 
-          {/* 10. Description */}
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Description (optional)</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value.slice(0, 300))}
-              className={`${INPUT_CLASS} min-h-[80px] resize-none`}
-              placeholder="Any extra details about the book's condition, edition, or contents..." />
-            <p className="mt-1 text-right text-[10px] text-[#8A8A8A]">{description.length}/300</p>
+            {/* Submit */}
+            <GlassButton className="w-full py-3" onClick={handleSubmit} disabled={submitting}>
+              {submitting ? <Loader2 size={18} className="animate-spin" /> : 'Submit for Review'}
+            </GlassButton>
           </div>
-
-          {/* Submit */}
-          <GlassButton className="w-full py-3" onClick={handleSubmit} disabled={submitting}>
-            {submitting ? <Loader2 size={18} className="animate-spin" /> : 'Submit for Review'}
-          </GlassButton>
-        </div>
-      </motion.main>
+        </motion.main>
+      </AnimatePresence>
       <Footer />
     </div>
   );
@@ -383,4 +480,3 @@ const PillToggle = ({ active, onClick, children }: { active: boolean; onClick: (
 );
 
 export default SellBook;
-

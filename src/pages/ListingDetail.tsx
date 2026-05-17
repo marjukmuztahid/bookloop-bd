@@ -104,12 +104,21 @@ const ListingDetail = () => {
   const isSoldPending = listing?.status === 'sold_pending_delivery';
   const isSold = listing?.status === 'sold' || isSoldPending || (listing?.status === 'available' && quantity === 0);
 
-  // Dynamic SEO
+  // Dynamic SEO — keep title under 60 chars
+  const maxBookNameLen = (suffix: string) => {
+    const budget = 60 - 3 - suffix.length; // 3 for "… — " or similar
+    return budget > 10 ? budget : 10;
+  };
+
   const isGeneral = listing?.book_type === 'general';
-  const seoTitle = listing
+  const listingSuffix = listing
     ? isGeneral
-      ? `${listing.book_name} — ${listing.genre || 'General'} | ${listing.condition} Condition | Book Loop BD`
-      : `${listing.book_name} — ${listing.curriculum} ${listing.class_level} | ${listing.condition} Condition | Book Loop BD`
+      ? ` — ${listing.genre || 'General'} | Book Loop BD`
+      : ` — ${listing.curriculum} ${listing.class_level} | Book Loop BD`
+    : '';
+
+  const seoTitle = listing
+    ? `${listing.book_name.slice(0, maxBookNameLen(listingSuffix))}${listing.book_name.length > maxBookNameLen(listingSuffix) ? '…' : ''}${listingSuffix}`
     : 'Book Listing — Book Loop BD';
   const seoDesc = listing && seller
     ? `Buy ${listing.book_name} second hand in ${seller.district}, Bangladesh. ${listing.condition} condition. Cash on delivery via Steadfast Courier. Listed on Book Loop BD.`

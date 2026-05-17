@@ -267,7 +267,7 @@ const SellBook = () => {
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(10,132,255,0.10)]">
                   <BookOpen size={28} className="text-[#0A5AA8]" />
                 </div>
-                <p className="text-base font-bold text-[#1A1A1A]">📚 Academic Book</p>
+                <p className="text-base font-bold text-[#1A1A1A]">Academic Book</p>
                 <p className="text-xs text-[#8A8A8A]">School or college textbooks, guides, notes</p>
               </motion.button>
 
@@ -279,7 +279,7 @@ const SellBook = () => {
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(139,92,246,0.10)]">
                   <BookMarked size={28} className="text-[#6D28D9]" />
                 </div>
-                <p className="text-base font-bold text-[#1A1A1A]">📖 General Book</p>
+                <p className="text-base font-bold text-[#1A1A1A]">General Book</p>
                 <p className="text-xs text-[#8A8A8A]">Story books, self-help, religious, and more</p>
               </motion.button>
             </div>

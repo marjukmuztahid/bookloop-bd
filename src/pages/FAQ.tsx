@@ -50,6 +50,46 @@ const faqs: { q: string; a: string }[] = [
     q: 'Can I return a book or get a refund?',
     a: 'You can refuse a book at the door if it does not match the listing. Once you accept the delivery and pay the courier, the sale is final — there are no refunds after successful Cash on Delivery.',
   },
+  {
+    q: 'Where can I buy old books online in Bangladesh?',
+    a: 'Book Loop BD is a dedicated online marketplace to buy old books in Bangladesh. Unlike Facebook groups or classifieds, every listing here is verified, prices are transparent, and delivery is handled through Steadfast Courier with Cash on Delivery to all 64 districts.',
+  },
+  {
+    q: 'How can I sell my old books in Bangladesh for the best price?',
+    a: 'You set your own price when you list. To get the best price for your old books, upload clear photos of the cover and inside pages, describe the condition honestly (Like New, Good, Fair, or Worn), and price slightly below similar listings. Popular SSC, HSC, O-Level and A-Level books usually sell within days.',
+  },
+  {
+    q: 'Is Book Loop BD better than buying old books from Nilkhet or Facebook groups?',
+    a: 'Nilkhet and Facebook groups work, but you have to travel, bargain, and trust strangers without protection. Book Loop BD brings everything online — verified listings, fixed prices, secure Cash on Delivery, and home delivery anywhere in Bangladesh, often at lower prices than Nilkhet for the same condition.',
+  },
+  {
+    q: 'How are old book prices decided?',
+    a: 'Sellers set the base price for their book. A small platform fee is added on top so the price you see is the final price you pay (plus delivery at checkout). There is no hidden charge, no bargaining, and no last-minute price change.',
+  },
+  {
+    q: 'Do you have old NCTB textbooks for SSC and HSC?',
+    a: 'Yes. SSC and HSC old textbooks — including Higher Math, Physics, Chemistry, Biology, Accounting, ICT, Bangla and English — are among the most listed categories on Book Loop BD, in both Bangla Version and English Version.',
+  },
+  {
+    q: 'Do you sell old O-Level and A-Level books?',
+    a: 'Yes. Used Cambridge and Edexcel O-Level and A-Level textbooks are regularly listed on Book Loop BD by English Medium students across Bangladesh, often at 50–70% off the original price.',
+  },
+  {
+    q: 'Is Book Loop BD free to use?',
+    a: 'Yes. Browsing, creating an account, and listing books are completely free. Sellers receive the full price they set; a small platform fee is added to the buyer side and shown transparently.',
+  },
+  {
+    q: 'How will I get paid after selling my book?',
+    a: 'After the buyer receives and pays for the book, your earnings are transferred to the bKash or Nagad number on your seller profile. That is why a verified mobile financial account is required before you can list.',
+  },
+  {
+    q: 'Can I buy old books from outside Dhaka?',
+    a: 'Yes. Book Loop BD ships nationwide. You can buy old books from sellers anywhere in Bangladesh and have them delivered to your district through Steadfast Courier with Cash on Delivery — Chittagong, Sylhet, Khulna, Rajshahi, Rangpur, Barisal, Mymensingh and all other districts included.',
+  },
+  {
+    q: 'How do I contact Book Loop BD support?',
+    a: 'You can reach our team any time through the Contact page or by emailing bookloopbd.com@gmail.com. We also respond to messages on our official Facebook and Instagram pages.',
+  },
 ];
 
 const FAQ = () => {

@@ -216,7 +216,7 @@ const Home = () => {
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
             <button
               onClick={scrollToGrid}
-              className="group relative flex items-center justify-center overflow-hidden rounded-[20px] border-t border-white/20 bg-[#E8357A] px-8 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(232,53,122,0.5)] transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] hover:shadow-[0_14px_36px_-10px_rgba(232,53,122,0.55)] active:scale-95"
+              className="group relative flex items-center justify-center overflow-hidden rounded-[20px] border-t border-white/20 bg-[rgba(232,53,122,0.85)] px-8 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(232,53,122,0.4)] backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] hover:bg-[rgba(232,53,122,0.92)] hover:shadow-[0_14px_36px_-10px_rgba(232,53,122,0.5)] active:scale-95"
             >
               <span className="relative z-10">Browse Books</span>
               <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/15 to-transparent" />

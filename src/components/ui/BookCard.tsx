@@ -3,20 +3,22 @@ import { MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { fadeUp, cardHover } from '@/lib/animations';
 import { GlassBadge } from '@/components/ui/GlassBadge';
-import type { BookCondition, Curriculum } from '@/types';
+import type { BookCondition, Curriculum, BookType, Genre } from '@/types';
 
 export interface BookCardData {
   id: string;
   book_name: string;
   author_publisher: string;
-  curriculum: Curriculum;
-  class_level: string;
+  curriculum: Curriculum | null;
+  class_level: string | null;
   condition: BookCondition;
   display_price: number;
   photos: string[];
   seller_district: string;
   status?: string;
   quantity?: number;
+  book_type?: BookType;
+  genre?: Genre | null;
 }
 
 const curriculumLabels: Record<Curriculum, string> = {
@@ -28,6 +30,7 @@ const curriculumLabels: Record<Curriculum, string> = {
 const BookCard = ({ book }: { book: BookCardData }) => {
   const navigate = useNavigate();
   const qty = book.quantity ?? 1;
+  const isGeneral = book.book_type === 'general';
 
   return (
     <motion.div
@@ -40,7 +43,7 @@ const BookCard = ({ book }: { book: BookCardData }) => {
       <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-[14px]">
         <img
           src={book.photos[0] || '/placeholder.svg'}
-          alt={`${book.class_level} ${book.book_name} ${book.condition} condition — Book Loop BD`}
+          alt={`${book.class_level ?? book.genre ?? ''} ${book.book_name} ${book.condition} condition — Book Loop BD`}
           width={300}
           height={400}
           loading="lazy"
@@ -62,12 +65,18 @@ const BookCard = ({ book }: { book: BookCardData }) => {
       {/* Author */}
       <p className="mb-1 truncate text-xs text-muted-foreground">{book.author_publisher}</p>
 
-      {/* Class */}
-      <p className="mb-2 truncate text-[11px] font-medium text-foreground">{book.class_level}</p>
+      {/* Class / Genre line */}
+      <p className="mb-2 truncate text-[11px] font-medium text-foreground">
+        {isGeneral ? (book.genre || 'General') : (book.class_level || '')}
+      </p>
 
       {/* Badges */}
       <div className="mb-2 flex flex-wrap gap-1.5">
-        <GlassBadge variant="curriculum">{curriculumLabels[book.curriculum]}</GlassBadge>
+        {isGeneral ? (
+          book.genre && <GlassBadge variant="genre">{book.genre}</GlassBadge>
+        ) : (
+          book.curriculum && <GlassBadge variant="curriculum">{curriculumLabels[book.curriculum]}</GlassBadge>
+        )}
         <GlassBadge variant={book.condition}>{book.condition.charAt(0).toUpperCase() + book.condition.slice(1)}</GlassBadge>
       </div>
 

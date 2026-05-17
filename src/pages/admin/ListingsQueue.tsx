@@ -18,6 +18,7 @@ const ListingsQueue = () => {
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('pending');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'academic' | 'general'>('all');
   const [search, setSearch] = useState('');
   const [rejectModal, setRejectModal] = useState<{ id: string; name: string; sellerId: string } | null>(null);
   const [removeModal, setRemoveModal] = useState<{ id: string; name: string; sellerId: string } | null>(null);
@@ -28,11 +29,12 @@ const ListingsQueue = () => {
     setLoading(true);
     let q = supabase.from('listings').select('*, users!listings_seller_id_fkey(full_name, district)').order('created_at', { ascending: false });
     if (filter !== 'all') q = q.eq('status', filter);
+    if (typeFilter !== 'all') q = q.eq('book_type', typeFilter);
     if (search.trim()) q = q.ilike('book_name', `%${search.trim()}%`);
     const { data } = await q;
     setListings(data || []);
     setLoading(false);
-  }, [filter, search]);
+  }, [filter, typeFilter, search]);
 
   useEffect(() => { fetch(); }, [fetch]);
 
@@ -89,7 +91,17 @@ const ListingsQueue = () => {
 
   return (
     <AdminLayout title="Listings Queue">
-      {/* Filters */}
+      {/* Type filter */}
+      <div className="mb-2 flex flex-wrap gap-2">
+        {(['all', 'academic', 'general'] as const).map((t) => (
+          <button key={t} onClick={() => setTypeFilter(t)}
+            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${typeFilter === t ? 'bg-[rgba(139,92,246,0.12)] text-[#6D28D9]' : 'bg-[rgba(0,0,0,0.04)] text-[#8A8A8A]'}`}>
+            {t === 'all' ? 'All Types' : t === 'academic' ? '📚 Academic' : '📖 General'}
+          </button>
+        ))}
+      </div>
+
+      {/* Status filters */}
       <div className="mb-4 flex flex-wrap gap-2">
         {['all', 'pending', 'available', 'rejected', 'sold', 'deleted', 'expired'].map((f) => (
           <button key={f} onClick={() => setFilter(f)}
@@ -112,11 +124,22 @@ const ListingsQueue = () => {
             <div key={l.id} className="glass-panel-sm flex flex-wrap items-center gap-3 p-3">
               <img src={l.photos?.[0] || '/placeholder.svg'} alt="" className="h-14 w-14 flex-shrink-0 rounded-lg object-cover" />
               <div className="min-w-0 flex-1">
-                <h4 className="truncate text-sm font-bold text-[#1A1A1A]">{l.book_name}</h4>
+                <div className="flex items-center gap-1.5">
+                  <GlassBadge variant={l.book_type === 'general' ? 'general' : 'academic'} className="text-[10px]">
+                    {l.book_type === 'general' ? 'General' : 'Academic'}
+                  </GlassBadge>
+                  <h4 className="truncate text-sm font-bold text-[#1A1A1A]">{l.book_name}</h4>
+                </div>
                 <p className="text-xs text-[#8A8A8A]">{l.author_publisher} • {l.users?.full_name}, {l.users?.district}</p>
                 <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                  <GlassBadge variant="curriculum" className="text-[10px]">{l.curriculum}</GlassBadge>
-                  <GlassBadge variant="worn" className="text-[10px]">{l.class_level}</GlassBadge>
+                  {l.book_type === 'general' ? (
+                    l.genre && <GlassBadge variant="genre" className="text-[10px]">{l.genre}</GlassBadge>
+                  ) : (
+                    <>
+                      {l.curriculum && <GlassBadge variant="curriculum" className="text-[10px]">{l.curriculum}</GlassBadge>}
+                      {l.class_level && <GlassBadge variant="worn" className="text-[10px]">{l.class_level}</GlassBadge>}
+                    </>
+                  )}
                   <span className="text-xs font-bold text-[#E8357A]">{formatPrice(l.display_price)}</span>
                   <span className="text-[10px] text-[#8A8A8A]">Qty: {l.quantity ?? 1}</span>
                 </div>

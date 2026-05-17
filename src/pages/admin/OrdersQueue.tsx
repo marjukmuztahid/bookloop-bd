@@ -147,7 +147,12 @@ const OrdersQueue = () => {
                   <div className="flex items-center gap-3">
                     <img src={l?.photos?.[0] || '/placeholder.svg'} alt="" className="h-14 w-14 flex-shrink-0 rounded-lg object-cover" />
                     <div>
-                      <h4 className="text-sm font-bold text-[#1A1A1A]">{l?.book_name}</h4>
+                      <div className="flex items-center gap-1.5">
+                        <GlassBadge variant={l?.book_type === 'general' ? 'general' : 'academic'} className="text-[10px]">
+                          {l?.book_type === 'general' ? 'General' : 'Academic'}
+                        </GlassBadge>
+                        <h4 className="text-sm font-bold text-[#1A1A1A]">{l?.book_name}</h4>
+                      </div>
                       <div className="mt-1 flex flex-wrap items-center gap-2">
                         <span className="text-sm font-bold text-[#E8357A]">{formatPrice(l?.display_price || 0)}</span>
                         <span className="text-xs text-[#8A8A8A]">Del: {formatPrice(o.delivery_charge)}</span>

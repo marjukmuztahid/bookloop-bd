@@ -1,5 +1,16 @@
 export type Curriculum = 'bangla_version' | 'english_version' | 'english_medium';
 export type BookCondition = 'new' | 'good' | 'fair' | 'worn';
+export type BookType = 'academic' | 'general';
+export type Genre =
+  | 'Fiction'
+  | 'Non-fiction'
+  | 'Self-help / Motivational'
+  | 'Religious'
+  | 'Science & Technology'
+  | 'History & Biography'
+  | "Children's Books"
+  | 'Comics'
+  | 'Other';
 export type ListingStatus = 'pending' | 'available' | 'sold' | 'sold_pending_delivery' | 'rejected' | 'deleted' | 'expired';
 export type OrderStatus = 'pending' | 'approved' | 'pickup_scheduled' | 'in_transit' | 'delivered' | 'unsuccessful' | 'cancelled';
 
@@ -18,8 +29,10 @@ export interface Listing {
   seller_id: string;
   book_name: string;
   author_publisher: string;
-  curriculum: Curriculum;
-  class_level: string;
+  book_type: BookType;
+  genre: Genre | null;
+  curriculum: Curriculum | null;
+  class_level: string | null;
   condition: BookCondition;
   weight_kg: number;
   seller_price: number;

@@ -122,7 +122,12 @@ const ActiveDeliveries = () => {
                 <div className="flex flex-wrap items-start gap-3">
                   <img src={l?.photos?.[0] || '/placeholder.svg'} alt="" className="h-16 w-16 flex-shrink-0 rounded-lg object-cover" />
                   <div className="min-w-0 flex-1">
-                    <h4 className="text-sm font-bold text-[#1A1A1A]">{l?.book_name}</h4>
+                    <div className="flex items-center gap-1.5">
+                      <GlassBadge variant={l?.book_type === 'general' ? 'general' : 'academic'} className="text-[10px]">
+                        {l?.book_type === 'general' ? 'General' : 'Academic'}
+                      </GlassBadge>
+                      <h4 className="text-sm font-bold text-[#1A1A1A]">{l?.book_name}</h4>
+                    </div>
                     <div className="mt-1 flex flex-col gap-0.5 text-xs text-[#8A8A8A]">
                       <p>📦 Buyer: {o.buyer?.full_name} • {o.delivery_address}</p>
                       <p>📞 {o.delivery_phone}</p>

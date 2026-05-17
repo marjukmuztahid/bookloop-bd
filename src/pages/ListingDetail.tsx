@@ -105,8 +105,11 @@ const ListingDetail = () => {
   const isSold = listing?.status === 'sold' || isSoldPending || (listing?.status === 'available' && quantity === 0);
 
   // Dynamic SEO
+  const isGeneral = listing?.book_type === 'general';
   const seoTitle = listing
-    ? `${listing.book_name} — ${listing.curriculum} ${listing.class_level} | ${listing.condition} Condition | Book Loop BD`
+    ? isGeneral
+      ? `${listing.book_name} — ${listing.genre || 'General'} | ${listing.condition} Condition | Book Loop BD`
+      : `${listing.book_name} — ${listing.curriculum} ${listing.class_level} | ${listing.condition} Condition | Book Loop BD`
     : 'Book Listing — Book Loop BD';
   const seoDesc = listing && seller
     ? `Buy ${listing.book_name} second hand in ${seller.district}, Bangladesh. ${listing.condition} condition. Cash on delivery via Steadfast Courier. Listed on Book Loop BD.`
@@ -148,7 +151,7 @@ const ListingDetail = () => {
                 <motion.img
                   key={activePhoto}
                   src={photos[activePhoto]}
-                  alt={`${listing.class_level} ${listing.book_name} ${listing.condition} condition — Book Loop BD`}
+                  alt={`${listing.class_level ?? listing.genre ?? ''} ${listing.book_name} ${listing.condition} condition — Book Loop BD`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -187,11 +190,21 @@ const ListingDetail = () => {
 
           {/* Right — Info */}
           <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <GlassBadge variant={isGeneral ? 'general' : 'academic'}>
+                {isGeneral ? 'General' : 'Academic'}
+              </GlassBadge>
+              {!isGeneral && listing.class_level && (
+                <span className="text-xs text-[#8A8A8A]">{listing.class_level}</span>
+              )}
+            </div>
             <h1 className="text-2xl font-extrabold text-[#1A1A1A] md:text-3xl">{listing.book_name}</h1>
             <p className="text-sm text-[#8A8A8A]">{listing.author_publisher}</p>
 
             <div className="flex flex-wrap gap-2">
-              <GlassBadge variant="curriculum">{listing.curriculum}</GlassBadge>
+              {isGeneral
+                ? listing.genre && <GlassBadge variant="genre">{listing.genre}</GlassBadge>
+                : listing.curriculum && <GlassBadge variant="curriculum">{listing.curriculum}</GlassBadge>}
               <GlassBadge variant={conditionVariant(listing.condition)}>{listing.condition}</GlassBadge>
             </div>
 
@@ -241,7 +254,7 @@ const ListingDetail = () => {
               <button
                 onClick={() => {
                   const text = encodeURIComponent(
-                    `Check out this book on Book Loop BD! ${listing.book_name} — ${listing.curriculum} ${listing.class_level}, ${listing.condition} condition. Price: ৳${listing.display_price.toLocaleString()}. Link: https://bookloopbd.com/listings/${listing.id}`
+                    `Check out this book on Book Loop BD! ${listing.book_name}${isGeneral ? ` — ${listing.genre || ''}` : ` — ${listing.curriculum} ${listing.class_level}`}, ${listing.condition} condition. Price: ৳${listing.display_price.toLocaleString()}. Link: https://bookloopbd.com/listings/${listing.id}`
                   );
                   window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener');
                 }}

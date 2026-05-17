@@ -18,6 +18,7 @@ interface RevenueOrder {
   created_at: string;
   listing: {
     book_name: string;
+    book_type?: string;
     seller_price: number;
     seller_id: string;
   };
@@ -41,7 +42,7 @@ const Revenue = () => {
     const load = async () => {
       const { data, error } = await supabase
         .from('orders')
-        .select('id, created_at, listing_id, buyer_id, listings!orders_listing_id_fkey(book_name, seller_price, seller_id)')
+        .select('id, created_at, listing_id, buyer_id, listings!orders_listing_id_fkey(book_name, book_type, seller_price, seller_id)')
         .eq('status', 'delivered');
 
       if (error) {
@@ -67,6 +68,7 @@ const Revenue = () => {
         created_at: o.created_at,
         listing: {
           book_name: o.listings?.book_name || 'Unknown',
+          book_type: o.listings?.book_type,
           seller_price: o.listings?.seller_price || 0,
           seller_id: o.listings?.seller_id || '',
         },
@@ -213,7 +215,12 @@ const Revenue = () => {
                         return (
                           <TableRow key={o.id} className="transition-colors hover:bg-muted/40">
                             <TableCell className="font-mono text-xs text-muted-foreground">{o.id.slice(0, 8)}…</TableCell>
-                            <TableCell className="max-w-[180px] truncate text-sm font-medium text-foreground">{o.listing.book_name}</TableCell>
+                            <TableCell className="max-w-[180px] truncate text-sm font-medium text-foreground">
+                              <span className={`mr-1.5 inline-block rounded-full border px-1.5 py-0.5 text-[10px] font-semibold ${o.listing.book_type === 'general' ? 'border-[rgba(139,92,246,0.25)] bg-[rgba(139,92,246,0.10)] text-[#6D28D9]' : 'border-[rgba(10,132,255,0.25)] bg-[rgba(10,132,255,0.10)] text-[#0A5AA8]'}`}>
+                                {o.listing.book_type === 'general' ? 'General' : 'Academic'}
+                              </span>
+                              {o.listing.book_name}
+                            </TableCell>
                             <TableCell className="text-sm text-foreground">{o.seller.full_name}</TableCell>
                             <TableCell className="text-sm text-foreground">{o.buyer.full_name}</TableCell>
                             <TableCell className="text-right text-sm text-foreground">{formatPrice(o.listing.seller_price)}</TableCell>

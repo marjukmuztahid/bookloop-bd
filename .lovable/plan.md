@@ -1,88 +1,101 @@
-# Improve AI discoverability + Google ranking signals
+## Goal
+Make the **Book Card** (grid item) and **Listing Detail** page feel more aesthetic, modern, and "premium" — closer to a polished iOS/Apple-store product feel — without changing business logic, copy, prices, or data flow.
 
-## Reality check
+---
 
-No code change can guarantee a #1 Google ranking. Ranking depends on
-backlinks, brand authority, time, and competition. What we **can** do
-is make sure every on-page signal Google and AI assistants
-(ChatGPT, Perplexity, Claude, Gemini) read is clean, rich, and
-keyword-aligned. The work below covers all of that.
+## Book Card refinements
 
-## What I'll change
+Visual upgrades to `src/components/ui/BookCard.tsx`:
 
-### 1. Richer `/llms.txt` for AI assistants
-Today's file is a 3-line skeleton. AI crawlers use this to decide
-whether to recommend your site. I'll rewrite it with:
-- Clear positioning: "Bangladesh's marketplace for second-hand
-  school/college books, COD via Steadfast Courier across 64 districts."
-- The user problem it solves (affordable textbooks, recouping money on
-  finished books).
-- How buying and selling actually works (3-4 steps each).
-- Coverage (academic levels, general genres, districts).
-- Trust info (no refunds policy, admin-moderated listings, contact channels).
-- Curated links to the key pages.
+1. **Layered cover image**
+   - Add a soft tinted "halo" behind the cover using a blurred copy of the image (CSS `filter: blur(24px) saturate(140%)`, opacity 0.45) so each card glows in its own dominant color.
+   - Replace flat `aspect-[3/4]` with a subtle rounded-22px frame, inner 1px white ring, and a faint gradient sheen on top-left (mimics glass reflection).
 
-### 2. Per-page meta titles + descriptions
-Right now most pages reuse near-identical titles. I'll rewrite each
-route's `useSEO` call with a unique, keyword-rich title (under 60 chars)
-and description (under 160 chars):
-- Home → "Buy & Sell Second-Hand School Books in Bangladesh"
-- About → "About Book Loop BD — Affordable Used Books for BD Students"
-- How It Works → "How to Buy & Sell Used Books in Bangladesh — Book Loop BD"
-- Contact, Sign Up, Login, Privacy, Terms → tightened similarly
-- Listing Detail → already dynamic, but I'll add the price + district
-  into the title for richer SERP snippets
+2. **Refined hover/press**
+   - Replace existing scale-1.03 with: lift `y: -4`, scale `1.015`, shadow `0 18px 40px -16px rgba(232,53,122,0.25)`. Tighter, more "Apple".
+   - Image gets a parallax-style `scale(1.06)` and `translateY(-2px)` only on hover.
 
-### 3. Structured data (rich snippets)
-- **FAQPage JSON-LD on `/how-it-works`** — lets Google show
-  expandable Q&A under your result and lets AI assistants quote
-  answers directly. I'll convert the existing steps into Q&A pairs.
-- **BreadcrumbList JSON-LD on `/listings/:id`** — gives Google
-  the "Home › Listings › Book Name" trail in search results.
-- Organization + WebSite JSON-LD already in `index.html` (done in
-  the last pass).
-- Product JSON-LD already on listing pages (done in the last pass).
+3. **Typography hierarchy**
+   - Book name → `text-[15px] font-semibold tracking-tight`, max 2 lines (line-clamp-2) instead of `truncate` — prevents harsh cut-offs.
+   - Author → `text-[11px] uppercase tracking-[0.08em] text-muted-foreground`.
+   - Class/genre line removed (moved into a single badge row) to reduce vertical noise.
 
-### 4. Dynamic sitemap including every listing
-Today's sitemap only lists 9 static pages. I'll add a build-time
-generator script (`scripts/generate-sitemap.ts`) that:
-- Pulls all `available` and `sold_pending_delivery` listings from
-  Supabase using the anon key.
-- Emits one `<url>` per listing at `/listings/<id>` with `lastmod`.
-- Runs via `predev` + `prebuild` npm scripts so it stays fresh on
-  every deploy.
-This is what gets your individual book pages indexed.
+4. **Badge row**
+   - Show only **one** primary contextual badge (curriculum OR genre) + condition badge.
+   - Use smaller pill: `px-2 py-0.5 text-[10px]`.
+   - Add a subtle icon prefix (BookOpen / Sparkles) for condition.
 
-### 5. Semantic HTML polish
-- Ensure every page has exactly one `<h1>`.
-- Verify alt text on listing images uses the dynamic format already
-  in your memory (book name + condition + curriculum).
-- Add `aria-label` on icon-only buttons that lack one.
+5. **Price + district row**
+   - Combine into one flex row: price left (`text-[17px] font-bold text-primary`), district right (`text-[11px] muted` with pin icon).
+   - Adds a thin `border-t border-white/40` above the row for separation.
 
-### 6. Optional, requires your input
-- **Google Search Console verification** — once you publish, I can
-  verify your site so you can submit the sitemap and watch
-  impressions/clicks. Needs the Search Console connector enabled.
-- **OG share image** — a real 1200×630 image (with logo + tagline)
-  performs far better on WhatsApp/Facebook shares than the favicon.
-  I can generate one if you want.
+6. **Status overlay**
+   - Replace bottom-pinned pill with a centered frosted chip + diagonal soft gradient overlay (`from-black/0 via-black/10 to-black/40`).
+   - For "Sold": add a subtle grayscale filter (`filter: grayscale(0.6)`) on the cover to reinforce state.
 
-## Out of scope (only you can do these)
+7. **Skeleton card**
+   - Match new spacing & sizes in `SkeletonBookCard.tsx`.
 
-These move the needle on ranking more than any code change, but
-they aren't code:
-- **Backlinks**: get listed in Bangladeshi student blogs, FB groups,
-  university forums, ed-tech directories.
-- **Brand searches**: people Googling "Book Loop BD" by name is the
-  strongest authority signal there is — promote on social.
-- **Fresh content**: a `/blog` with posts like "How to sell HSC
-  textbooks in Dhaka" targets long-tail keywords. Tell me if you
-  want this scaffolded.
+---
 
-## Technical notes
+## Listing Detail refinements
 
-- Sitemap generator uses the public anon key already in `.env` —
-  read-only `select` on `listings` with the existing RLS policy.
-- JSON-LD goes through the existing `useSEO` hook (already supports
-  `jsonLd`) so no new dependency.
-- No design or business-logic changes; pure SEO/metadata work.
+Visual upgrades to `src/pages/ListingDetail.tsx`:
+
+1. **Ambient backdrop**
+   - Behind the photo column, render a large blurred copy of the active photo (`absolute inset-0 -z-10 blur(60px) opacity-30`) bounded to the left column. Creates a museum-style spotlight feel; respects `prefers-reduced-motion`.
+
+2. **Photo gallery polish**
+   - Main photo: rounded-[24px], 1px inner highlight ring, soft drop shadow `0 24px 60px -24px rgba(0,0,0,0.18)`.
+   - Thumbnails: 56×56 → 64×64, rounded-[14px], active thumb gets a `ring-2 ring-primary ring-offset-2 ring-offset-background` instead of solid border; inactive thumbs at `opacity-60` and brighten on hover.
+   - Add discrete left/right arrow buttons on the main image when more than one photo (desktop only).
+   - Add a tiny "1 / 4" counter pill in bottom-right of main image.
+
+3. **Right column hierarchy**
+   - Restructure to three visual blocks separated by hairline dividers instead of multiple glass panels stacked:
+     - **Header block**: category chip → H1 title → author (smaller, muted).
+     - **Price block**: big price + small "Cash on Delivery via Steadfast" line directly under it (replaces the standalone "Delivery charge calculated at checkout" panel — keeps the message, less boxy).
+     - **Meta block**: badges row (curriculum/genre + condition + stock indicator inline) — currently spread across 3 separate rows.
+   - Reduces visual clutter from the 5–6 stacked glass panels.
+
+4. **Seller card**
+   - Convert plain text line into a compact avatar-style row: circular initial badge (first letter of seller name on a tinted primary background) + name + district. Feels human, not a notice bar.
+
+5. **Seller's Note**
+   - Keep glass panel but add a soft top-left quote glyph and italic body. Distinguishes it from generic info panels.
+
+6. **Action buttons**
+   - "Order Now" stays primary, but place "Save to Wishlist" and "Share on WhatsApp" side-by-side as secondary icons-only buttons on desktop (≥md), full-width stacked on mobile. Reduces button stack from 3 to a cleaner 1 + 2 layout.
+   - Add a sticky bottom action bar on mobile (`fixed bottom-0` glass bar) holding price + "Order Now" — common modern e-commerce pattern, keeps CTA always reachable.
+
+7. **Breadcrumb**
+   - Add a small breadcrumb above the H1 on desktop: `Home / Books / {class or genre}` using existing `Breadcrumb` shadcn component. Already have BreadcrumbList JSON-LD; this surfaces it visually.
+
+8. **Stock badge wording stays identical** (per memory). Only the placement changes.
+
+---
+
+## Animation polish (shared)
+
+- Cards stagger in with 40ms delay using existing `staggerContainer`.
+- Listing detail right-column blocks fade-up with 60ms delay between them.
+- Cover image cross-fade duration bumped from 0.25s → 0.35s with `ease-out`.
+- All respect `prefers-reduced-motion` via existing `animations.ts` helpers.
+
+---
+
+## Out of scope
+
+- Wishlist logic, order flow, pricing math, SEO/JSON-LD, data fetching.
+- Color palette or accent change (still `#E8357A` magenta + frosted glass).
+- New routes or new fields.
+
+---
+
+## Files to be edited
+
+- `src/components/ui/BookCard.tsx`
+- `src/components/ui/SkeletonBookCard.tsx`
+- `src/pages/ListingDetail.tsx`
+
+No new dependencies. No DB changes.

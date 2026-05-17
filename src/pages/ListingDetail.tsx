@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Heart, Loader2, Share2 } from 'lucide-react';
-import { pageTransition, fadeUp } from '@/lib/animations';
+import { MapPin, Heart, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import { pageTransition, fadeUp, staggerContainer } from '@/lib/animations';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassBadge, type BadgeVariant } from '@/components/ui/GlassBadge';
 import { useAppToast } from '@/components/ui/GlassToast';
@@ -179,14 +179,30 @@ const ListingDetail = () => {
   const photos: string[] = listing.photos?.length ? listing.photos : ['/placeholder.svg'];
   const sellerFirstName = seller?.full_name?.split(' ')[0] || 'Seller';
 
+  const sellerInitial = (seller?.full_name || 'S').trim().charAt(0).toUpperCase();
+  const categoryLabel = isGeneral ? (listing.genre || 'General') : (listing.class_level || 'Academic');
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <motion.main {...pageTransition} className="mx-auto max-w-6xl px-4 pb-16 pt-24">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          {/* Left — Photos */}
-          <div>
-            <div className="relative overflow-hidden rounded-[20px]" style={{ aspectRatio: '3/4' }}>
+      <motion.main {...pageTransition} className="mx-auto max-w-6xl px-4 pb-32 pt-24 md:pb-16">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
+          {/* Left — Photos with ambient backdrop */}
+          <div className="relative">
+            {/* Ambient blurred backdrop */}
+            <div className="pointer-events-none absolute -inset-6 -z-10 overflow-hidden rounded-[40px] motion-reduce:hidden">
+              <img
+                src={photos[activePhoto]}
+                alt=""
+                aria-hidden="true"
+                className="h-full w-full scale-125 object-cover opacity-30 blur-3xl saturate-150"
+              />
+            </div>
+
+            <div
+              className="relative overflow-hidden rounded-[24px] shadow-[0_24px_60px_-24px_rgba(0,0,0,0.18)]"
+              style={{ aspectRatio: '3/4' }}
+            >
               <AnimatePresence mode="wait">
                 <motion.img
                   key={activePhoto}
@@ -195,15 +211,42 @@ const ListingDetail = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
                   className="h-full w-full object-cover"
                   width={600}
                   height={800}
                   loading="eager"
                   fetchPriority="high"
-               />
+                />
               </AnimatePresence>
-              {(isSoldPending) && (
+
+              {/* Inner highlight ring */}
+              <div className="pointer-events-none absolute inset-0 rounded-[24px] ring-1 ring-inset ring-white/40" />
+
+              {/* Desktop arrows */}
+              {photos.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setActivePhoto((i) => (i - 1 + photos.length) % photos.length)}
+                    className="absolute left-3 top-1/2 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-[#3A3A3A] shadow-md backdrop-blur-md transition hover:bg-white md:flex"
+                    aria-label="Previous photo"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <button
+                    onClick={() => setActivePhoto((i) => (i + 1) % photos.length)}
+                    className="absolute right-3 top-1/2 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-[#3A3A3A] shadow-md backdrop-blur-md transition hover:bg-white md:flex"
+                    aria-label="Next photo"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                  <span className="absolute bottom-3 right-3 rounded-full bg-black/40 px-2.5 py-0.5 text-[11px] font-medium text-white backdrop-blur-md">
+                    {activePhoto + 1} / {photos.length}
+                  </span>
+                </>
+              )}
+
+              {isSoldPending && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                   <span className="rounded-full bg-white/90 px-5 py-2 text-sm font-bold text-[#3A3A3A]">
                     Currently Unavailable
@@ -211,15 +254,19 @@ const ListingDetail = () => {
                 </div>
               )}
             </div>
+
             {photos.length > 1 && (
-              <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+              <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
                 {photos.map((p: string, i: number) => (
                   <button
                     key={i}
                     onClick={() => setActivePhoto(i)}
-                    className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-[10px] border-2 transition-all ${
-                      i === activePhoto ? 'border-[#E8357A]' : 'border-transparent'
+                    className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-[14px] transition-all ${
+                      i === activePhoto
+                        ? 'ring-2 ring-primary ring-offset-2 ring-offset-background'
+                        : 'opacity-60 hover:opacity-100'
                     }`}
+                    aria-label={`Photo ${i + 1}`}
                   >
                     <img src={p} alt="" className="h-full w-full object-cover" width={64} height={64} loading="lazy" />
                   </button>
@@ -229,114 +276,167 @@ const ListingDetail = () => {
           </div>
 
           {/* Right — Info */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              <GlassBadge variant={isGeneral ? 'general' : 'academic'}>
-                {isGeneral ? 'General' : 'Academic'}
-              </GlassBadge>
-              {!isGeneral && listing.class_level && (
-                <span className="text-xs text-[#8A8A8A]">{listing.class_level}</span>
-              )}
-            </div>
-            <h1 className="text-2xl font-extrabold text-[#1A1A1A] md:text-3xl">{listing.book_name}</h1>
-            <p className="text-sm text-[#8A8A8A]">{listing.author_publisher}</p>
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+            className="flex flex-col"
+          >
+            {/* Breadcrumb (desktop) */}
+            <motion.nav
+              variants={fadeUp}
+              className="mb-3 hidden items-center gap-1.5 text-xs text-muted-foreground md:flex"
+              aria-label="Breadcrumb"
+            >
+              <Link to="/" className="hover:text-primary">Home</Link>
+              <span>/</span>
+              <Link to="/" className="hover:text-primary">Books</Link>
+              <span>/</span>
+              <span className="truncate text-foreground">{categoryLabel}</span>
+            </motion.nav>
 
-            <div className="flex flex-wrap gap-2">
+            {/* Header block */}
+            <motion.div variants={fadeUp} className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <GlassBadge variant={isGeneral ? 'general' : 'academic'}>
+                  {isGeneral ? 'General' : 'Academic'}
+                </GlassBadge>
+                {!isGeneral && listing.class_level && (
+                  <span className="text-xs text-[#8A8A8A]">{listing.class_level}</span>
+                )}
+              </div>
+              <h1 className="text-2xl font-extrabold tracking-tight text-[#1A1A1A] md:text-[28px]">
+                {listing.book_name}
+              </h1>
+              <p className="text-sm text-[#8A8A8A]">{listing.author_publisher}</p>
+            </motion.div>
+
+            <div className="my-5 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent" />
+
+            {/* Price block */}
+            <motion.div variants={fadeUp} className="flex flex-col gap-1">
+              <p className="text-[34px] font-extrabold leading-none tracking-tight text-[#E8357A]">
+                {formatPrice(listing.display_price)}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Cash on Delivery via Steadfast Courier · charge calculated at checkout
+              </p>
+            </motion.div>
+
+            <div className="my-5 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent" />
+
+            {/* Meta block — badges inline */}
+            <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-2">
               {isGeneral
                 ? listing.genre && <GlassBadge variant="genre">{listing.genre}</GlassBadge>
                 : listing.curriculum && <GlassBadge variant="curriculum">{listing.curriculum}</GlassBadge>}
               <GlassBadge variant={conditionVariant(listing.condition)}>{listing.condition}</GlassBadge>
-            </div>
-
-            {/* Stock availability */}
-            <div>
-              {quantity >= 2 && (
-                <GlassBadge variant="new">🟢 {quantity} copies available</GlassBadge>
-              )}
+              {quantity >= 2 && <GlassBadge variant="new">🟢 {quantity} copies available</GlassBadge>}
               {quantity === 1 && listing.status === 'available' && (
                 <GlassBadge variant="fair">🟡 Last copy</GlassBadge>
               )}
               {(quantity === 0 || listing.status === 'sold') && (
                 <GlassBadge variant="worn">🔴 Unavailable</GlassBadge>
               )}
-            </div>
+            </motion.div>
 
-            <div>
-              <p className="text-2xl font-extrabold text-[#E8357A]">{formatPrice(listing.display_price)}</p>
-              
-            </div>
-
-            {/* Delivery charge */}
-            <div className="glass-panel-sm p-4">
-              <p className="text-sm text-[#8A8A8A]">Delivery charge calculated at checkout</p>
-            </div>
-
-            {/* Seller info */}
+            {/* Seller chip */}
             {seller && (
-              <div className="glass-panel-sm flex items-center gap-2 p-4">
-                <MapPin size={14} className="text-[#8A8A8A]" />
-                <p className="text-sm text-[#3A3A3A]">
-                  Listed by <span className="font-semibold">{sellerFirstName}</span>, {seller.district}
-                </p>
-              </div>
-            )}
-
-            {/* Description */}
-            {listing.description && (
-              <div className="glass-panel-sm p-4">
-                <p className="mb-1 text-xs font-semibold text-[#8A8A8A]">Seller's Note</p>
-                <p className="text-sm text-[#3A3A3A]">{listing.description}</p>
-              </div>
-            )}
-
-            {/* WhatsApp share */}
-            {listing && (
-              <button
-                onClick={() => {
-                  const text = encodeURIComponent(
-                    `Check out this book on Book Loop BD! ${listing.book_name}${isGeneral ? ` — ${listing.genre || ''}` : ` — ${listing.curriculum} ${listing.class_level}`}, ${listing.condition} condition. Price: ৳${listing.display_price.toLocaleString()}. Link: https://bookloopbd.com/listings/${listing.id}`
-                  );
-                  window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener');
-                }}
-                className="flex w-full items-center justify-center gap-2 rounded-[14px] border border-[rgba(37,211,102,0.25)] bg-[rgba(37,211,102,0.08)] px-4 py-3 text-sm font-semibold text-[#25D366] backdrop-blur-sm transition-all hover:bg-[rgba(37,211,102,0.15)] active:scale-[0.98]"
+              <motion.div
+                variants={fadeUp}
+                className="mt-5 flex items-center gap-3 rounded-[16px] border border-white/50 bg-white/50 p-3 backdrop-blur-md"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                Share on WhatsApp
-              </button>
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[rgba(232,53,122,0.12)] text-sm font-bold text-[#E8357A]">
+                  {sellerInitial}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-[#1A1A1A]">{sellerFirstName}</p>
+                  <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <MapPin size={11} />
+                    {seller.district}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Seller's Note */}
+            {listing.description && (
+              <motion.div variants={fadeUp} className="glass-panel-sm relative mt-4 p-4 pl-10">
+                <Quote size={16} className="absolute left-3 top-3 text-[#E8357A]/50" />
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                  Seller's Note
+                </p>
+                <p className="text-sm italic text-[#3A3A3A]">{listing.description}</p>
+              </motion.div>
             )}
 
             {/* Action buttons */}
             {isAvailable ? (
-              <div className="flex flex-col gap-2 pt-2">
-                <GlassButton className="w-full py-3" onClick={handleOrder}>Order Now</GlassButton>
-                <GlassButton
-                  variant="secondary"
-                  className={`w-full py-3 ${wishlisted ? 'bg-[rgba(232,53,122,0.08)]' : ''}`}
-                  onClick={toggleWishlist}
-                  disabled={wishlistLoading}
-                >
-                  <Heart size={16} className={`mr-2 ${wishlisted ? 'fill-[#E8357A] text-[#E8357A]' : ''}`} />
-                  {wishlisted ? 'Saved' : 'Save to Wishlist'}
+              <motion.div variants={fadeUp} className="mt-5 flex flex-col gap-2">
+                <GlassButton className="hidden w-full py-3 md:flex" onClick={handleOrder}>
+                  Order Now
                 </GlassButton>
-              </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <GlassButton
+                    variant="secondary"
+                    className={`w-full py-3 ${wishlisted ? 'bg-[rgba(232,53,122,0.08)]' : ''}`}
+                    onClick={toggleWishlist}
+                    disabled={wishlistLoading}
+                  >
+                    <Heart size={16} className={`mr-2 ${wishlisted ? 'fill-[#E8357A] text-[#E8357A]' : ''}`} />
+                    {wishlisted ? 'Saved' : 'Wishlist'}
+                  </GlassButton>
+                  <button
+                    onClick={() => {
+                      const text = encodeURIComponent(
+                        `Check out this book on Book Loop BD! ${listing.book_name}${isGeneral ? ` — ${listing.genre || ''}` : ` — ${listing.curriculum} ${listing.class_level}`}, ${listing.condition} condition. Price: ৳${listing.display_price.toLocaleString()}. Link: https://bookloopbd.com/listings/${listing.id}`
+                      );
+                      window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener');
+                    }}
+                    className="flex w-full items-center justify-center gap-2 rounded-[14px] border border-[rgba(37,211,102,0.25)] bg-[rgba(37,211,102,0.08)] px-4 py-3 text-sm font-semibold text-[#25D366] backdrop-blur-sm transition-all hover:bg-[rgba(37,211,102,0.15)] active:scale-[0.98]"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    Share
+                  </button>
+                </div>
+              </motion.div>
             ) : isSoldPending ? (
-              <div className="flex flex-col gap-2 pt-2">
+              <motion.div variants={fadeUp} className="mt-5 flex flex-col gap-2">
                 <GlassButton className="w-full py-3" disabled>
                   Currently Unavailable
                 </GlassButton>
-                <p className="text-center text-xs text-[#8A8A8A]">This book has a pending order. Check back later — it may become available again.</p>
-              </div>
+                <p className="text-center text-xs text-[#8A8A8A]">
+                  This book has a pending order. Check back later — it may become available again.
+                </p>
+              </motion.div>
             ) : (
-              <div className="pt-2">
+              <motion.div variants={fadeUp} className="mt-5">
                 <GlassBadge variant="worn" className="w-full justify-center py-3">
                   {isSold ? 'This book has been sold' : 'This listing is not available'}
                 </GlassBadge>
-              </div>
+              </motion.div>
             )}
+          </motion.div>
+        </div>
+      </motion.main>
+
+      {/* Mobile sticky CTA */}
+      {isAvailable && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/40 bg-white/80 px-4 py-3 backdrop-blur-xl md:hidden">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[11px] text-muted-foreground">Price</p>
+              <p className="truncate text-lg font-extrabold text-[#E8357A]">
+                {formatPrice(listing.display_price)}
+              </p>
+            </div>
+            <GlassButton onClick={handleOrder} className="flex-shrink-0 px-6 py-3">
+              Order Now
+            </GlassButton>
           </div>
         </div>
+      )}
 
-      </motion.main>
       <Footer />
     </div>
   );

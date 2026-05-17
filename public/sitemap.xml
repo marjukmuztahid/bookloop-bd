@@ -19,6 +19,12 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
+    <loc>https://bookloopbd.com/faq</loc>
+    <lastmod>2026-05-17</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://bookloopbd.com/contact</loc>
     <lastmod>2026-05-17</lastmod>
     <priority>0.7</priority>

@@ -225,10 +225,10 @@ const Home = () => {
         <section className="mx-auto mb-4 max-w-7xl px-4">
           <div className="flex justify-center gap-2">
             <TypeTab active={bookType === 'academic'} onClick={() => switchTab('academic')}>
-              📚 Academic Books
+              Academic Books
             </TypeTab>
             <TypeTab active={bookType === 'general'} onClick={() => switchTab('general')}>
-              📖 General Books
+              General Books
             </TypeTab>
           </div>
         </section>

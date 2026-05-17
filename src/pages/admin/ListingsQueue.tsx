@@ -96,7 +96,7 @@ const ListingsQueue = () => {
         {(['all', 'academic', 'general'] as const).map((t) => (
           <button key={t} onClick={() => setTypeFilter(t)}
             className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${typeFilter === t ? 'bg-[rgba(139,92,246,0.12)] text-[#6D28D9]' : 'bg-[rgba(0,0,0,0.04)] text-[#8A8A8A]'}`}>
-            {t === 'all' ? 'All Types' : t === 'academic' ? '📚 Academic' : '📖 General'}
+            {t === 'all' ? 'All Types' : t === 'academic' ? 'Academic' : 'General'}
           </button>
         ))}
       </div>

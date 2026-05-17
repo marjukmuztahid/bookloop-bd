@@ -270,6 +270,31 @@ const About = () => {
           </p>
         </section>
 
+        {/* FAQ */}
+        <section className="mb-6">
+          <h2 className="mb-4 text-lg font-semibold text-heading">
+            Frequently Asked Questions
+          </h2>
+          <div className="glass-panel p-2 sm:p-4">
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.map(({ q, a }, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`faq-${i}`}
+                  className="border-b border-white/40 last:border-b-0"
+                >
+                  <AccordionTrigger className="px-2 text-left text-sm font-semibold text-heading hover:no-underline sm:px-3">
+                    {q}
+                  </AccordionTrigger>
+                  <AccordionContent className="px-2 text-sm leading-relaxed text-muted-foreground sm:px-3">
+                    {a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
+
         {/* CTA */}
         <section className="glass-panel flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
           <div>

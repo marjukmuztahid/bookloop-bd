@@ -10,7 +10,6 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { SkeletonGrid } from '@/components/ui/SkeletonBookCard';
 import HowItWorksModal from '@/components/HowItWorksModal';
-import BookBackdrop from '@/components/ui/BookBackdrop';
 import useSEO from '@/hooks/useSEO';
 import { supabase } from '@/integrations/supabase/client';
 import { BANGLADESH_DISTRICTS } from '@/data/districts';
@@ -214,8 +213,7 @@ const Home = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="relative pt-16">
-        <BookBackdrop />
+      <main className="pt-16">
         {/* Hero */}
         <motion.section
           {...pageTransition}

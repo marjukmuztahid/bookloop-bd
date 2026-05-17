@@ -73,6 +73,16 @@ Deno.serve(async () => {
     }
   }
 
+  for (const post of BLOG_POSTS) {
+    xml += `
+  <url>
+    <loc>${BASE_URL}/blog/${post.slug}</loc>
+    <lastmod>${post.lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+  }
+
   xml += `
 </urlset>`;
 

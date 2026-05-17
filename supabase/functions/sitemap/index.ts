@@ -1,12 +1,14 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const BASE_URL = "https://bookloopbd.com";
+const BASE_URL = "https://bookloop-bd.lovable.app";
 
 const STATIC_PAGES = [
   { loc: "/", priority: "1.0", changefreq: "daily" },
-  { loc: "/how-it-works", priority: "0.7", changefreq: "monthly" },
-  { loc: "/about", priority: "0.6", changefreq: "monthly" },
-  { loc: "/contact", priority: "0.5", changefreq: "monthly" },
+  { loc: "/how-it-works", priority: "0.8", changefreq: "monthly" },
+  { loc: "/about", priority: "0.7", changefreq: "monthly" },
+  { loc: "/contact", priority: "0.7", changefreq: "monthly" },
+  { loc: "/signup", priority: "0.6", changefreq: "monthly" },
+  { loc: "/login", priority: "0.5", changefreq: "monthly" },
   { loc: "/privacy-policy", priority: "0.3", changefreq: "yearly" },
   { loc: "/terms", priority: "0.3", changefreq: "yearly" },
 ];

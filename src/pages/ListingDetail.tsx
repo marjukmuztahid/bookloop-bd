@@ -137,13 +137,25 @@ const ListingDetail = () => {
       }
     : undefined;
 
+  const breadcrumbJsonLd = listing
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://bookloop-bd.lovable.app/' },
+          { '@type': 'ListItem', position: 2, name: 'Listings', item: 'https://bookloop-bd.lovable.app/' },
+          { '@type': 'ListItem', position: 3, name: listing.book_name, item: `https://bookloop-bd.lovable.app/listings/${listing.id}` },
+        ],
+      }
+    : undefined;
+
   useSEO({
     title: seoTitle,
     description: seoDesc,
     ogImage: seoImage,
     ogType: 'product',
     canonicalPath: id ? `/listings/${id}` : undefined,
-    jsonLd: productJsonLd,
+    jsonLd: productJsonLd && breadcrumbJsonLd ? [productJsonLd, breadcrumbJsonLd] : productJsonLd,
   });
 
   if (loading) return <SkeletonDetail />;

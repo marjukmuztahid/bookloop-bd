@@ -23,6 +23,7 @@ const Footer = () => {
               <FooterLink to="/listings" label="Browse Books" />
               <FooterLink to="/sell" label="Sell a Book" />
               <FooterLink to="/faq" label="FAQ" />
+              <FooterLink to="/blog" label="Blog" />
               <FooterLink to="/contact" label="Contact / Report an Issue" />
             </div>
 

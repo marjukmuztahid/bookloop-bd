@@ -61,7 +61,7 @@ const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
   useSEO({
-    title: 'Old Books BD — Buy & Sell Old Books in Bangladesh | Book Loop BD',
+    title: 'Buy & Sell Old Books Bangladesh | Book Loop BD',
     description: 'Buy and sell old books in Bangladesh at the lowest price. Old school, college, HSC, SSC and general books with cash on delivery across all 64 districts.',
     canonicalPath: '/',
     jsonLd: [

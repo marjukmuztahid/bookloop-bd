@@ -19,6 +19,8 @@ interface OrderRecord {
   updated_at: string;
   listing: {
     book_name: string;
+    book_type?: string;
+    genre?: string | null;
     seller_price: number;
     display_price: number;
     seller: {
@@ -50,7 +52,7 @@ const OrderHistory = () => {
         .select(`
           id, status, delivery_address, delivery_phone, delivery_charge, total_amount, updated_at,
           listing:listings!orders_listing_id_fkey (
-            book_name, seller_price, display_price,
+            book_name, seller_price, display_price, book_type, genre,
             seller:users!listings_seller_id_fkey ( full_name, phone, district )
           ),
           buyer:users!orders_buyer_id_fkey ( full_name, phone, district )
@@ -98,7 +100,12 @@ const OrderHistory = () => {
         {/* Book info + badge */}
         <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
           <div>
-            <p className="text-sm font-semibold text-[#1A1A1A]">{order.listing?.book_name ?? 'Unknown Book'}</p>
+            <p className="text-sm font-semibold text-[#1A1A1A]">
+              <GlassBadge variant={order.listing?.book_type === 'general' ? 'general' : 'academic'} className="mr-1.5 text-[10px]">
+                {order.listing?.book_type === 'general' ? 'General' : 'Academic'}
+              </GlassBadge>
+              {order.listing?.book_name ?? 'Unknown Book'}
+            </p>
             <p className="mt-0.5 text-xs text-[#8A8A8A]">
               Listed ৳{order.listing?.seller_price ?? '–'} · Buyer ৳{order.listing?.display_price ?? '–'} · Fee ৳{fee}
             </p>

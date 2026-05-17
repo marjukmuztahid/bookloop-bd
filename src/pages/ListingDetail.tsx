@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Heart, Loader2, Share2 } from 'lucide-react';
-import { pageTransition, fadeUp } from '@/lib/animations';
+import { MapPin, Heart, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import { pageTransition, fadeUp, staggerContainer } from '@/lib/animations';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassBadge, type BadgeVariant } from '@/components/ui/GlassBadge';
 import { useAppToast } from '@/components/ui/GlassToast';

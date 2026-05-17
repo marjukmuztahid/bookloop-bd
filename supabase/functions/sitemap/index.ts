@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const BASE_URL = "https://bookloop-bd.lovable.app";
+const BASE_URL = "https://bookloopbd.com";
 
 const STATIC_PAGES = [
   { loc: "/", priority: "1.0", changefreq: "daily" },

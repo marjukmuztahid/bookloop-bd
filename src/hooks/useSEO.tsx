@@ -10,7 +10,7 @@ interface SEOProps {
   jsonLd?: Record<string, any> | Record<string, any>[];
 }
 
-const BASE_URL = 'https://bookloop-bd.lovable.app';
+const BASE_URL = 'https://bookloopbd.com';
 const DEFAULT_OG_IMAGE = `${BASE_URL}/favicon.png?v=6`;
 
 const setMetaTag = (property: string, content: string, isOg = false) => {

@@ -132,7 +132,7 @@ const ListingDetail = () => {
             listing.status === 'available'
               ? 'https://schema.org/InStock'
               : 'https://schema.org/OutOfStock',
-          url: `https://bookloop-bd.lovable.app/listings/${listing.id}`,
+          url: `https://bookloopbd.com/listings/${listing.id}`,
         },
       }
     : undefined;
@@ -142,9 +142,9 @@ const ListingDetail = () => {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://bookloop-bd.lovable.app/' },
-          { '@type': 'ListItem', position: 2, name: 'Listings', item: 'https://bookloop-bd.lovable.app/' },
-          { '@type': 'ListItem', position: 3, name: listing.book_name, item: `https://bookloop-bd.lovable.app/listings/${listing.id}` },
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://bookloopbd.com/' },
+          { '@type': 'ListItem', position: 2, name: 'Listings', item: 'https://bookloopbd.com/' },
+          { '@type': 'ListItem', position: 3, name: listing.book_name, item: `https://bookloopbd.com/listings/${listing.id}` },
         ],
       }
     : undefined;

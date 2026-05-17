@@ -211,7 +211,7 @@ const Home = () => {
             <TypingText text="Give Your Books a Second Life" />
           </h1>
           <p className="mx-auto mb-8 max-w-lg text-base text-[#8A8A8A] md:text-lg">
-            Buy and sell school &amp; college books across Bangladesh. Safe, simple, student-friendly.
+            Buy and sell old books across Bangladesh. Safe, simple, student-friendly.
           </p>
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
             <button

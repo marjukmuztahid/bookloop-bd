@@ -223,13 +223,15 @@ const Home = () => {
 
         {/* Book Type Tabs */}
         <section className="mx-auto mb-4 max-w-7xl px-4">
-          <div className="flex justify-center gap-2">
-            <TypeTab active={bookType === 'academic'} onClick={() => switchTab('academic')}>
-              Academic Books
-            </TypeTab>
-            <TypeTab active={bookType === 'general'} onClick={() => switchTab('general')}>
-              General Books
-            </TypeTab>
+          <div className="flex justify-center">
+            <div className="inline-flex items-center gap-1 rounded-full border border-white/60 bg-white/40 p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.04)] backdrop-blur-2xl">
+              <TypeTab active={bookType === 'academic'} onClick={() => switchTab('academic')}>
+                Academic Books
+              </TypeTab>
+              <TypeTab active={bookType === 'general'} onClick={() => switchTab('general')}>
+                General Books
+              </TypeTab>
+            </div>
           </div>
         </section>
 
@@ -384,13 +386,18 @@ const Home = () => {
 const TypeTab = ({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) => (
   <button
     onClick={onClick}
-    className={`rounded-full border px-5 py-2 text-sm font-semibold backdrop-blur-[8px] transition-all ${
-      active
-        ? 'border-[rgba(232,53,122,0.40)] bg-[#E8357A] text-white shadow-[0_4px_14px_rgba(232,53,122,0.30)]'
-        : 'border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#3A3A3A] hover:border-[rgba(232,53,122,0.25)] hover:text-[#E8357A]'
-    }`}
+    className="relative flex items-center justify-center rounded-full px-6 py-2 transition-all duration-300 sm:px-8 sm:py-2.5"
   >
-    {children}
+    {active && (
+      <span className="absolute inset-0 rounded-full bg-white/90 shadow-[0_2px_12px_rgba(0,0,0,0.08)]" />
+    )}
+    <span
+      className={`relative text-sm tracking-tight transition-colors duration-300 ${
+        active ? 'font-semibold text-[#E8357A]' : 'font-medium text-[#8A8A8A] hover:text-[#3A3A3A]'
+      }`}
+    >
+      {children}
+    </span>
   </button>
 );
 

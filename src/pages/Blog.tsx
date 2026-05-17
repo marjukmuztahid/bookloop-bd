@@ -28,7 +28,7 @@ const Blog = () => {
   );
 
   useSEO({
-    title: 'Book Loop BD Blog — Buying & Selling Old Books in Bangladesh',
+    title: 'Old Books Blog — Buying & Selling Guides | Book Loop BD',
     description:
       'Guides, comparisons and tips for buying and selling old books in Bangladesh — NCTB, SSC, HSC, O-Level, A-Level. Save 50–70% with Cash on Delivery nationwide.',
     canonicalPath: '/blog',

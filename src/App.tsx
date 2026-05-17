@@ -67,6 +67,7 @@ const App = () => (
                   <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/about" element={<About />} />
+                  <Route path="/faq" element={<FAQ />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
 
                   {/* User protected */}

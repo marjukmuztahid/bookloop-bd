@@ -216,11 +216,9 @@ const Home = () => {
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
             <button
               onClick={scrollToGrid}
-              className="group relative flex items-center justify-center overflow-hidden rounded-[20px] border border-white/40 bg-[rgba(232,53,122,0.45)] px-8 py-3.5 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(232,53,122,0.35),inset_0_1px_0_rgba(255,255,255,0.4)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] hover:bg-[rgba(232,53,122,0.55)] hover:shadow-[0_12px_32px_-8px_rgba(232,53,122,0.45),inset_0_1px_0_rgba(255,255,255,0.5)] active:scale-95"
+              className="inline-flex items-center justify-center rounded-xl border border-[rgba(232,53,122,0.30)] bg-[rgba(232,53,122,0.12)] px-8 py-3 text-[15px] font-semibold text-[#E8357A] backdrop-blur-[12px] transition-colors hover:bg-[rgba(232,53,122,0.20)] active:scale-95"
             >
-              <span className="relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)]">Browse Books</span>
-              <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/30 to-transparent" />
-              <span className="pointer-events-none absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              Browse Books
             </button>
             <button
               onClick={() => navigate('/sell')}

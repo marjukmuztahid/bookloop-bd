@@ -59,6 +59,26 @@ const Contact = () => {
           <div className="h-px bg-[rgba(0,0,0,0.06)]" />
 
           <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[rgba(37,99,235,0.10)]">
+              <Phone size={20} className="text-[#2563EB]" />
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold text-[#1A1A1A]">Contact Number</h2>
+              <p className="mt-1 text-sm text-[#8A8A8A]">
+                Reach us by phone for general inquiries:
+              </p>
+              <a
+                href="tel:+8809647241356"
+                className="mt-2 inline-block text-sm font-medium text-[#2563EB] transition-colors hover:text-[#1e40af]"
+              >
+                +8809647-241356
+              </a>
+            </div>
+          </div>
+
+          <div className="h-px bg-[rgba(0,0,0,0.06)]" />
+
+          <div className="flex items-start gap-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[rgba(232,53,122,0.10)]">
               <MessageSquare size={20} className="text-[#E8357A]" />
             </div>

@@ -56,6 +56,49 @@ const FAQ_QA = [
   },
 ];
 
+const ARTICLES = [
+  {
+    icon: '📚',
+    title: 'Buy & Sell Old Books in Bangladesh — The Complete Guide',
+    body: [
+      "Book Loop BD is Bangladesh's dedicated marketplace to buy old books and sell old books online. Whether you're hunting for old school textbooks, old college books, HSC or SSC guides, or general reading at the lowest old book price in Bangladesh, you can browse verified listings from students across all 64 districts.",
+      "Sellers list used books in minutes and reach buyers nationwide. Buyers get old books price well below retail, with safe cash on delivery via Steadfast Courier — from Dhaka and Chattogram to Sylhet, Rajshahi and Khulna. Buying old books in Bangladesh has never been simpler.",
+    ],
+  },
+  {
+    icon: '💸',
+    title: 'How to Get the Best Old Book Price in Bangladesh',
+    body: [
+      "Old book prices in Bangladesh depend on condition, demand, and edition. A 'Good' condition NCTB textbook for Class 9 or Class 10 typically sells for 40–60% of the new price, while HSC and SSC guides hold value longer because of repeat demand.",
+      "On Book Loop BD you set your own asking price. Buyers see a transparent display price that includes our flat 10% platform fee — no hidden charges, no haggling. Use the price filters on the home page to quickly find the cheapest used books for your class.",
+    ],
+  },
+  {
+    icon: '🎓',
+    title: 'Why Students Choose Second-Hand Books Over New Ones',
+    body: [
+      "A full set of new textbooks for SSC or HSC can cost thousands of taka every year. Second-hand books cut that bill in half — sometimes more — without sacrificing the content you need to study.",
+      "Selling your old books after exams also recovers money you'd otherwise lose. Thousands of students across Bangladesh are already using Book Loop BD to buy old books cheap and sell old books fast, instead of letting them gather dust at home.",
+    ],
+  },
+  {
+    icon: '🛡️',
+    title: 'Is It Safe to Buy Old Books Online in Bangladesh?',
+    body: [
+      "Yes — when the marketplace is properly moderated. Every listing on Book Loop BD is reviewed by an admin before going live, and every order is reviewed again before the courier is dispatched. You never pay in advance.",
+      "Steadfast Courier handles pickup and delivery nationwide. You inspect the book at your door and pay cash on delivery only if you're happy with it. No prepayment, no online wallets required, no stranger-meetups.",
+    ],
+  },
+  {
+    icon: '📦',
+    title: 'Old Books Delivery: How Cash on Delivery Works',
+    body: [
+      "Once your order is approved, Steadfast picks up the book from the seller's district and ships it to your address. Delivery typically takes 2–5 working days depending on location. A weight-based shipping rate is added to the cash-on-delivery amount shown at checkout.",
+      "You pay the rider in cash when the book arrives. If you reject the parcel at the door, you owe nothing. Refunds after a successful delivery are not offered — so always inspect before accepting.",
+    ],
+  },
+];
+
 const HowItWorks = () => {
   const [tab, setTab] = useState<'buying' | 'selling'>('buying');
   const steps = tab === 'buying' ? BUYING_STEPS : SELLING_STEPS;
@@ -126,6 +169,43 @@ const HowItWorks = () => {
                 <h3 className="mb-1 text-sm font-bold text-[#1A1A1A]">{item.title}</h3>
                 <p className="text-xs text-[#8A8A8A]">{item.desc}</p>
               </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Articles / SEO content */}
+        <section aria-labelledby="articles-heading" className="mx-auto max-w-3xl px-4 pb-16">
+          <div className="mb-8 text-center">
+            <h2 id="articles-heading" className="mb-2 text-xl font-bold text-[#1A1A1A] md:text-2xl">
+              Guides for Buying & Selling Old Books in Bangladesh
+            </h2>
+            <p className="text-sm text-[#8A8A8A]">
+              Short reads to help you get the best old book price and shop safely.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            {ARTICLES.map((article, i) => (
+              <motion.article
+                key={i}
+                variants={fadeUp}
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: true, margin: '-50px' }}
+                className="glass-panel-sm p-5 md:p-6"
+              >
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[rgba(232,53,122,0.10)] text-lg">
+                    {article.icon}
+                  </span>
+                  <h3 className="text-base font-bold text-[#1A1A1A] md:text-lg">{article.title}</h3>
+                </div>
+                <div className="space-y-3 pl-12 text-sm leading-relaxed text-[#3A3A3A]">
+                  {article.body.map((p, j) => (
+                    <p key={j}>{p}</p>
+                  ))}
+                </div>
+              </motion.article>
             ))}
           </div>
         </section>

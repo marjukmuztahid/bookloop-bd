@@ -214,10 +214,17 @@ const MyListings = () => {
           <img src={l.photos?.[0] || '/placeholder.svg'} alt={l.book_name}
             className="h-[72px] w-[72px] flex-shrink-0 rounded-[10px] object-cover" />
           <div className="min-w-0 flex-1">
+            <div className="mb-0.5 flex items-center gap-1.5">
+              <GlassBadge variant={l.book_type === 'general' ? 'general' : 'academic'} className="text-[10px]">
+                {l.book_type === 'general' ? 'General' : 'Academic'}
+              </GlassBadge>
+            </div>
             <h4 className="truncate text-sm font-bold text-[#1A1A1A]">{l.book_name}</h4>
             <p className="text-xs text-[#8A8A8A]">{l.author_publisher}</p>
             <div className="mt-1 flex flex-wrap items-center gap-1.5">
-              <GlassBadge variant="curriculum" className="text-[10px]">{l.curriculum}</GlassBadge>
+              {l.book_type === 'general'
+                ? l.genre && <GlassBadge variant="genre" className="text-[10px]">{l.genre}</GlassBadge>
+                : l.curriculum && <GlassBadge variant="curriculum" className="text-[10px]">{l.curriculum}</GlassBadge>}
               <span className="text-sm font-bold text-[#E8357A]">{formatPrice(l.display_price)}</span>
               {l.status === 'available' && <span className="text-[10px] text-[#8A8A8A]">Qty: {l.quantity ?? 1}</span>}
             </div>

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
-import { pageTransition, staggerContainer, fadeUp } from '@/lib/animations';
+import { pageTransition, staggerContainer } from '@/lib/animations';
 import { GlassButton } from '@/components/ui/GlassButton';
 import BookCard from '@/components/ui/BookCard';
 import type { BookCardData } from '@/components/ui/BookCard';
@@ -13,6 +13,8 @@ import HowItWorksModal from '@/components/HowItWorksModal';
 import useSEO from '@/hooks/useSEO';
 import { supabase } from '@/integrations/supabase/client';
 import { BANGLADESH_DISTRICTS } from '@/data/districts';
+import { GENRES } from '@/data/genres';
+import type { BookType } from '@/types';
 
 const DISTRICTS = ['All', ...BANGLADESH_DISTRICTS];
 const CURRICULA_MAP: Record<string, string> = { 'All': 'All', 'Bangla Version': 'bangla_version', 'English Version': 'english_version', 'English Medium': 'english_medium' };
@@ -20,7 +22,7 @@ const CURRICULA = Object.keys(CURRICULA_MAP);
 const CONDITIONS_MAP: Record<string, string> = { 'All': 'All', 'New': 'new', 'Good': 'good', 'Fair': 'fair', 'Worn': 'worn' };
 const CONDITIONS = Object.keys(CONDITIONS_MAP);
 const CLASSES = ['All', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
-const BROWSE_CLASSES = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
+const GENRE_OPTIONS = ['All', ...GENRES];
 const SORT_OPTIONS = ['Default', 'Price: Low to High', 'Price: High to Low'];
 const PAGE_SIZE = 12;
 
@@ -62,14 +64,21 @@ const Home = () => {
     title: 'Book Loop BD — Buy & Sell Second Hand School Books in Bangladesh',
     description: "Bangladesh's student book marketplace. Buy and sell second-hand school and college books at affordable prices. Fast delivery across Bangladesh via Steadfast Courier.",
   });
+
+  const [bookType, setBookType] = useState<BookType>(() => {
+    if (typeof window === 'undefined') return 'academic';
+    const saved = localStorage.getItem('bookTypeTab');
+    return saved === 'general' ? 'general' : 'academic';
+  });
+
   const [searchQuery, setSearchQuery] = useState('');
   const [curriculum, setCurriculum] = useState('All');
   const [classLevel, setClassLevel] = useState('All');
+  const [genre, setGenre] = useState('All');
   const [condition, setCondition] = useState('All');
   const [district, setDistrict] = useState('All');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-  const [activeClassPill, setActiveClassPill] = useState('');
   const [sortBy, setSortBy] = useState('Default');
   const [isLoading, setIsLoading] = useState(true);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
@@ -87,6 +96,22 @@ const Home = () => {
     }
   }, [location.state]);
 
+  const switchTab = (t: BookType) => {
+    if (t === bookType) return;
+    setBookType(t);
+    localStorage.setItem('bookTypeTab', t);
+    // Reset filters on tab switch for clarity
+    setCurriculum('All');
+    setClassLevel('All');
+    setGenre('All');
+    setCondition('All');
+    setDistrict('All');
+    setMinPrice('');
+    setMaxPrice('');
+    setSortBy('Default');
+    setPage(1);
+  };
+
   const fetchListings = useCallback(async () => {
     setIsLoading(true);
     const userJoin = district !== 'All'
@@ -94,8 +119,9 @@ const Home = () => {
       : 'users!listings_seller_id_fkey(district)';
     let q = supabase
       .from('listings')
-      .select(`id, book_name, author_publisher, curriculum, class_level, condition, display_price, photos, status, ${userJoin}`, { count: 'exact' })
-      .in('status', ['available', 'sold_pending_delivery']);
+      .select(`id, book_name, author_publisher, curriculum, class_level, condition, display_price, photos, status, book_type, genre, ${userJoin}`, { count: 'exact' })
+      .in('status', ['available', 'sold_pending_delivery'])
+      .eq('book_type', bookType);
 
     if (sortBy === 'Price: Low to High') {
       q = q.order('display_price', { ascending: true });
@@ -105,8 +131,12 @@ const Home = () => {
       q = q.order('created_at', { ascending: false });
     }
 
-    if (curriculum !== 'All') q = q.eq('curriculum', CURRICULA_MAP[curriculum]);
-    if (classLevel !== 'All') q = q.eq('class_level', classLevel);
+    if (bookType === 'academic') {
+      if (curriculum !== 'All') q = q.eq('curriculum', CURRICULA_MAP[curriculum]);
+      if (classLevel !== 'All') q = q.eq('class_level', classLevel);
+    } else {
+      if (genre !== 'All') q = q.eq('genre', genre);
+    }
     if (condition !== 'All') q = q.eq('condition', CONDITIONS_MAP[condition]);
     if (district !== 'All') q = (q as any).eq('users.district', district);
     if (minPrice) q = q.gte('display_price', Number(minPrice));
@@ -131,20 +161,25 @@ const Home = () => {
       photos: l.photos || [],
       seller_district: l.users?.district || 'Unknown',
       status: l.status,
+      book_type: l.book_type,
+      genre: l.genre,
     }));
     setBooks(mapped);
     setTotalCount(count || 0);
     setIsLoading(false);
-  }, [curriculum, classLevel, condition, district, minPrice, maxPrice, page, searchQuery, sortBy]);
+  }, [bookType, curriculum, classLevel, genre, condition, district, minPrice, maxPrice, page, searchQuery, sortBy]);
 
   useEffect(() => { fetchListings(); }, [fetchListings]);
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-  const hasActiveFilter = curriculum !== 'All' || classLevel !== 'All' || condition !== 'All' || district !== 'All' || minPrice || maxPrice || sortBy !== 'Default';
+  const hasActiveFilter =
+    (bookType === 'academic' ? (curriculum !== 'All' || classLevel !== 'All') : genre !== 'All') ||
+    condition !== 'All' || district !== 'All' || minPrice || maxPrice || sortBy !== 'Default';
 
   const clearFilters = () => {
     setCurriculum('All');
     setClassLevel('All');
+    setGenre('All');
     setCondition('All');
     setDistrict('All');
     setMinPrice('');
@@ -186,134 +221,157 @@ const Home = () => {
           </div>
         </motion.section>
 
-        {/* Search & Filter Bar */}
-        <motion.section
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.15 }}
-          className="mx-auto max-w-7xl px-4"
-        >
-          <div className="glass-panel p-4 md:p-6">
-            {/* Search row */}
-            <form onSubmit={handleSearch} className="mb-4 flex gap-3">
-              <div className="relative flex-1">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A8A8A]" size={18} />
-                <input
-                  type="text"
-                  placeholder="Search by book name, author..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] py-3 pl-11 pr-4 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]"
-                />
-              </div>
-              <GlassButton type="submit">Search</GlassButton>
-            </form>
-
-            {/* Filter row */}
-            <div className="flex items-center gap-3 overflow-x-auto pb-1">
-              <GlassSelect label="Curriculum" value={curriculum} onChange={setCurriculum} options={CURRICULA} active={curriculum !== 'All'} />
-              <GlassSelect label="Class" value={classLevel} onChange={setClassLevel} options={CLASSES} active={classLevel !== 'All'} />
-              <GlassSelect label="Condition" value={condition} onChange={setCondition} options={CONDITIONS} active={condition !== 'All'} />
-              <GlassSelect label="District" value={district} onChange={setDistrict} options={DISTRICTS} active={district !== 'All'} />
-
-              {/* Sort dropdown */}
-              <div className="relative flex-shrink-0">
-                <select
-                  value={sortBy}
-                  onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
-                  aria-label="Sort by"
-                  className={`cursor-pointer appearance-none rounded-[10px] border bg-[rgba(0,0,0,0.04)] py-2 pl-8 pr-3 text-xs font-medium text-[#3A3A3A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] ${
-                    sortBy !== 'Default' ? 'border-[rgba(232,53,122,0.30)] text-[#E8357A]' : 'border-[rgba(0,0,0,0.08)]'
-                  }`}
-                >
-                  {SORT_OPTIONS.map((opt) => (
-                    <option key={opt} value={opt}>{opt === 'Default' ? 'Sort: Default' : opt}</option>
-                  ))}
-                </select>
-                <ArrowUpDown size={13} className={`pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 ${sortBy !== 'Default' ? 'text-[#E8357A]' : 'text-[#8A8A8A]'}`} />
-              </div>
-
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  placeholder="Min ৳"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                  className="w-20 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-2.5 py-2 text-xs text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)]"
-                />
-                <input
-                  type="number"
-                  placeholder="Max ৳"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-20 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-2.5 py-2 text-xs text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)]"
-                />
-              </div>
-
-              {hasActiveFilter && (
-                <button onClick={clearFilters} className="whitespace-nowrap text-xs font-semibold text-[#E8357A] transition-opacity hover:opacity-70">
-                  Clear Filters
-                </button>
-              )}
-            </div>
+        {/* Book Type Tabs */}
+        <section className="mx-auto mb-4 max-w-7xl px-4">
+          <div className="flex justify-center gap-2">
+            <TypeTab active={bookType === 'academic'} onClick={() => switchTab('academic')}>
+              📚 Academic Books
+            </TypeTab>
+            <TypeTab active={bookType === 'general'} onClick={() => switchTab('general')}>
+              📖 General Books
+            </TypeTab>
           </div>
-        </motion.section>
-
-        {/* Book Grid */}
-        <section id="book-grid" className="mx-auto max-w-7xl px-4 py-10">
-          <h2 className="mb-6 text-xl font-bold text-[#1A1A1A]">Available Books</h2>
-          {isLoading ? (
-            <SkeletonGrid count={8} />
-          ) : books.length === 0 ? (
-            <p className="py-10 text-center text-sm text-[#8A8A8A]">No books found. Check back soon!</p>
-          ) : (
-            <motion.div
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-              className="grid grid-cols-2 gap-4 md:grid-cols-4"
-            >
-              {books.map((book) => (
-                <BookCard key={book.id} book={book} />
-              ))}
-            </motion.div>
-          )}
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A] disabled:opacity-40"
-              >
-                <ChevronLeft size={16} />
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).slice(0, 5).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setPage(p)}
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl border text-sm font-semibold transition-colors ${
-                    p === page
-                      ? 'border-[rgba(232,53,122,0.30)] bg-[rgba(232,53,122,0.12)] text-[#E8357A]'
-                      : 'border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#3A3A3A] hover:text-[#E8357A]'
-                  }`}
-                >
-                  {p}
-                </button>
-              ))}
-              <button
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A] disabled:opacity-40"
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          )}
         </section>
 
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={bookType}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+          >
+            {/* Search & Filter Bar */}
+            <section className="mx-auto max-w-7xl px-4">
+              <div className="glass-panel p-4 md:p-6">
+                {/* Search row */}
+                <form onSubmit={handleSearch} className="mb-4 flex gap-3">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A8A8A]" size={18} />
+                    <input
+                      type="text"
+                      placeholder="Search by book name, author..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] py-3 pl-11 pr-4 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]"
+                    />
+                  </div>
+                  <GlassButton type="submit">Search</GlassButton>
+                </form>
 
+                {/* Filter row */}
+                <div className="flex items-center gap-3 overflow-x-auto pb-1">
+                  {bookType === 'academic' ? (
+                    <>
+                      <GlassSelect label="Curriculum" value={curriculum} onChange={setCurriculum} options={CURRICULA} active={curriculum !== 'All'} />
+                      <GlassSelect label="Class" value={classLevel} onChange={setClassLevel} options={CLASSES} active={classLevel !== 'All'} />
+                    </>
+                  ) : (
+                    <GlassSelect label="Genre" value={genre} onChange={setGenre} options={GENRE_OPTIONS} active={genre !== 'All'} />
+                  )}
+                  <GlassSelect label="Condition" value={condition} onChange={setCondition} options={CONDITIONS} active={condition !== 'All'} />
+                  <GlassSelect label="District" value={district} onChange={setDistrict} options={DISTRICTS} active={district !== 'All'} />
+
+                  {/* Sort dropdown */}
+                  <div className="relative flex-shrink-0">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
+                      aria-label="Sort by"
+                      className={`cursor-pointer appearance-none rounded-[10px] border bg-[rgba(0,0,0,0.04)] py-2 pl-8 pr-3 text-xs font-medium text-[#3A3A3A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] ${
+                        sortBy !== 'Default' ? 'border-[rgba(232,53,122,0.30)] text-[#E8357A]' : 'border-[rgba(0,0,0,0.08)]'
+                      }`}
+                    >
+                      {SORT_OPTIONS.map((opt) => (
+                        <option key={opt} value={opt}>{opt === 'Default' ? 'Sort: Default' : opt}</option>
+                      ))}
+                    </select>
+                    <ArrowUpDown size={13} className={`pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 ${sortBy !== 'Default' ? 'text-[#E8357A]' : 'text-[#8A8A8A]'}`} />
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      placeholder="Min ৳"
+                      value={minPrice}
+                      onChange={(e) => setMinPrice(e.target.value)}
+                      className="w-20 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-2.5 py-2 text-xs text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)]"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Max ৳"
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(e.target.value)}
+                      className="w-20 rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-2.5 py-2 text-xs text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)]"
+                    />
+                  </div>
+
+                  {hasActiveFilter && (
+                    <button onClick={clearFilters} className="whitespace-nowrap text-xs font-semibold text-[#E8357A] transition-opacity hover:opacity-70">
+                      Clear Filters
+                    </button>
+                  )}
+                </div>
+              </div>
+            </section>
+
+            {/* Book Grid */}
+            <section id="book-grid" className="mx-auto max-w-7xl px-4 py-10">
+              <h2 className="mb-6 text-xl font-bold text-[#1A1A1A]">
+                {bookType === 'academic' ? 'Available Academic Books' : 'Available General Books'}
+              </h2>
+              {isLoading ? (
+                <SkeletonGrid count={8} />
+              ) : books.length === 0 ? (
+                <p className="py-10 text-center text-sm text-[#8A8A8A]">No books found. Check back soon!</p>
+              ) : (
+                <motion.div
+                  variants={staggerContainer}
+                  initial="initial"
+                  animate="animate"
+                  className="grid grid-cols-2 gap-4 md:grid-cols-4"
+                >
+                  {books.map((book) => (
+                    <BookCard key={book.id} book={book} />
+                  ))}
+                </motion.div>
+              )}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-8 flex items-center justify-center gap-2">
+                  <button
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A] disabled:opacity-40"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).slice(0, 5).map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`flex h-9 w-9 items-center justify-center rounded-xl border text-sm font-semibold transition-colors ${
+                        p === page
+                          ? 'border-[rgba(232,53,122,0.30)] bg-[rgba(232,53,122,0.12)] text-[#E8357A]'
+                          : 'border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#3A3A3A] hover:text-[#E8357A]'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                  <button
+                    disabled={page >= totalPages}
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#8A8A8A] transition-colors hover:text-[#E8357A] disabled:opacity-40"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              )}
+            </section>
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <Footer />
@@ -322,6 +380,19 @@ const Home = () => {
     </div>
   );
 };
+
+const TypeTab = ({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) => (
+  <button
+    onClick={onClick}
+    className={`rounded-full border px-5 py-2 text-sm font-semibold backdrop-blur-[8px] transition-all ${
+      active
+        ? 'border-[rgba(232,53,122,0.40)] bg-[#E8357A] text-white shadow-[0_4px_14px_rgba(232,53,122,0.30)]'
+        : 'border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.60)] text-[#3A3A3A] hover:border-[rgba(232,53,122,0.25)] hover:text-[#E8357A]'
+    }`}
+  >
+    {children}
+  </button>
+);
 
 /* Reusable glass select */
 const GlassSelect = ({

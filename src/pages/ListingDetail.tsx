@@ -116,7 +116,35 @@ const ListingDetail = () => {
     : 'View book listing on Book Loop BD.';
   const seoImage = listing?.photos?.[0] || undefined;
 
-  useSEO({ title: seoTitle, description: seoDesc, ogImage: seoImage });
+  const productJsonLd = listing
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: listing.book_name,
+        description: seoDesc,
+        image: listing.photos || undefined,
+        brand: listing.author_publisher ? { '@type': 'Brand', name: listing.author_publisher } : undefined,
+        offers: {
+          '@type': 'Offer',
+          priceCurrency: 'BDT',
+          price: listing.display_price,
+          availability:
+            listing.status === 'available'
+              ? 'https://schema.org/InStock'
+              : 'https://schema.org/OutOfStock',
+          url: `https://bookloop-bd.lovable.app/listings/${listing.id}`,
+        },
+      }
+    : undefined;
+
+  useSEO({
+    title: seoTitle,
+    description: seoDesc,
+    ogImage: seoImage,
+    ogType: 'product',
+    canonicalPath: id ? `/listings/${id}` : undefined,
+    jsonLd: productJsonLd,
+  });
 
   if (loading) return <SkeletonDetail />;
 

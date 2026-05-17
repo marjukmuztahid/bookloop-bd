@@ -1,0 +1,19 @@
+# Book Loop BD
+
+> Bangladesh's student marketplace for buying and selling second-hand school and college books. Cash on delivery via Steadfast Courier across all 64 districts.
+
+Book Loop BD lets students list used academic and general books, browse listings by curriculum, class level, genre, condition, and district, and order with cash on delivery. Sellers receive payouts via bKash or Nagad after successful delivery.
+
+## Pages
+
+- [Home](/): Browse available academic and general second-hand books.
+- [How It Works](/how-it-works): Step-by-step buying and selling guide.
+- [About](/about): Mission and story behind Book Loop BD.
+- [Contact](/contact): Support email and WhatsApp contact details.
+- [Sign Up](/signup): Create a buyer or seller account.
+- [Login](/login): Sign in to an existing account.
+
+## Optional
+
+- [Privacy Policy](/privacy-policy): How user data is handled.
+- [Terms and Conditions](/terms): Marketplace rules and policies.

@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://bookloopbd.com/</loc>
+    <loc>https://bookloop-bd.lovable.app/</loc>
     <priority>1.0</priority>
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://bookloopbd.com/listings</loc>
-    <priority>0.9</priority>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://bookloopbd.com/how-it-works</loc>
+    <loc>https://bookloop-bd.lovable.app/how-it-works</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://bookloopbd.com/signup</loc>
+    <loc>https://bookloop-bd.lovable.app/about</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://bookloopbd.com/login</loc>
+    <loc>https://bookloop-bd.lovable.app/contact</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://bookloop-bd.lovable.app/signup</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://bookloop-bd.lovable.app/login</loc>
     <priority>0.6</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://bookloopbd.com/privacy-policy</loc>
+    <loc>https://bookloop-bd.lovable.app/reset-password</loc>
+    <priority>0.3</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://bookloop-bd.lovable.app/privacy-policy</loc>
     <priority>0.4</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://bookloopbd.com/terms</loc>
+    <loc>https://bookloop-bd.lovable.app/terms</loc>
     <priority>0.4</priority>
-    <changefreq>monthly</changefreq>
-  </url>
-  <url>
-    <loc>https://bookloopbd.com/about</loc>
-    <priority>0.6</priority>
     <changefreq>monthly</changefreq>
   </url>
 </urlset>

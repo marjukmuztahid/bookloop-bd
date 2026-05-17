@@ -61,20 +61,32 @@ const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
   useSEO({
-    title: 'Buy & Sell Second-Hand School Books in Bangladesh | Book Loop BD',
-    description: 'Bangladesh\'s student marketplace for cheap second-hand school, college, HSC and SSC books. Cash on delivery via Steadfast Courier across 64 districts.',
+    title: 'Old Books BD — Buy & Sell Old Books in Bangladesh | Book Loop BD',
+    description: 'Buy and sell old books in Bangladesh at the lowest price. Old school, college, HSC, SSC and general books with cash on delivery across all 64 districts.',
     canonicalPath: '/',
-    jsonLd: {
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      name: 'Book Loop BD',
-      url: 'https://bookloop-bd.lovable.app/',
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: 'https://bookloop-bd.lovable.app/?q={search_term_string}',
-        'query-input': 'required name=search_term_string',
+    jsonLd: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Book Loop BD',
+        alternateName: ['Old Books BD', 'Book Loop Bangladesh'],
+        url: 'https://bookloop-bd.lovable.app/',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: 'https://bookloop-bd.lovable.app/?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
+        },
       },
-    },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'OnlineStore',
+        name: 'Book Loop BD',
+        description: 'Bangladesh\'s marketplace to buy and sell old books at the lowest price.',
+        url: 'https://bookloop-bd.lovable.app/',
+        areaServed: { '@type': 'Country', name: 'Bangladesh' },
+        paymentAccepted: 'Cash on Delivery',
+      },
+    ],
   });
 
   const [bookType, setBookType] = useState<BookType>(() => {

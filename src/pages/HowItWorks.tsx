@@ -172,6 +172,43 @@ const HowItWorks = () => {
             ))}
           </div>
         </section>
+
+        {/* Articles / SEO content */}
+        <section aria-labelledby="articles-heading" className="mx-auto max-w-3xl px-4 pb-16">
+          <div className="mb-8 text-center">
+            <h2 id="articles-heading" className="mb-2 text-xl font-bold text-[#1A1A1A] md:text-2xl">
+              Guides for Buying & Selling Old Books in Bangladesh
+            </h2>
+            <p className="text-sm text-[#8A8A8A]">
+              Short reads to help you get the best old book price and shop safely.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            {ARTICLES.map((article, i) => (
+              <motion.article
+                key={i}
+                variants={fadeUp}
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: true, margin: '-50px' }}
+                className="glass-panel-sm p-5 md:p-6"
+              >
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[rgba(232,53,122,0.10)] text-lg">
+                    {article.icon}
+                  </span>
+                  <h3 className="text-base font-bold text-[#1A1A1A] md:text-lg">{article.title}</h3>
+                </div>
+                <div className="space-y-3 pl-12 text-sm leading-relaxed text-[#3A3A3A]">
+                  {article.body.map((p, j) => (
+                    <p key={j}>{p}</p>
+                  ))}
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </section>
       </main>
       <Footer />
     </div>

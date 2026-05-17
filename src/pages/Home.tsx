@@ -213,11 +213,22 @@ const Home = () => {
           <p className="mx-auto mb-8 max-w-lg text-base text-[#8A8A8A] md:text-lg">
             Buy and sell school &amp; college books across Bangladesh. Safe, simple, student-friendly.
           </p>
-          <div className="flex items-center justify-center gap-3">
-            <GlassButton onClick={scrollToGrid}>Browse Books</GlassButton>
-            <GlassButton variant="secondary" onClick={() => navigate('/sell')}>
-              Start Selling
-            </GlassButton>
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+            <button
+              onClick={scrollToGrid}
+              className="group relative flex items-center justify-center overflow-hidden rounded-[20px] border-t border-white/20 bg-[#E8357A] px-8 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(232,53,122,0.5)] transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] hover:shadow-[0_14px_36px_-10px_rgba(232,53,122,0.55)] active:scale-95"
+            >
+              <span className="relative z-10">Browse Books</span>
+              <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/15 to-transparent" />
+              <span className="pointer-events-none absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            </button>
+            <button
+              onClick={() => navigate('/sell')}
+              className="group relative flex items-center justify-center rounded-[20px] border border-white bg-white/70 px-8 py-3.5 text-[15px] font-semibold text-[#1A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.03)] backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] hover:bg-white/90 hover:shadow-[0_10px_20px_rgba(0,0,0,0.06)] active:scale-95"
+            >
+              <span className="relative z-10">Start Selling</span>
+              <span className="pointer-events-none absolute inset-0 rounded-[20px] border border-white/50" />
+            </button>
           </div>
         </motion.section>
 

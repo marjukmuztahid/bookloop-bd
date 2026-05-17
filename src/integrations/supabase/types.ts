@@ -57,14 +57,16 @@ export type Database = {
         Row: {
           author_publisher: string
           book_name: string
-          class_level: string
+          book_type: string
+          class_level: string | null
           condition: string
           created_at: string
-          curriculum: string
+          curriculum: string | null
           description: string | null
           display_price: number
           expires_at: string
           expiry_warning_sent: boolean
+          genre: string | null
           id: string
           photos: string[]
           quantity: number
@@ -77,14 +79,16 @@ export type Database = {
         Insert: {
           author_publisher: string
           book_name: string
-          class_level: string
+          book_type?: string
+          class_level?: string | null
           condition: string
           created_at?: string
-          curriculum: string
+          curriculum?: string | null
           description?: string | null
           display_price?: number
           expires_at?: string
           expiry_warning_sent?: boolean
+          genre?: string | null
           id?: string
           photos?: string[]
           quantity?: number
@@ -97,14 +101,16 @@ export type Database = {
         Update: {
           author_publisher?: string
           book_name?: string
-          class_level?: string
+          book_type?: string
+          class_level?: string | null
           condition?: string
           created_at?: string
-          curriculum?: string
+          curriculum?: string | null
           description?: string | null
           display_price?: number
           expires_at?: string
           expiry_warning_sent?: boolean
+          genre?: string | null
           id?: string
           photos?: string[]
           quantity?: number

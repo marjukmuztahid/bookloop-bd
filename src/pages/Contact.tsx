@@ -4,7 +4,7 @@ import Footer from '@/components/layout/Footer';
 import useSEO from '@/hooks/useSEO';
 
 const Contact = () => {
-  useSEO({ title: 'Contact Us — Book Loop BD', description: 'Have a question or need to report a problem? Contact the Book Loop BD team.' });
+  useSEO({ title: 'Contact Book Loop BD — Support for BD Book Marketplace', description: 'Get support for buying or selling second-hand books on Book Loop BD. Reach our team by email or WhatsApp.', canonicalPath: '/contact' });
 
   return (
     <div className="min-h-screen bg-[#F9F9F9]">

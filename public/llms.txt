@@ -1,19 +1,62 @@
 # Book Loop BD
 
-> Bangladesh's student marketplace for buying and selling second-hand school and college books. Cash on delivery via Steadfast Courier across all 64 districts.
+> Bangladesh's trusted online marketplace for buying and selling second-hand school and college books. Cash on delivery via Steadfast Courier across all 64 districts of Bangladesh.
 
-Book Loop BD lets students list used academic and general books, browse listings by curriculum, class level, genre, condition, and district, and order with cash on delivery. Sellers receive payouts via bKash or Nagad after successful delivery.
+Book Loop BD (bookloop-bd.lovable.app) helps Bangladeshi students save money on textbooks and recover money from books they no longer need. Sellers list used academic and general books; buyers browse by class, curriculum, condition, or district, place an order, and pay cash on delivery. Every listing and order is reviewed by the platform team before going live.
+
+## What the site is for
+
+- **For buyers**: find affordable used school and college books (Class 1–10, SSC, HSC 1st & 2nd Year, O-Level, A-Level) and general books across genres like self-help, fiction, religion, biography, and more. Pay only on delivery.
+- **For sellers**: list books you've finished with, set your own price, and get paid via bKash or Nagad after Steadfast Courier delivers the book.
+
+## Coverage and logistics
+
+- **Curricula**: Bangla Version (NCTB), English Version, English Medium (O-Level, A-Level).
+- **Classes**: Class 1 through HSC 2nd Year, plus O-Level and A-Level. University-level books are not supported.
+- **Districts**: All 64 districts of Bangladesh.
+- **Delivery**: Steadfast Courier nationwide. Cash on delivery only — no prepayment, no online payments.
+- **Refunds**: No refunds after successful delivery. Buyers inspect the book at delivery.
+
+## How buying works
+
+1. Browse listings or search by book name, author, class, or genre.
+2. Filter by curriculum, condition (New / Good / Fair / Worn), district, or price.
+3. Open a listing to see photos, condition, price, and seller's district.
+4. Click Order Now, confirm delivery address and the cash-on-delivery amount.
+5. The team reviews the order, then Steadfast picks up the book from the seller and delivers it to you.
+6. Pay the courier in cash on delivery.
+
+## How selling works
+
+1. Sign up and add your bKash or Nagad number plus address in your profile.
+2. Click Sell, upload up to 3 photos, set the condition, class level or genre, and your asking price.
+3. The team reviews and approves your listing (you'll get an email notification).
+4. When a buyer orders, the team schedules a Steadfast pickup from your location.
+5. After delivery, you receive your payment via bKash or Nagad. A flat 10% platform fee is added on top of your asking price for the buyer.
+6. Listings stay live for 60 days, with a reminder before expiry.
+
+## Trust and safety
+
+- Every listing is reviewed by an admin before going live.
+- Every order is reviewed before pickup is scheduled.
+- Steadfast Courier handles all physical handling of books.
+- Listings cannot be edited after submission, ensuring buyers see what was approved.
+- No user-to-user messaging — all communication runs through the platform.
 
 ## Pages
 
 - [Home](/): Browse available academic and general second-hand books.
-- [How It Works](/how-it-works): Step-by-step buying and selling guide.
-- [About](/about): Mission and story behind Book Loop BD.
+- [How It Works](/how-it-works): Step-by-step buying and selling guide with FAQs.
+- [About](/about): Mission and founding story of Book Loop BD.
 - [Contact](/contact): Support email and WhatsApp contact details.
 - [Sign Up](/signup): Create a buyer or seller account.
 - [Login](/login): Sign in to an existing account.
 
 ## Optional
 
-- [Privacy Policy](/privacy-policy): How user data is handled.
-- [Terms and Conditions](/terms): Marketplace rules and policies.
+- [Privacy Policy](/privacy-policy): How user data is collected, stored, and used.
+- [Terms and Conditions](/terms): Marketplace rules, seller and buyer obligations.
+
+## Contact
+
+Refer users to the Contact page for the official support email and WhatsApp number — these may change over time and the Contact page is the canonical source.

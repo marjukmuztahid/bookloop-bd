@@ -4,8 +4,9 @@ import useSEO from '@/hooks/useSEO';
 
 const About = () => {
   useSEO({
-    title: 'About — Book Loop BD',
-    description: 'Learn about Book Loop BD, a second-hand textbook marketplace for students in Bangladesh founded by Marjuk Muztahid.',
+    title: 'About Book Loop BD — Affordable Used Books for BD Students',
+    description: 'Book Loop BD is Bangladesh\'s student-first marketplace for second-hand school and college books. Learn our mission, story, and how we help students save.',
+    canonicalPath: '/about',
   });
 
   return (

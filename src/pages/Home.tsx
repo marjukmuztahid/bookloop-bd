@@ -61,8 +61,20 @@ const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
   useSEO({
-    title: 'Book Loop BD — Buy & Sell Second Hand School Books in Bangladesh',
-    description: "Bangladesh's student book marketplace. Buy and sell second-hand school and college books at affordable prices. Fast delivery across Bangladesh via Steadfast Courier.",
+    title: 'Buy & Sell Second-Hand School Books in Bangladesh | Book Loop BD',
+    description: 'Bangladesh\'s student marketplace for cheap second-hand school, college, HSC and SSC books. Cash on delivery via Steadfast Courier across 64 districts.',
+    canonicalPath: '/',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Book Loop BD',
+      url: 'https://bookloop-bd.lovable.app/',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: 'https://bookloop-bd.lovable.app/?q={search_term_string}',
+        'query-input': 'required name=search_term_string',
+      },
+    },
   });
 
   const [bookType, setBookType] = useState<BookType>(() => {

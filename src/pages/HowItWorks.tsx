@@ -29,12 +29,49 @@ const GOOD_TO_KNOW = [
   { icon: '🔒', title: 'Admin Approved', desc: 'Every listing and order is reviewed by our team for safety.' },
 ];
 
+const FAQ_QA = [
+  {
+    q: 'How do I buy a second-hand book on Book Loop BD?',
+    a: 'Browse or search listings, open the book you want, click Order Now, and confirm your delivery address. After admin approval, Steadfast Courier picks up the book from the seller and delivers it to your door. You pay the courier in cash on delivery.',
+  },
+  {
+    q: 'How do I sell my old school or college books?',
+    a: 'Sign up, add your bKash or Nagad number and address in your profile, then click Sell. Upload up to 3 photos, set the condition, class level or genre, and your asking price. After admin approval your listing goes live for 60 days.',
+  },
+  {
+    q: 'Is cash on delivery available across Bangladesh?',
+    a: 'Yes. We use Steadfast Courier and deliver to all 64 districts of Bangladesh. Cash on delivery is the only payment method — you never pay in advance.',
+  },
+  {
+    q: 'Can I get a refund if I do not like the book?',
+    a: 'No. There are no refunds after a successful delivery. You inspect the book\'s condition at delivery and pay only if you accept it. All listings are reviewed by admins before going live to keep quality high.',
+  },
+  {
+    q: 'What is the platform fee for sellers?',
+    a: 'A flat 10% platform fee is added on top of your asking price for the buyer. You receive your full asking price via bKash or Nagad after the order is delivered successfully.',
+  },
+  {
+    q: 'How long does a listing stay active?',
+    a: 'Listings stay live for 60 days. You\'ll get a reminder notification before they expire.',
+  },
+];
+
 const HowItWorks = () => {
   const [tab, setTab] = useState<'buying' | 'selling'>('buying');
   const steps = tab === 'buying' ? BUYING_STEPS : SELLING_STEPS;
   useSEO({
-    title: 'How It Works — Book Loop BD',
-    description: 'Learn how to buy and sell second-hand school books on Book Loop BD. Simple listings, admin approval, cash on delivery via Steadfast Courier.',
+    title: 'How to Buy & Sell Used Books in Bangladesh — Book Loop BD',
+    description: 'Step-by-step guide to buying and selling second-hand school and college books on Book Loop BD. Cash on delivery, 10% seller fee, 60-day listings.',
+    canonicalPath: '/how-it-works',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: FAQ_QA.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    },
   });
 
   return (

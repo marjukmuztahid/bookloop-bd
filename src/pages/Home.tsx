@@ -61,20 +61,32 @@ const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
   useSEO({
-    title: 'Buy & Sell Second-Hand School Books in Bangladesh | Book Loop BD',
-    description: 'Bangladesh\'s student marketplace for cheap second-hand school, college, HSC and SSC books. Cash on delivery via Steadfast Courier across 64 districts.',
+    title: 'Old Books BD — Buy & Sell Old Books in Bangladesh | Book Loop BD',
+    description: 'Buy and sell old books in Bangladesh at the lowest price. Old school, college, HSC, SSC and general books with cash on delivery across all 64 districts.',
     canonicalPath: '/',
-    jsonLd: {
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      name: 'Book Loop BD',
-      url: 'https://bookloop-bd.lovable.app/',
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: 'https://bookloop-bd.lovable.app/?q={search_term_string}',
-        'query-input': 'required name=search_term_string',
+    jsonLd: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Book Loop BD',
+        alternateName: ['Old Books BD', 'Book Loop Bangladesh'],
+        url: 'https://bookloop-bd.lovable.app/',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: 'https://bookloop-bd.lovable.app/?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
+        },
       },
-    },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'OnlineStore',
+        name: 'Book Loop BD',
+        description: 'Bangladesh\'s marketplace to buy and sell old books at the lowest price.',
+        url: 'https://bookloop-bd.lovable.app/',
+        areaServed: { '@type': 'Country', name: 'Bangladesh' },
+        paymentAccepted: 'Cash on Delivery',
+      },
+    ],
   });
 
   const [bookType, setBookType] = useState<BookType>(() => {
@@ -396,6 +408,29 @@ const Home = () => {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      <section aria-labelledby="seo-about" className="mx-auto max-w-3xl px-4 pb-12 text-sm text-muted-foreground leading-relaxed">
+        <h2 id="seo-about" className="mb-3 text-base font-semibold text-heading">
+          Buy & Sell Old Books in Bangladesh
+        </h2>
+        <p className="mb-3">
+          Book Loop BD is Bangladesh's dedicated marketplace to <strong>buy old books</strong> and{' '}
+          <strong>sell old books</strong> online. Whether you're looking for old school textbooks,
+          old college books, HSC or SSC guides, or general reading at the lowest{' '}
+          <strong>old book price in Bangladesh</strong>, you can browse verified listings from
+          students across all 64 districts.
+        </p>
+        <p className="mb-3">
+          Sellers list used books in minutes and reach buyers nationwide. Buyers get{' '}
+          <strong>old books price</strong> well below retail, with safe cash on delivery via
+          Steadfast Courier. From Dhaka and Chattogram to Sylhet, Rajshahi and Khulna —{' '}
+          <strong>buying old books in Bangladesh</strong> has never been simpler.
+        </p>
+        <p>
+          Popular searches: old books bd, old book price, buy old book, old books sell, book sell
+          bd, second-hand books Bangladesh, purano boi, used HSC books, used SSC books.
+        </p>
+      </section>
 
       <Footer />
 

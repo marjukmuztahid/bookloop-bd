@@ -8,6 +8,13 @@ import { GlassBadge } from '@/components/ui/GlassBadge';
 import { useAppToast } from '@/components/ui/GlassToast';
 import { supabase } from '@/integrations/supabase/client';
 import { logActivity, notifyUser } from '@/hooks/useAdmin';
+import { sendEmail, getUserEmail, sellerListingApproved, sellerListingRejected } from '@/lib/email';
+
+async function getSellerFirstName(sellerId: string): Promise<string> {
+  const { data } = await supabase.from('profiles').select('full_name').eq('id', sellerId).maybeSingle();
+  const full = (data as any)?.full_name?.trim();
+  return full ? full.split(/\s+/)[0] : 'there';
+}
 import AdminLayout from '@/components/admin/AdminLayout';
 import { GENRES } from '@/data/genres';
 import type { BookCondition, Curriculum, BookType, Genre } from '@/types';
@@ -151,15 +158,31 @@ const ListingsQueue = () => {
     await supabase.from('listings').update({ status: 'available' }).eq('id', l.id);
     await logActivity('listing_approved', `Listing "${l.book_name}" approved`);
     await notifyUser(l.seller_id, `Your listing for "${l.book_name}" has been approved and is now live!`);
+    try {
+      const [email, firstName] = await Promise.all([getUserEmail(l.seller_id), getSellerFirstName(l.seller_id)]);
+      if (email) {
+        const { subject, html } = sellerListingApproved(firstName, l.book_name);
+        await sendEmail(email, subject, html);
+      }
+    } catch (e) { console.error('approval email failed', e); }
     showToast('Listing approved', 'success');
     fetch();
   };
 
   const confirmReject = async () => {
     if (!rejectModal || !rejectReason.trim()) { showToast('Please provide a reason', 'error'); return; }
-    await supabase.from('listings').update({ status: 'rejected', rejection_reason: rejectReason.trim() } as any).eq('id', rejectModal.id);
-    await logActivity('listing_rejected', `Listing "${rejectModal.name}" rejected`);
-    await notifyUser(rejectModal.sellerId, `Your listing for "${rejectModal.name}" was not approved. Reason: ${rejectReason.trim()}`);
+    const reason = rejectReason.trim();
+    const { id, name, sellerId } = rejectModal;
+    await supabase.from('listings').update({ status: 'rejected', rejection_reason: reason } as any).eq('id', id);
+    await logActivity('listing_rejected', `Listing "${name}" rejected`);
+    await notifyUser(sellerId, `Your listing for "${name}" was not approved. Reason: ${reason}`);
+    try {
+      const [email, firstName] = await Promise.all([getUserEmail(sellerId), getSellerFirstName(sellerId)]);
+      if (email) {
+        const { subject, html } = sellerListingRejected(firstName, name, reason);
+        await sendEmail(email, subject, html);
+      }
+    } catch (e) { console.error('rejection email failed', e); }
     showToast('Listing rejected', 'success');
     setRejectModal(null);
     setRejectReason('');

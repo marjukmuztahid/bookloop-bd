@@ -288,3 +288,53 @@ export function sellerListingExpiryWarning(sellerFirstName: string, bookTitle: s
   };
 }
 
+export function sellerListingApproved(sellerFirstName: string, bookTitle: string): { subject: string; html: string } {
+  const body = `
+    ${bodyText(`Hi <strong>${sellerFirstName}</strong>,`)}
+    ${bodyText(`Great news — your listing for <strong style="color:#E8357A">${bookTitle}</strong> has been reviewed and approved by our team. It's now live on Book Loop BD and discoverable by buyers across Bangladesh. 🎉`)}
+    <div style="background:rgba(232,53,122,0.06);border-radius:12px;padding:16px 18px;margin:16px 0">
+      <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#1A1A1A;font-family:Inter,system-ui,sans-serif">✅ What happens next</p>
+      <p style="margin:0;font-size:12px;color:#3A3A3A;font-family:Inter,system-ui,sans-serif;line-height:1.9">
+        • Buyers can view and order your book directly from the marketplace.<br>
+        • You'll get an in-app notification and an email as soon as someone places an order.<br>
+        • Your listing stays active for 90 days. We'll remind you 7 days before it expires.
+      </p>
+    </div>
+    ${bodyText(`💡 Tip: Share your listing link on WhatsApp or social media to reach more buyers faster.`)}
+    ${bodyText(`Thank you for helping give books a second life with Book Loop BD. 📚♻️`)}
+    ${signOff()}
+  `;
+  return {
+    subject: `Your listing "${bookTitle}" is now live on Book Loop BD ✅`,
+    html: emailTemplate('✅', 'Listing Approved!', 'Your book is now visible to buyers across Bangladesh', body),
+  };
+}
+
+export function sellerListingRejected(sellerFirstName: string, bookTitle: string, reason: string): { subject: string; html: string } {
+  const safeReason = reason.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const body = `
+    ${bodyText(`Hi <strong>${sellerFirstName}</strong>,`)}
+    ${bodyText(`Thanks for submitting <strong style="color:#E8357A">${bookTitle}</strong> to Book Loop BD. After review, our team wasn't able to approve this listing in its current form.`)}
+    <div style="background:rgba(232,53,122,0.08);border-radius:12px;padding:16px 18px;margin:16px 0">
+      <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#1A1A1A;font-family:Inter,system-ui,sans-serif">📝 Reason from our team</p>
+      <p style="margin:0;font-size:13px;color:#3A3A3A;font-family:Inter,system-ui,sans-serif;line-height:1.7">${safeReason}</p>
+    </div>
+    <div style="background:rgba(232,53,122,0.06);border-radius:12px;padding:16px 18px;margin:16px 0">
+      <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#1A1A1A;font-family:Inter,system-ui,sans-serif">What you can do</p>
+      <p style="margin:0;font-size:12px;color:#3A3A3A;font-family:Inter,system-ui,sans-serif;line-height:1.9">
+        • Review the reason above and prepare a fresh submission that addresses it.<br>
+        • Make sure photos are clear, the condition is accurate, and the price follows our guidelines.<br>
+        • Re-list the book from your dashboard whenever you're ready.
+      </p>
+    </div>
+    ${bodyText(`If you believe this was a mistake or need clarification, simply reply to this email or message us on WhatsApp — we're happy to help.`)}
+    ${bodyText(`Thank you for being part of Book Loop BD. 📚`)}
+    ${signOff()}
+  `;
+  return {
+    subject: `Update on your listing "${bookTitle}"`,
+    html: emailTemplate('📝', 'Listing Not Approved', 'A small change is needed before it can go live', body),
+  };
+}
+
+

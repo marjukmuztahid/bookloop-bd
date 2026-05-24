@@ -104,7 +104,7 @@ const HowItWorks = () => {
   const steps = tab === 'buying' ? BUYING_STEPS : SELLING_STEPS;
   useSEO({
     title: 'How to Buy & Sell Used Books in Bangladesh — Book Loop BD',
-    description: 'Step-by-step guide to buying and selling second-hand school and college books on Book Loop BD. Cash on delivery, 10% seller fee, 60-day listings.',
+    description: 'Step-by-step guide to buying and selling second-hand school and college books on Book Loop BD. Cash on delivery, 10% seller fee, 90-day listings.',
     canonicalPath: '/how-it-works',
     jsonLd: {
       '@context': 'https://schema.org',

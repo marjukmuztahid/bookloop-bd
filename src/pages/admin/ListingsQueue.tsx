@@ -353,4 +353,11 @@ const SkeletonRows = () => (
   </div>
 );
 
+const Field = ({ label, value }: { label: string; value: React.ReactNode }) => (
+  <div>
+    <p className="text-[10px] font-semibold uppercase tracking-wide text-[#8A8A8A]">{label}</p>
+    <p className="text-sm text-[#1A1A1A] break-words">{value}</p>
+  </div>
+);
+
 export default ListingsQueue;

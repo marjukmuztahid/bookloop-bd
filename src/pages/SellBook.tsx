@@ -293,6 +293,64 @@ const SellBook = () => {
               </motion.button>
             </div>
           </div>
+
+          {/* Seller Instructions */}
+          <div className="glass-panel mt-6 p-6 text-left">
+            <div className="mb-5 rounded-2xl bg-[rgba(232,53,122,0.06)] px-4 py-3">
+              <p className="text-sm font-bold text-[#E8357A] sm:text-base">
+                Please read these seller instructions carefully before posting your book.
+              </p>
+            </div>
+
+            <div className="space-y-5">
+              {[
+                {
+                  title: 'Before you list',
+                  items: [
+                    'Photo must be your actual copy — no internet images',
+                    'Mention missing pages, heavy writing, or torn covers in description',
+                    'Set a fair price, correct weight, edition, class or genre etc.',
+                  ],
+                },
+                {
+                  title: 'While listed',
+                  items: [
+                    'If your book sells elsewhere (e.g. Facebook group, in person), remove it from Book Loop BD immediately to avoid confusions',
+                    "Don't post the same book twice",
+                  ],
+                },
+                {
+                  title: 'When ordered',
+                  items: [
+                    'Be ready to hand over the book when Steadfast comes for pickup; a no-show may result in account suspension',
+                    "Make sure your bKash/Nagad number is correct in your profile — that's how you get paid",
+                  ],
+                },
+                {
+                  title: 'General',
+                  items: [
+                    'Renew before expiry if still available',
+                    'If your listing is rejected, read the reason and fix it before reposting',
+                  ],
+                },
+              ].map((section) => (
+                <div key={section.title}>
+                  <h3 className="mb-2 text-xs font-bold uppercase tracking-wide text-[#1A1A1A]">
+                    {section.title}
+                  </h3>
+                  <ul className="space-y-1.5">
+                    {section.items.map((item, i) => (
+                      <li key={i} className="flex gap-2 text-xs leading-relaxed text-[#3A3A3A]">
+                        <span className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full bg-[#E8357A]" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </motion.main>
         <Footer />
       </div>

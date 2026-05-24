@@ -135,7 +135,7 @@ const PrivacyPolicy = () => {
             <p>We retain personal data only for as long as necessary to fulfil the purposes for which it was collected, including legal, accounting, or reporting requirements. Specifically:</p>
             <ul className="mt-2 list-disc space-y-1 pl-5">
               <li><strong>Account data</strong> — retained while your account is active. You may request deletion at any time.</li>
-              <li><strong>Active listings</strong> — automatically removed after a successful delivery or after 60 days of remaining unsold. A reminder email is sent 7 days before automatic expiry.</li>
+              <li><strong>Active listings</strong> — automatically removed after a successful delivery or after 90 days of remaining unsold. A reminder email is sent 7 days before automatic expiry.</li>
               <li><strong>Order records</strong> — basic transactional records (order IDs, timestamps, amounts, status) are retained permanently for accounting, dispute resolution, and fraud prevention.</li>
               <li><strong>Email logs</strong> — retained for a limited period for audit and troubleshooting purposes.</li>
               <li><strong>Banned or suspended accounts</strong> — identifying details may be retained indefinitely to prevent repeat offenders from re-registering.</li>

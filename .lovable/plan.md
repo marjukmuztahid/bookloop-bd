@@ -1,55 +1,64 @@
-# Admin User Details Modal
+# Listing Approval & Rejection Emails
 
-Add a **See Details** button beside each user in the admin Users page that opens a modal with their complete profile, payment info, and listing/order statistics.
+Add two new transactional emails sent to sellers from the admin Listings Queue, using the existing frosted-glass `emailTemplate` wrapper in `src/lib/email.ts` and the `send-email` edge function (same pattern as all other Book Loop BD emails).
 
-## File to edit
-- `src/pages/admin/Users.tsx` (only)
+## 1. Email content
 
-## UI changes
-- Add a **See Details** button (GlassButton, secondary variant) beside the existing Ban/Unban button on each user row.
-- Build a new full-detail modal (same frosted-glass pattern as the ban modal and ListingsQueue detail modal), `max-w-2xl`, scrollable.
+### A. Listing Approved — `sellerListingApproved(sellerFirstName, bookTitle)`
+- **Subject:** `Your listing "<bookTitle>" is now live on Book Loop BD`
+- **Hero emoji:** ✅
+- **Hero title:** `Listing approved!`
+- **Hero subtitle:** `Your book is now visible to buyers across Bangladesh.`
+- **Body copy:**
+  > Hi <sellerFirstName>,
+  >
+  > Great news — your listing for **"<bookTitle>"** has been reviewed and approved by our team. It's now live on Book Loop BD and discoverable by buyers.
+  >
+  > **What happens next:**
+  > - Buyers can view and order your book directly from the marketplace.
+  > - You'll get an in-app notification and an email as soon as someone places an order.
+  > - Your listing stays active for 90 days. We'll remind you 7 days before it expires.
+  >
+  > Tip: Share your listing link on WhatsApp or social media to reach more buyers faster.
+  >
+  > — The Book Loop BD Team
 
-## Modal contents
+### B. Listing Rejected — `sellerListingRejected(sellerFirstName, bookTitle, reason)`
+- **Subject:** `Update on your listing "<bookTitle>"`
+- **Hero emoji:** 📝
+- **Hero title:** `Listing not approved`
+- **Hero subtitle:** `A small change is needed before it can go live.`
+- **Body copy:**
+  > Hi <sellerFirstName>,
+  >
+  > Thanks for submitting **"<bookTitle>"** to Book Loop BD. After review, our team wasn't able to approve this listing in its current form.
+  >
+  > **Reason from our team:**
+  > <reason in a highlighted card — faint magenta background `rgba(232,53,122,0.08)`, rounded, left-aligned>
+  >
+  > **What you can do:**
+  > - Review the reason above and prepare a fresh submission that addresses it.
+  > - Make sure photos are clear, the condition is accurate, and the price follows our guidelines.
+  > - Re-list the book from your dashboard whenever you're ready.
+  >
+  > If you believe this was a mistake or need clarification, reply to this email or message us on WhatsApp.
+  >
+  > — The Book Loop BD Team
 
-**Profile section**
-- Full name, phone, district, detailed address, member since, banned/active status, email (fetched via `get_user_email` RPC).
+Both emails reuse the existing wrapper (Book Loop BD header, frosted glass cards, magenta CTA button linking to the site, footer with support contact) — visually consistent with all other transactional emails.
 
-**Payment information**
-- Payment method (bKash / Nagad)
-- Payment number (`bkash_nagad_number`)
-- Fallback "Not provided" when null.
+## 2. Wiring
 
-**Listings stats** (queried from `listings` where `seller_id = user.id`)
-- Total listings
-- Pending (status `pending`)
-- Available (`available`)
-- Sold (`sold_pending_delivery` + delivered count via orders)
-- Rejected (`rejected`)
-- Removed/Deleted (`removed`, soft-deleted)
+In `src/pages/admin/ListingsQueue.tsx`:
 
-**Orders as buyer** (queried from `orders` where `buyer_id = user.id`)
-- Total orders placed
-- Successful deliveries (status `delivered`)
-- Unsuccessful (status `cancelled` / `failed` / `returned`)
-- Pending/in-progress (remaining statuses)
+- **`approve(l)`** — after the existing `notifyUser(...)` in-app notification, fetch the seller's email via `getUserEmail(l.seller_id)`, derive `sellerFirstName` from their profile's `full_name` (first token, fallback `'there'`), build the email with `sellerListingApproved(...)`, and send via `sendEmail(...)`. Failures are logged but don't block the approve action (same pattern as expiry warning).
+- **`reject()`** — same flow, after the in-app notify call, using `sellerListingRejected(firstName, rejectModal.name, rejectReason.trim())`.
 
-**Orders as seller** (queried via `orders` joined to `listings` where `listings.seller_id = user.id`)
-- Total sales
-- Successful deliveries
-- Unsuccessful deliveries
-- In progress
+Seller first name lookup: a single `supabase.from('profiles').select('full_name').eq('id', sellerId).maybeSingle()` call alongside the email lookup. Both queries run in parallel.
 
-## Technical details
-- New state: `detailUser`, `detailStats`, `detailLoading`.
-- `openDetails(user)` runs in parallel:
-  1. `supabase.from('listings').select('status').eq('seller_id', user.id)` — aggregate counts client-side.
-  2. `supabase.from('orders').select('status').eq('buyer_id', user.id)` — buyer stats.
-  3. `supabase.from('orders').select('status, listings!inner(seller_id)').eq('listings.seller_id', user.id)` — seller stats (explicit FK hint per existing query patterns).
-  4. `supabase.rpc('get_user_email', { _user_id: user.id })` — email.
-- Skeleton loaders while fetching; stats shown as a compact grid of `glass-panel-sm` stat cards.
-- Modal closes on overlay click / Close button; `e.stopPropagation()` on inner panel.
-- No DB schema changes, no new RLS policies (admin already has SELECT on `users`, `listings`, `orders`).
+## 3. Files changed
 
-## Out of scope
-- Editing user fields from this modal.
-- Viewing the actual listing/order rows (counts only). Can be added later if needed.
+- `src/lib/email.ts` — add `sellerListingApproved()` and `sellerListingRejected()` exports.
+- `src/pages/admin/ListingsQueue.tsx` — fire the email after each admin action.
+
+No database, edge function, RLS, or schema changes — purely additive frontend + email content.

@@ -1,31 +1,44 @@
-## Goal
-Let admins click any listing in the Listings Queue (pending or otherwise) to view the full submission — all photos, full description, weight, price breakdown, curriculum/genre, seller info — before approving or rejecting.
+# Admin Edit Listing Feature
 
-## Approach
-Add a "View Details" interaction on each row in `src/pages/admin/ListingsQueue.tsx`. Clicking the row (or a dedicated "View" button) opens a full-detail modal built inside the same file, reusing the existing `Modal` component and glass design tokens.
+Yes — fully possible. Admins already have `UPDATE` RLS permission on `listings`, and the `listings_auto_fields` trigger will auto-recompute `display_price` whenever `seller_price` changes, so price math stays correct.
 
-The modal will fetch nothing extra — the row already holds the full listing record (`select('*')`), so we just pass the listing object into the modal and render every field.
+Note: the project rule "No post-submission listing edits" applies to **sellers**. This adds an **admin-only** override for fixing miscategorized posts — it does not change seller-facing behavior.
 
-## What the modal shows
-- Photo gallery: all images in `photos[]` with a main image + thumbnail strip and prev/next arrows (admin needs to inspect every photo).
-- Book name, author/publisher, book type badge (Academic/General).
-- For academic: curriculum + class level. For general: genre.
-- Condition, weight (kg), quantity.
-- Full seller note / description (no truncation).
-- Price breakdown: seller price, +10% platform fee, display price.
-- Status badge, created date, expiry date, rejection reason (if any).
-- Seller block: full name, district, phone, detailed address, bKash/Nagad number, payment method (fetched once on modal open from `users` table by `seller_id`).
-- Action buttons inside the modal footer mirroring the row actions (Approve / Reject / Remove / Delete Permanently) so admin can act without closing first.
+## Where
 
-## UX details
-- Whole row becomes clickable (cursor-pointer) to open the modal; existing inline action buttons stop propagation so they still work directly.
-- Modal uses a wider variant (`max-w-3xl`) and `max-h-[90vh] overflow-y-auto` since content is long.
-- Reject flow from inside the detail modal opens the existing reject reason modal on top (or inlines the textarea in a confirmation step).
+`src/pages/admin/ListingsQueue.tsx` — add an "Edit" mode inside the existing full-detail modal. No new page, no schema changes.
 
-## Files to change
-- `src/pages/admin/ListingsQueue.tsx` — add `detailModal` state, make rows clickable, add new `<ListingDetailModal>` component (in same file) with gallery + all fields + action buttons, fetch seller profile on open.
+## Editable fields
+
+All listing fields a seller originally chose:
+- **Book Type** (`academic` ⇄ `general`) — the main fix you mentioned
+- **Book Name**, **Author/Publisher**
+- **Condition** (new / good / fair / worn)
+- **Weight (kg)**, **Quantity** (1–50), **Seller Price** (display price auto-recalculates)
+- **Description** (seller's note)
+- **Academic-only**: Curriculum, Class Level
+- **General-only**: Genre
+
+Not editable here (out of scope): status, photos, seller, dates, rejection reason.
+
+## UX
+
+- In the detail modal footer, add an **"Edit Listing"** button (visible only when status is `pending` or `available`).
+- Clicking it swaps the read-only view into a form (same modal) with all fields pre-filled.
+- Switching **Book Type** swaps the conditional fields (genre vs curriculum/class) and clears the now-irrelevant ones on save.
+- **Save** / **Cancel** buttons at the bottom. Save shows a confirmation toast.
+- On save: update DB → log activity (`listing_edited`) → notify the seller ("Your listing for X was updated by admin: <changed fields>") → refresh list → return to read-only view.
+
+## Data writes
+
+Single `supabase.from('listings').update({...}).eq('id', l.id)` call. When `book_type` is changed:
+- to `general`: set `genre`, null out `curriculum` & `class_level`
+- to `academic`: set `curriculum` & `class_level`, null out `genre`
+
+`display_price` is recomputed by the existing DB trigger — no client-side calculation needed for persistence.
 
 ## Out of scope
-- No DB or RLS changes (admins already have full SELECT on listings + users).
-- No changes to the public `ListingDetail.tsx` page.
-- No edits to listings themselves (per project constraint: post-submission listings are not editable).
+
+- Editing photos (would require re-upload flow)
+- Allowing sellers to edit (explicit project constraint stays)
+- Editing status, seller, or dates from this UI

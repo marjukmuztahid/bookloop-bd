@@ -25,7 +25,7 @@ const SELLING_STEPS = [
 
 const GOOD_TO_KNOW = [
   { icon: '💵', title: 'Cash on Delivery', desc: 'You never pay in advance. Pay the courier when your book arrives.' },
-  { icon: '⏳', title: '60-Day Listings', desc: 'Listings stay live for 60 days. You\'ll get a reminder before expiry.' },
+  { icon: '⏳', title: '90-Day Listings', desc: 'Listings stay live for 90 days. You\'ll get a reminder before expiry.' },
   { icon: '🔒', title: 'Admin Approved', desc: 'Every listing and order is reviewed by our team for safety.' },
 ];
 

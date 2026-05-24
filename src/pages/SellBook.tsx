@@ -26,8 +26,8 @@ const CURRICULUMS: Array<{ label: string; value: Curriculum }> = [
 ];
 const SCHOOL_COLLEGE_LEVELS = [
   'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5',
-  'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10',
-  'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level',
+  'Class 6', 'Class 7', 'Class 8',
+  'SSC', 'HSC', 'O-Level', 'A-Level',
 ];
 const CLASS_LEVELS_BY_CURRICULUM: Record<Curriculum, string[]> = {
   bangla_version: SCHOOL_COLLEGE_LEVELS,

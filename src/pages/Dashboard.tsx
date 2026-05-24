@@ -518,10 +518,8 @@ const MyProfile = () => {
     refreshProfile();
   };
 
-  const removeWishlistItem = async (wishlistId: string) => {
-    await supabase.from('wishlists').delete().eq('id', wishlistId);
-    setWishlist((prev) => prev.filter((w) => w.id !== wishlistId));
-  };
+
+
 
   return (
     <div className="mx-auto flex max-w-[560px] flex-col gap-6">

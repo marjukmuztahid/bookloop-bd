@@ -203,14 +203,14 @@ const ListingsQueue = () => {
   );
 };
 
-const Modal = ({ open, onClose, children }: { open: boolean; onClose: () => void; children: React.ReactNode }) => (
+const Modal = ({ open, onClose, children, panelClassName }: { open: boolean; onClose: () => void; children: React.ReactNode; panelClassName?: string }) => (
   <AnimatePresence>
     {open && (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         className="fixed inset-0 z-[100] flex items-center justify-center p-4"
         style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }} onClick={onClose}>
         <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-          className="glass-panel max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
+          className={panelClassName || 'glass-panel max-w-sm w-full p-6'} onClick={(e) => e.stopPropagation()}>
           {children}
         </motion.div>
       </motion.div>

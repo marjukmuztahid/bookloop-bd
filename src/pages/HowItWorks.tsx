@@ -52,7 +52,7 @@ const FAQ_QA = [
   },
   {
     q: 'How long does a listing stay active?',
-    a: 'Listings stay live for 60 days. You\'ll get a reminder notification before they expire.',
+    a: 'Listings stay live for 90 days. You\'ll get a reminder notification before they expire.',
   },
 ];
 

@@ -487,14 +487,8 @@ const MyProfile = () => {
     }
   }, [profile]);
 
-  useEffect(() => {
-    if (!user) return;
-    supabase
-      .from('wishlists')
-      .select('*, listings(*)')
-      .eq('user_id', user.id)
-      .then(({ data }) => { setWishlist(data || []); setWishlistLoading(false); });
-  }, [user]);
+
+
 
   const savePersonal = async () => {
     if (!user) return;

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, Pencil } from 'lucide-react';
 
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassBadge } from '@/components/ui/GlassBadge';
@@ -9,6 +9,25 @@ import { useAppToast } from '@/components/ui/GlassToast';
 import { supabase } from '@/integrations/supabase/client';
 import { logActivity, notifyUser } from '@/hooks/useAdmin';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { GENRES } from '@/data/genres';
+import type { BookCondition, Curriculum, BookType, Genre } from '@/types';
+
+const CURRICULUMS: Array<{ label: string; value: Curriculum }> = [
+  { label: 'Bangla Version', value: 'bangla_version' },
+  { label: 'English Version', value: 'english_version' },
+  { label: 'English Medium', value: 'english_medium' },
+  { label: 'University', value: 'university' },
+  { label: 'Test Prep', value: 'test_prep' },
+];
+const SCHOOL_COLLEGE_LEVELS = ['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6','Class 7','Class 8','SSC','HSC','O-Level','A-Level'];
+const CLASS_LEVELS_BY_CURRICULUM: Record<Curriculum, string[]> = {
+  bangla_version: SCHOOL_COLLEGE_LEVELS,
+  english_version: SCHOOL_COLLEGE_LEVELS,
+  english_medium: SCHOOL_COLLEGE_LEVELS,
+  university: ['Bachelors', 'Masters'],
+  test_prep: ['IELTS', 'TOEFL', 'GRE', 'SAT'],
+};
+const CONDITIONS: BookCondition[] = ['new', 'good', 'fair', 'worn'];
 
 const INPUT_CLASS = 'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
 const formatPrice = (n: number) => `৳ ${n.toLocaleString('en-BD')}`;
@@ -28,15 +47,92 @@ const ListingsQueue = () => {
   const [detailListing, setDetailListing] = useState<any | null>(null);
   const [detailSeller, setDetailSeller] = useState<any | null>(null);
   const [photoIdx, setPhotoIdx] = useState(0);
+  const [editMode, setEditMode] = useState(false);
+  const [editForm, setEditForm] = useState<any>(null);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const openDetail = async (l: any) => {
     setDetailListing(l);
     setPhotoIdx(0);
     setDetailSeller(null);
+    setEditMode(false);
+    setEditForm(null);
     const { data } = await supabase.from('users').select('full_name, district, phone, detailed_address, bkash_nagad_number, payment_method').eq('id', l.seller_id).maybeSingle();
     setDetailSeller(data);
   };
-  const closeDetail = () => { setDetailListing(null); setDetailSeller(null); };
+  const closeDetail = () => { setDetailListing(null); setDetailSeller(null); setEditMode(false); setEditForm(null); };
+
+  const startEdit = () => {
+    if (!detailListing) return;
+    const l = detailListing;
+    setEditForm({
+      book_type: l.book_type || 'academic',
+      book_name: l.book_name || '',
+      author_publisher: l.author_publisher || '',
+      curriculum: l.curriculum || '',
+      class_level: l.class_level || '',
+      genre: l.genre || '',
+      condition: l.condition || 'good',
+      weight_kg: String(l.weight_kg ?? ''),
+      quantity: l.quantity ?? 1,
+      seller_price: String(l.seller_price ?? ''),
+      description: l.description || '',
+    });
+    setEditMode(true);
+  };
+
+  const saveEdit = async () => {
+    if (!detailListing || !editForm) return;
+    const f = editForm;
+    if (!f.book_name.trim()) { showToast('Book name is required', 'error'); return; }
+    if (!f.author_publisher.trim()) { showToast('Author/Publisher is required', 'error'); return; }
+    const weight = parseFloat(f.weight_kg);
+    const price = parseFloat(f.seller_price);
+    const qty = parseInt(String(f.quantity), 10);
+    if (isNaN(weight) || weight <= 0) { showToast('Valid weight required', 'error'); return; }
+    if (isNaN(price) || price <= 0) { showToast('Valid seller price required', 'error'); return; }
+    if (isNaN(qty) || qty < 1 || qty > 50) { showToast('Quantity must be 1–50', 'error'); return; }
+    if (f.book_type === 'academic') {
+      if (!f.curriculum) { showToast('Select a curriculum', 'error'); return; }
+      if (!f.class_level) { showToast('Select a class level', 'error'); return; }
+    } else {
+      if (!f.genre) { showToast('Select a genre', 'error'); return; }
+    }
+
+    const payload: any = {
+      book_type: f.book_type,
+      book_name: f.book_name.trim(),
+      author_publisher: f.author_publisher.trim(),
+      condition: f.condition,
+      weight_kg: weight,
+      quantity: qty,
+      seller_price: price,
+      description: f.description.trim() || null,
+    };
+    if (f.book_type === 'academic') {
+      payload.curriculum = f.curriculum;
+      payload.class_level = f.class_level;
+      payload.genre = null;
+    } else {
+      payload.genre = f.genre;
+      payload.curriculum = null;
+      payload.class_level = null;
+    }
+
+    setSavingEdit(true);
+    const { data, error } = await supabase.from('listings').update(payload).eq('id', detailListing.id).select('*').maybeSingle();
+    setSavingEdit(false);
+    if (error) { showToast(`Failed to save: ${error.message}`, 'error'); return; }
+
+    await logActivity('listing_edited', `Listing "${payload.book_name}" edited by admin`);
+    await notifyUser(detailListing.seller_id, `Your listing "${payload.book_name}" was updated by the admin.`);
+    showToast('Listing updated', 'success');
+    setEditMode(false);
+    setEditForm(null);
+    if (data) setDetailListing({ ...detailListing, ...data });
+    fetch();
+  };
+
 
   const fetch = useCallback(async () => {
     setLoading(true);
@@ -220,6 +316,128 @@ const ListingsQueue = () => {
           const photos: string[] = l.photos?.length ? l.photos : ['/placeholder.svg'];
           const sellerPrice = Number(l.seller_price) || 0;
           const fee = Math.round(sellerPrice * 0.10);
+
+          if (editMode && editForm) {
+            const f = editForm;
+            const setF = (patch: any) => setEditForm({ ...f, ...patch });
+            const previewFee = Math.round((parseFloat(f.seller_price) || 0) * 0.10);
+            const previewDisplay = (parseFloat(f.seller_price) || 0) + previewFee;
+            return (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#E8357A]">Editing Listing</p>
+                    <h2 className="text-lg font-bold text-[#1A1A1A]">{l.book_name}</h2>
+                  </div>
+                  <button onClick={closeDetail} className="text-xs text-[#8A8A8A] hover:text-[#1A1A1A]">✕</button>
+                </div>
+
+                {/* Book Type */}
+                <div>
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Book Type</p>
+                  <div className="flex gap-2">
+                    {(['academic', 'general'] as BookType[]).map((t) => (
+                      <button key={t} type="button" onClick={() => setF({ book_type: t })}
+                        className={`flex-1 rounded-xl border px-4 py-2 text-sm font-semibold transition ${f.book_type === t ? 'border-[#E8357A] bg-[rgba(232,53,122,0.08)] text-[#E8357A]' : 'border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] text-[#3A3A3A]'}`}>
+                        {t === 'academic' ? 'Academic' : 'General'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Name + author */}
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Book Name</p>
+                    <input value={f.book_name} onChange={(e) => setF({ book_name: e.target.value })} className={INPUT_CLASS} />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Author / Publisher</p>
+                    <input value={f.author_publisher} onChange={(e) => setF({ author_publisher: e.target.value })} className={INPUT_CLASS} />
+                  </div>
+                </div>
+
+                {/* Academic-only */}
+                {f.book_type === 'academic' && (
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                    <div>
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Curriculum</p>
+                      <select value={f.curriculum} onChange={(e) => setF({ curriculum: e.target.value, class_level: '' })} className={`${INPUT_CLASS} appearance-none`}>
+                        <option value="">Select curriculum</option>
+                        {CURRICULUMS.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                        {f.curriculum === 'test_prep' ? 'Exam' : f.curriculum === 'university' ? 'Degree Level' : 'Class Level'}
+                      </p>
+                      <select value={f.class_level} onChange={(e) => setF({ class_level: e.target.value })} disabled={!f.curriculum} className={`${INPUT_CLASS} appearance-none`}>
+                        <option value="">{f.curriculum ? 'Select' : 'Select curriculum first'}</option>
+                        {(f.curriculum ? CLASS_LEVELS_BY_CURRICULUM[f.curriculum as Curriculum] : []).map((c) => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {/* General-only */}
+                {f.book_type === 'general' && (
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Genre</p>
+                    <select value={f.genre} onChange={(e) => setF({ genre: e.target.value })} className={`${INPUT_CLASS} appearance-none`}>
+                      <option value="">Select genre</option>
+                      {GENRES.map((g) => <option key={g} value={g}>{g}</option>)}
+                    </select>
+                  </div>
+                )}
+
+                {/* Condition */}
+                <div>
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Condition</p>
+                  <div className="flex flex-wrap gap-2">
+                    {CONDITIONS.map((c) => (
+                      <button key={c} type="button" onClick={() => setF({ condition: c })}
+                        className={`rounded-full px-4 py-1.5 text-xs font-semibold capitalize transition ${f.condition === c ? 'bg-[rgba(232,53,122,0.12)] text-[#E8357A]' : 'bg-[rgba(0,0,0,0.04)] text-[#8A8A8A]'}`}>
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Weight, qty, price */}
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Weight (kg)</p>
+                    <input type="number" step="0.01" min="0" value={f.weight_kg} onChange={(e) => setF({ weight_kg: e.target.value })} className={INPUT_CLASS} />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Quantity (1–50)</p>
+                    <input type="number" min="1" max="50" value={f.quantity} onChange={(e) => setF({ quantity: e.target.value })} className={INPUT_CLASS} />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Seller Price (৳)</p>
+                    <input type="number" min="0" value={f.seller_price} onChange={(e) => setF({ seller_price: e.target.value })} className={INPUT_CLASS} />
+                  </div>
+                </div>
+
+                <p className="text-xs text-[#8A8A8A]">
+                  Platform fee (10%): <strong>{formatPrice(previewFee)}</strong> · Buyer display price: <strong className="text-[#E8357A]">{formatPrice(previewDisplay)}</strong>
+                </p>
+
+                {/* Description */}
+                <div>
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Seller's Note</p>
+                  <textarea value={f.description} onChange={(e) => setF({ description: e.target.value })}
+                    className={`${INPUT_CLASS} min-h-[90px] resize-none`} placeholder="Description" />
+                </div>
+
+                <div className="flex flex-wrap justify-end gap-2 border-t border-[rgba(0,0,0,0.08)] pt-4">
+                  <GlassButton variant="secondary" onClick={() => { setEditMode(false); setEditForm(null); }} disabled={savingEdit}>Cancel</GlassButton>
+                  <GlassButton variant="success" onClick={saveEdit} disabled={savingEdit}>{savingEdit ? 'Saving…' : 'Save Changes'}</GlassButton>
+                </div>
+              </div>
+            );
+          }
+
           return (
             <div className="flex flex-col gap-4">
               <div className="flex items-start justify-between gap-3">
@@ -311,6 +529,11 @@ const ListingsQueue = () => {
               {/* Actions */}
               <div className="flex flex-wrap justify-end gap-2 border-t border-[rgba(0,0,0,0.08)] pt-4">
                 <GlassButton variant="secondary" onClick={closeDetail}>Close</GlassButton>
+                {['pending', 'available'].includes(l.status) && (
+                  <GlassButton variant="secondary" onClick={startEdit}>
+                    <Pencil size={14} className="mr-1 inline" /> Edit Listing
+                  </GlassButton>
+                )}
                 {l.status === 'pending' && (
                   <>
                     <GlassButton variant="success" onClick={() => { approve(l); closeDetail(); }}>Approve</GlassButton>

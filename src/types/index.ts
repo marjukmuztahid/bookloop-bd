@@ -1,4 +1,4 @@
-export type Curriculum = 'bangla_version' | 'english_version' | 'english_medium';
+export type Curriculum = 'bangla_version' | 'english_version' | 'english_medium' | 'university' | 'test_prep';
 export type BookCondition = 'new' | 'good' | 'fair' | 'worn';
 export type BookType = 'academic' | 'general';
 export type Genre =

@@ -22,7 +22,7 @@ const Terms = () => {
           <p className="mb-8 text-sm text-muted-foreground">Effective Date: January 1, 2026 &nbsp;·&nbsp; Last Updated: January 1, 2026</p>
 
           <Section title="1. About Book Loop BD">
-            <p>Book Loop BD (“we”, “us”, “our”, the “Platform”) is an online marketplace operated from Bangladesh that connects students and parents who wish to buy and sell second-hand school and college curriculum books. The Platform provides the technology, payment workflow, order management, customer support, and delivery coordination required to complete each transaction safely and conveniently.</p>
+            <p>Book Loop BD (“we”, “us”, “our”, the “Platform”) is an online marketplace operated from Bangladesh that connects students and parents who wish to buy and sell second-hand school, college, university and test-prep books. The Platform provides the technology, payment workflow, order management, customer support, and delivery coordination required to complete each transaction safely and conveniently.</p>
             <p>These Terms and Conditions (the “Terms”) form a legally binding agreement between you and Book Loop BD. By creating an account, browsing listings, placing an order, posting a listing, or otherwise using the Platform, you agree to be bound by these Terms together with our <Link to="/privacy-policy" className="text-primary underline underline-offset-2 hover:opacity-80">Privacy Policy</Link>. If you do not agree with any part of these Terms, please do not use the Platform.</p>
           </Section>
 
@@ -41,11 +41,11 @@ const Terms = () => {
 
           <Section title="3. Eligibility">
             <ul className="list-disc space-y-1 pl-5">
-              <li>The Platform is intended primarily for school and college students in Bangladesh, as well as their parents or guardians acting on their behalf.</li>
+              <li>The Platform is intended for school, college, university and test-prep students in Bangladesh, as well as their parents or guardians acting on their behalf.</li>
               <li>You must reside in Bangladesh and be capable of providing a valid pickup or delivery address within one of the 64 districts.</li>
               <li>If you are under the age of 18, you may use the Platform only with the consent and supervision of a parent or legal guardian who agrees to be bound by these Terms on your behalf.</li>
               <li>By registering, you confirm that the information you provide is accurate, current, and complete, and that you have the legal capacity to enter into this agreement.</li>
-              <li>The Platform currently does not serve university-level curriculum, professional reference books, foreign editions outside our supported curriculums, or any non-book item.</li>
+              <li>The Platform is for academic and test-preparation books (school, college, university, IELTS, TOEFL, GRE, SAT) and selected general reading. We do not accept professional licensing materials, pirated or photocopied books, or any non-book item.</li>
             </ul>
           </Section>
 
@@ -162,7 +162,7 @@ const Terms = () => {
             <p>You agree that you will not use the Platform to:</p>
             <ul className="mt-2 list-disc space-y-1 pl-5">
               <li>Post false, misleading, fraudulent, pirated, or counterfeit listings.</li>
-              <li>List any item that is not a permitted school or college curriculum book (e.g., university books, foreign editions outside our supported curriculums, novels, gadgets, accessories, or any non-book item).</li>
+              <li>List any item that is not a permitted book on the Platform (e.g., pirated or photocopied books, professional licensing materials, gadgets, accessories, or any non-book item).</li>
               <li>Harass, abuse, threaten, defame, or otherwise harm other users, admins, or couriers.</li>
               <li>Solicit other users to transact outside the Platform to avoid fees, taxes, or accountability.</li>
               <li>Create multiple accounts, impersonate another person, or use bots, scrapers, or automated tools to access the Platform.</li>

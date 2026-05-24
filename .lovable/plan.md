@@ -1,74 +1,49 @@
-# Contact Page Enhancement Plan
+# Expand scope: University + Test-Prep books
 
-Refresh `src/pages/Contact.tsx` to feel more professional while keeping the existing Frosted Glass / iOS aesthetic. No backend or schema changes needed.
+Right now the platform only accepts school/college books (Class 1–10, SSC, HSC, O-Level, A-Level) under three curricula (Bangla Version, English Version, English Medium). We'll extend the academic book flow to also accept university and test-prep books, without touching the existing General Books flow.
 
-## Layout
+## New taxonomy
 
-Switch the main container from `max-w-2xl` (single column) to `max-w-5xl` with a responsive grid:
+Two new curriculum options will be added alongside the existing three:
 
-```text
-Desktop (md+):                 Mobile:
-┌────────────┬────────────┐    ┌────────────┐
-│  Contact   │  Business  │    │  Contact   │
-│  Methods   │   Info     │    │  Methods   │
-│  (left)    │  + Social  │    ├────────────┤
-├────────────┤  (right)   │    │ Business   │
-│ Quick FAQ  │            │    │   Info     │
-│  (left)    │            │    ├────────────┤
-└────────────┴────────────┘    │ Quick FAQ  │
-                               ├────────────┤
-                               │  Social    │
-                               └────────────┘
-```
+- **University** → class levels: `Bachelors`, `Masters`
+- **Test Prep** → class levels: `IELTS`, `GRE`, `SAT`, `TOEFL`
 
-- Left column: existing Email / WhatsApp / Phone / General Inquiries / Report a Problem cards (kept as-is)
-- Right column: new **Business Info** card + **Follow Us** card
-- Below: new **Quick Help** card with FAQ shortcuts
+Existing curricula (Bangla Version / English Version / English Medium) keep their current class levels.
 
-## 1. Business Info card (new)
+The Sell Book form's class-level dropdown will dynamically show the right list based on the selected curriculum, so a user picking "University" only sees Bachelors/Masters, etc.
 
-A glass panel with three rows, each with an icon + label + value:
+## Files to update
 
-- **Response time** (Clock icon, magenta) — "Usually within 24 hours"
-- **Support hours** (Calendar icon, magenta) — "Saturday – Thursday, 10 AM – 8 PM (BST)"
-- **Languages** (Languages icon, magenta) — "Bangla & English"
+**Frontend (pure UI / config):**
+- `src/types/index.ts` — extend `Curriculum` type with `'university' | 'test_prep'`
+- `src/pages/SellBook.tsx` — add the 2 new curriculum pills; replace the flat `CLASS_LEVELS` array with a curriculum→levels map so the dropdown filters correctly
+- `src/pages/Home.tsx` — add new curricula to `CURRICULA_MAP`; extend `CLASSES` filter list with Bachelors, Masters, IELTS, GRE, SAT, TOEFL
+- `src/components/ui/BookCard.tsx` — add labels `university: 'University'`, `test_prep: 'Test Prep'` in `curriculumLabels`
+- `src/pages/HowItWorks.tsx` and `src/components/HowItWorksModal.tsx` — update copy that mentions "school/college" to include university & test-prep where shown
+- `src/pages/About.tsx` — update mission copy to reflect the broader student audience
+- `src/pages/FAQ.tsx` — update any FAQ entries that say "school and college only"
 
-## 2. Quick Help card (new)
+**Legal pages (copy updates):**
+- `src/pages/PrivacyPolicy.tsx` — broaden the "school and college students" description to include university and test-prep learners
+- `src/pages/Terms.tsx` — remove the explicit exclusion of university books and foreign editions (sections that currently forbid them), and update the "Permitted Listings" / "Prohibited Activities" wording accordingly
 
-Heading: "Quick Help — answers in seconds". Below it, a 2-col grid (1-col on mobile) of link tiles. Each tile is a `Link` (react-router) to `/faq` with a relevant question label:
+**Memory updates:**
+- Update `mem://index.md` Core line — remove "No university curriculum"
+- Update `mem://constraints/curriculum-scope` — rewrite to reflect new supported scope (school, college, university, test-prep)
+- Update `mem://tech-stack/listing-data-mapping` — add the new curriculum slugs
 
-- "How do I sell a book?"
-- "How does delivery work?"
-- "When will I get paid?"
-- "What if my order doesn't arrive?"
-- "Can I cancel an order?"
-- "Browse all FAQs →" (primary styled, links to `/faq`)
+## What we are NOT changing
 
-Tiles use subtle hover lift (border + shadow transition) consistent with existing glass-panel styling.
+- Database schema — `curriculum` and `class_level` are free-text `text` columns, no migration needed.
+- General Books flow (genres, fiction/non-fiction, etc.) — untouched.
+- Platform fee, delivery, checkout, RLS, admin panel — untouched.
+- Existing listings — stay valid; their curriculum/class values are unaffected.
+- No DB migration, no edge function changes.
 
-## 3. Follow Us card (new)
+## Verification
 
-A small glass panel with heading "Follow us" and three social buttons in a row:
-
-- **Facebook** — link from existing footer (`https://www.facebook.com/share/17HMqPLb1L/`), hover color `#1877F2`
-- **Instagram** — link from existing footer (`https://www.instagram.com/book_loop_bd?igsh=eW9`), hover color `#E1306C`
-- **WhatsApp** — `https://wa.me/8801743661887`, hover color `#25D366`
-
-Each button: 40×40 rounded-xl tile with the brand SVG (reuse the same SVGs already in `Footer.tsx` for Facebook/Instagram for consistency; use Lucide `MessageCircle` for WhatsApp or inline SVG).
-
-## 4. Visual polish
-
-- Update the page intro: keep the H1 "Contact / Report an Issue" but tighten the description.
-- Add subtle entrance fade-in (Framer Motion `motion.div` with stagger) matching the site's existing animation patterns.
-- Keep all colors via existing inline hex values that already appear in the file (magenta `#E8357A`, WhatsApp green `#25D366`, etc.) — no new design tokens needed.
-
-## Technical notes
-
-- **File edited:** `src/pages/Contact.tsx` only.
-- **New Lucide icons:** `Clock`, `Calendar`, `Languages`, `HelpCircle`, `ArrowRight`, `Facebook`, `Instagram` (or keep custom SVG for brand accuracy).
-- **No DB / no edge functions / no new routes** — FAQ links point to the existing `/faq` page.
-- **SEO:** keep existing `useSEO` call; no changes.
-- **Accessibility:** social icons get `aria-label`; FAQ tiles are real `<Link>` elements.
-- **Responsive:** validated for the 602px viewport — grid collapses to single column below `md` (768px).
-
-After implementation, the contact page becomes a proper "support hub" rather than just a list of contact methods.
+After implementation, I'll:
+1. Open Sell Book → confirm new curriculum pills appear and the class-level dropdown swaps correctly per curriculum.
+2. Open Home filters → confirm new curricula and class levels appear and filter results.
+3. Spot-check the Privacy/Terms/About/FAQ pages for the updated copy.

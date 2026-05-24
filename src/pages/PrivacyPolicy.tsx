@@ -22,7 +22,7 @@ const PrivacyPolicy = () => {
           <p className="mb-8 text-sm text-muted-foreground">Effective Date: January 1, 2026 &nbsp;·&nbsp; Last Updated: January 1, 2026</p>
 
           <Section title="1. Introduction and Scope">
-            <p>Book Loop BD (“we”, “us”, “our”, or the “Platform”) is a second-hand book marketplace operated from Bangladesh that connects school and college students who wish to buy and sell used curriculum books. We take the privacy of our users (“you”, “user”, “buyer”, or “seller”) seriously and are committed to handling your personal data lawfully, fairly, and transparently.</p>
+            <p>Book Loop BD (“we”, “us”, “our”, or the “Platform”) is a second-hand book marketplace operated from Bangladesh that connects school, college, university and test-prep students who wish to buy and sell used curriculum and study books. We take the privacy of our users (“you”, “user”, “buyer”, or “seller”) seriously and are committed to handling your personal data lawfully, fairly, and transparently.</p>
             <p>This Privacy Policy explains what information we collect, why we collect it, how we use and protect it, with whom we share it, and what rights and choices you have. It applies to all visitors and registered users of the Book Loop BD website, mobile-responsive pages, transactional emails, and any related services we provide (collectively, the “Services”).</p>
             <p>By creating an account, browsing listings, placing an order, or otherwise using the Services, you acknowledge that you have read and understood this Privacy Policy and consent to the practices described here. If you do not agree with any part of this Policy, please do not use the Platform.</p>
           </Section>

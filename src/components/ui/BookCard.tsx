@@ -25,6 +25,8 @@ const curriculumLabels: Record<Curriculum, string> = {
   bangla_version: 'Bangla Version',
   english_version: 'English Version',
   english_medium: 'English Medium',
+  university: 'University',
+  test_prep: 'Test Prep',
 };
 
 const BookCard = ({ book }: { book: BookCardData }) => {

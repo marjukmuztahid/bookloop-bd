@@ -100,6 +100,7 @@ const Dashboard = () => {
               <motion.div key={activeTab} {...fadeUp}>
                 {activeTab === 'listings' && <MyListings />}
                 {activeTab === 'orders' && <MyOrders />}
+                {activeTab === 'saved' && <MySaved />}
                 {activeTab === 'profile' && <MyProfile />}
               </motion.div>
             </AnimatePresence>

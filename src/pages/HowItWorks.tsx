@@ -36,7 +36,7 @@ const FAQ_QA = [
   },
   {
     q: 'How do I sell my old school or college books?',
-    a: 'Sign up, add your bKash or Nagad number and address in your profile, then click Sell. Upload up to 3 photos, set the condition, class level or genre, and your asking price. After admin approval your listing goes live for 60 days.',
+    a: 'Sign up, add your bKash or Nagad number and address in your profile, then click Sell. Upload up to 3 photos, set the condition, class level or genre, and your asking price. After admin approval your listing goes live for 90 days.',
   },
   {
     q: 'Is cash on delivery available across Bangladesh?',

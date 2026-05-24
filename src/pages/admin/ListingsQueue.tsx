@@ -316,6 +316,128 @@ const ListingsQueue = () => {
           const photos: string[] = l.photos?.length ? l.photos : ['/placeholder.svg'];
           const sellerPrice = Number(l.seller_price) || 0;
           const fee = Math.round(sellerPrice * 0.10);
+
+          if (editMode && editForm) {
+            const f = editForm;
+            const setF = (patch: any) => setEditForm({ ...f, ...patch });
+            const previewFee = Math.round((parseFloat(f.seller_price) || 0) * 0.10);
+            const previewDisplay = (parseFloat(f.seller_price) || 0) + previewFee;
+            return (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#E8357A]">Editing Listing</p>
+                    <h2 className="text-lg font-bold text-[#1A1A1A]">{l.book_name}</h2>
+                  </div>
+                  <button onClick={closeDetail} className="text-xs text-[#8A8A8A] hover:text-[#1A1A1A]">✕</button>
+                </div>
+
+                {/* Book Type */}
+                <div>
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Book Type</p>
+                  <div className="flex gap-2">
+                    {(['academic', 'general'] as BookType[]).map((t) => (
+                      <button key={t} type="button" onClick={() => setF({ book_type: t })}
+                        className={`flex-1 rounded-xl border px-4 py-2 text-sm font-semibold transition ${f.book_type === t ? 'border-[#E8357A] bg-[rgba(232,53,122,0.08)] text-[#E8357A]' : 'border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] text-[#3A3A3A]'}`}>
+                        {t === 'academic' ? 'Academic' : 'General'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Name + author */}
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Book Name</p>
+                    <input value={f.book_name} onChange={(e) => setF({ book_name: e.target.value })} className={INPUT_CLASS} />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Author / Publisher</p>
+                    <input value={f.author_publisher} onChange={(e) => setF({ author_publisher: e.target.value })} className={INPUT_CLASS} />
+                  </div>
+                </div>
+
+                {/* Academic-only */}
+                {f.book_type === 'academic' && (
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                    <div>
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Curriculum</p>
+                      <select value={f.curriculum} onChange={(e) => setF({ curriculum: e.target.value, class_level: '' })} className={`${INPUT_CLASS} appearance-none`}>
+                        <option value="">Select curriculum</option>
+                        {CURRICULUMS.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                        {f.curriculum === 'test_prep' ? 'Exam' : f.curriculum === 'university' ? 'Degree Level' : 'Class Level'}
+                      </p>
+                      <select value={f.class_level} onChange={(e) => setF({ class_level: e.target.value })} disabled={!f.curriculum} className={`${INPUT_CLASS} appearance-none`}>
+                        <option value="">{f.curriculum ? 'Select' : 'Select curriculum first'}</option>
+                        {(f.curriculum ? CLASS_LEVELS_BY_CURRICULUM[f.curriculum as Curriculum] : []).map((c) => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {/* General-only */}
+                {f.book_type === 'general' && (
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Genre</p>
+                    <select value={f.genre} onChange={(e) => setF({ genre: e.target.value })} className={`${INPUT_CLASS} appearance-none`}>
+                      <option value="">Select genre</option>
+                      {GENRES.map((g) => <option key={g} value={g}>{g}</option>)}
+                    </select>
+                  </div>
+                )}
+
+                {/* Condition */}
+                <div>
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Condition</p>
+                  <div className="flex flex-wrap gap-2">
+                    {CONDITIONS.map((c) => (
+                      <button key={c} type="button" onClick={() => setF({ condition: c })}
+                        className={`rounded-full px-4 py-1.5 text-xs font-semibold capitalize transition ${f.condition === c ? 'bg-[rgba(232,53,122,0.12)] text-[#E8357A]' : 'bg-[rgba(0,0,0,0.04)] text-[#8A8A8A]'}`}>
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Weight, qty, price */}
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Weight (kg)</p>
+                    <input type="number" step="0.01" min="0" value={f.weight_kg} onChange={(e) => setF({ weight_kg: e.target.value })} className={INPUT_CLASS} />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Quantity (1–50)</p>
+                    <input type="number" min="1" max="50" value={f.quantity} onChange={(e) => setF({ quantity: e.target.value })} className={INPUT_CLASS} />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Seller Price (৳)</p>
+                    <input type="number" min="0" value={f.seller_price} onChange={(e) => setF({ seller_price: e.target.value })} className={INPUT_CLASS} />
+                  </div>
+                </div>
+
+                <p className="text-xs text-[#8A8A8A]">
+                  Platform fee (10%): <strong>{formatPrice(previewFee)}</strong> · Buyer display price: <strong className="text-[#E8357A]">{formatPrice(previewDisplay)}</strong>
+                </p>
+
+                {/* Description */}
+                <div>
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Seller's Note</p>
+                  <textarea value={f.description} onChange={(e) => setF({ description: e.target.value })}
+                    className={`${INPUT_CLASS} min-h-[90px] resize-none`} placeholder="Description" />
+                </div>
+
+                <div className="flex flex-wrap justify-end gap-2 border-t border-[rgba(0,0,0,0.08)] pt-4">
+                  <GlassButton variant="secondary" onClick={() => { setEditMode(false); setEditForm(null); }} disabled={savingEdit}>Cancel</GlassButton>
+                  <GlassButton variant="success" onClick={saveEdit} disabled={savingEdit}>{savingEdit ? 'Saving…' : 'Save Changes'}</GlassButton>
+                </div>
+              </div>
+            );
+          }
+
           return (
             <div className="flex flex-col gap-4">
               <div className="flex items-start justify-between gap-3">
@@ -407,6 +529,11 @@ const ListingsQueue = () => {
               {/* Actions */}
               <div className="flex flex-wrap justify-end gap-2 border-t border-[rgba(0,0,0,0.08)] pt-4">
                 <GlassButton variant="secondary" onClick={closeDetail}>Close</GlassButton>
+                {['pending', 'available'].includes(l.status) && (
+                  <GlassButton variant="secondary" onClick={startEdit}>
+                    <Pencil size={14} className="mr-1 inline" /> Edit Listing
+                  </GlassButton>
+                )}
                 {l.status === 'pending' && (
                   <>
                     <GlassButton variant="success" onClick={() => { approve(l); closeDetail(); }}>Approve</GlassButton>

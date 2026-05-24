@@ -40,7 +40,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: 'What kinds of books can I find?',
-    a: 'NCTB textbooks for Class 1 to Class 10, SSC and HSC guides, O-Level and A-Level Cambridge and Edexcel books, English grammar and dictionaries, admission preparation books, plus general reading like novels and Islamic books. University-level books are not supported.',
+    a: 'NCTB textbooks for Class 1 to Class 10, SSC and HSC guides, O-Level and A-Level Cambridge and Edexcel books, university textbooks (Bachelors and Masters), test-prep books for IELTS, TOEFL, GRE and SAT, English grammar and dictionaries, admission preparation books, plus general reading like novels and Islamic books.',
   },
   {
     q: 'Are the listings safe and verified?',

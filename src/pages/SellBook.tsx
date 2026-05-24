@@ -21,12 +21,21 @@ const CURRICULUMS: Array<{ label: string; value: Curriculum }> = [
   { label: 'Bangla Version', value: 'bangla_version' },
   { label: 'English Version', value: 'english_version' },
   { label: 'English Medium', value: 'english_medium' },
+  { label: 'University', value: 'university' },
+  { label: 'Test Prep', value: 'test_prep' },
 ];
-const CLASS_LEVELS = [
+const SCHOOL_COLLEGE_LEVELS = [
   'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5',
   'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10',
   'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level',
 ];
+const CLASS_LEVELS_BY_CURRICULUM: Record<Curriculum, string[]> = {
+  bangla_version: SCHOOL_COLLEGE_LEVELS,
+  english_version: SCHOOL_COLLEGE_LEVELS,
+  english_medium: SCHOOL_COLLEGE_LEVELS,
+  university: ['Bachelors', 'Masters'],
+  test_prep: ['IELTS', 'TOEFL', 'GRE', 'SAT'],
+};
 const CONDITIONS: Array<{ value: BookCondition; label: string; desc: string }> = [
   { value: 'new', label: 'Like New', desc: 'Unused, no marks' },
   { value: 'good', label: 'Good', desc: 'Minor wear, no writing' },
@@ -367,20 +376,23 @@ const SellBook = () => {
                 {/* 4. Curriculum */}
                 <div>
                   <label className="mb-2 block text-xs font-semibold text-[#3A3A3A]">Curriculum Type</label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {CURRICULUMS.map((c) => (
-                      <PillToggle key={c.value} active={curriculum === c.value} onClick={() => setCurriculum(c.value)}>{c.label}</PillToggle>
+                      <PillToggle key={c.value} active={curriculum === c.value} onClick={() => { setCurriculum(c.value); setClassLevel(''); }}>{c.label}</PillToggle>
                     ))}
                   </div>
                 </div>
 
                 {/* 5. Class Level */}
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">Class Level</label>
+                  <label className="mb-1 block text-xs font-semibold text-[#3A3A3A]">
+                    {curriculum === 'test_prep' ? 'Exam' : curriculum === 'university' ? 'Degree Level' : 'Class Level'}
+                  </label>
                   <select value={classLevel} onChange={(e) => setClassLevel(e.target.value)}
-                    className={`${INPUT_CLASS} appearance-none ${!classLevel ? 'text-[#8A8A8A]' : ''}`}>
-                    <option value="">Select class</option>
-                    {CLASS_LEVELS.map((c) => <option key={c} value={c}>{c}</option>)}
+                    className={`${INPUT_CLASS} appearance-none ${!classLevel ? 'text-[#8A8A8A]' : ''}`}
+                    disabled={!curriculum}>
+                    <option value="">{curriculum ? 'Select' : 'Select curriculum first'}</option>
+                    {(curriculum ? CLASS_LEVELS_BY_CURRICULUM[curriculum] : []).map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
               </>

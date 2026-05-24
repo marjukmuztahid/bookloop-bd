@@ -8,7 +8,7 @@ const About = () => {
   useSEO({
     title: 'About Book Loop BD — Buy & Sell Old Books in Bangladesh',
     description:
-      "Book Loop BD is Bangladesh's trusted marketplace to buy and sell old school and college books at the lowest prices, with Cash on Delivery across all 64 districts.",
+      "Book Loop BD is Bangladesh's trusted marketplace to buy and sell old school, college, university and test-prep books at the lowest prices, with Cash on Delivery across all 64 districts.",
     canonicalPath: '/about',
     jsonLd: {
       '@context': 'https://schema.org',
@@ -20,7 +20,7 @@ const About = () => {
       founder: { '@type': 'Person', name: 'Marjuk Muztahid' },
       areaServed: { '@type': 'Country', name: 'Bangladesh' },
       description:
-        'Student-first marketplace to buy and sell second-hand school and college textbooks across Bangladesh.',
+        'Student-first marketplace to buy and sell second-hand school, college, university and test-prep books across Bangladesh.',
     },
   });
 
@@ -61,8 +61,9 @@ const About = () => {
             Founded by <strong className="text-foreground">Marjuk Muztahid</strong> in
             March 2026, Book Loop BD gives students a dedicated, modern platform to
             find, sell, and exchange textbooks for Bangla Version, English Version, and
-            English Medium curricula — covering classes 1 to 12, including SSC, HSC,
-            O-Level, and A-Level.
+            English Medium curricula — covering classes 1 to 12, SSC, HSC, O-Level and
+            A-Level, as well as university (Bachelors and Masters) and test-prep books
+            for IELTS, TOEFL, GRE and SAT.
           </p>
         </section>
 
@@ -116,7 +117,7 @@ const About = () => {
               {
                 icon: BookOpen,
                 title: 'Every Curriculum',
-                body: 'Bangla Version, English Version, English Medium, plus general reading — from Class 1 to A-Level.',
+                body: 'Bangla Version, English Version, English Medium, university (Bachelors & Masters), and test-prep books (IELTS, TOEFL, GRE, SAT) — plus general reading.',
               },
               {
                 icon: Users,
@@ -144,8 +145,9 @@ const About = () => {
             What You Can Buy and Sell
           </h2>
           <p>
-            Book Loop BD covers the full school and college journey in Bangladesh.
-            Popular categories include:
+            Book Loop BD covers the full student journey in Bangladesh — from primary
+            school through university and international test prep. Popular categories
+            include:
           </p>
           <ul className="ml-5 list-disc space-y-1">
             <li>
@@ -162,6 +164,15 @@ const About = () => {
               and Edexcel textbooks
             </li>
             <li>
+              <strong className="text-foreground">University books</strong> for
+              Bachelors and Masters programs across BBA, CSE, Engineering, Medical, Law
+              and other disciplines
+            </li>
+            <li>
+              <strong className="text-foreground">Test-prep books</strong> for IELTS,
+              TOEFL, GRE and SAT — including official guides and practice sets
+            </li>
+            <li>
               <strong className="text-foreground">English grammar, dictionaries</strong>{' '}
               and admission preparation books
             </li>
@@ -170,10 +181,6 @@ const About = () => {
               biographies, self-development and Islamic books in Bangla and English
             </li>
           </ul>
-          <p>
-            University-level books are not currently supported — we focus on the school
-            and college audience where second-hand demand is highest.
-          </p>
         </section>
 
         {/* How it works (brief) */}

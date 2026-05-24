@@ -17,11 +17,11 @@ import { GENRES } from '@/data/genres';
 import type { BookType } from '@/types';
 
 const DISTRICTS = ['All', ...BANGLADESH_DISTRICTS];
-const CURRICULA_MAP: Record<string, string> = { 'All': 'All', 'Bangla Version': 'bangla_version', 'English Version': 'english_version', 'English Medium': 'english_medium' };
+const CURRICULA_MAP: Record<string, string> = { 'All': 'All', 'Bangla Version': 'bangla_version', 'English Version': 'english_version', 'English Medium': 'english_medium', 'University': 'university', 'Test Prep': 'test_prep' };
 const CURRICULA = Object.keys(CURRICULA_MAP);
 const CONDITIONS_MAP: Record<string, string> = { 'All': 'All', 'New': 'new', 'Good': 'good', 'Fair': 'fair', 'Worn': 'worn' };
 const CONDITIONS = Object.keys(CONDITIONS_MAP);
-const CLASSES = ['All', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level'];
+const CLASSES = ['All', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC 1st Year', 'HSC 2nd Year', 'O-Level', 'A-Level', 'Bachelors', 'Masters', 'IELTS', 'TOEFL', 'GRE', 'SAT'];
 const GENRE_OPTIONS = ['All', ...GENRES];
 const SORT_OPTIONS = ['Default', 'Price: Low to High', 'Price: High to Low'];
 const PAGE_SIZE = 12;

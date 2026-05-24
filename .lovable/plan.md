@@ -1,44 +1,55 @@
-# Admin Edit Listing Feature
+# Admin User Details Modal
 
-Yes — fully possible. Admins already have `UPDATE` RLS permission on `listings`, and the `listings_auto_fields` trigger will auto-recompute `display_price` whenever `seller_price` changes, so price math stays correct.
+Add a **See Details** button beside each user in the admin Users page that opens a modal with their complete profile, payment info, and listing/order statistics.
 
-Note: the project rule "No post-submission listing edits" applies to **sellers**. This adds an **admin-only** override for fixing miscategorized posts — it does not change seller-facing behavior.
+## File to edit
+- `src/pages/admin/Users.tsx` (only)
 
-## Where
+## UI changes
+- Add a **See Details** button (GlassButton, secondary variant) beside the existing Ban/Unban button on each user row.
+- Build a new full-detail modal (same frosted-glass pattern as the ban modal and ListingsQueue detail modal), `max-w-2xl`, scrollable.
 
-`src/pages/admin/ListingsQueue.tsx` — add an "Edit" mode inside the existing full-detail modal. No new page, no schema changes.
+## Modal contents
 
-## Editable fields
+**Profile section**
+- Full name, phone, district, detailed address, member since, banned/active status, email (fetched via `get_user_email` RPC).
 
-All listing fields a seller originally chose:
-- **Book Type** (`academic` ⇄ `general`) — the main fix you mentioned
-- **Book Name**, **Author/Publisher**
-- **Condition** (new / good / fair / worn)
-- **Weight (kg)**, **Quantity** (1–50), **Seller Price** (display price auto-recalculates)
-- **Description** (seller's note)
-- **Academic-only**: Curriculum, Class Level
-- **General-only**: Genre
+**Payment information**
+- Payment method (bKash / Nagad)
+- Payment number (`bkash_nagad_number`)
+- Fallback "Not provided" when null.
 
-Not editable here (out of scope): status, photos, seller, dates, rejection reason.
+**Listings stats** (queried from `listings` where `seller_id = user.id`)
+- Total listings
+- Pending (status `pending`)
+- Available (`available`)
+- Sold (`sold_pending_delivery` + delivered count via orders)
+- Rejected (`rejected`)
+- Removed/Deleted (`removed`, soft-deleted)
 
-## UX
+**Orders as buyer** (queried from `orders` where `buyer_id = user.id`)
+- Total orders placed
+- Successful deliveries (status `delivered`)
+- Unsuccessful (status `cancelled` / `failed` / `returned`)
+- Pending/in-progress (remaining statuses)
 
-- In the detail modal footer, add an **"Edit Listing"** button (visible only when status is `pending` or `available`).
-- Clicking it swaps the read-only view into a form (same modal) with all fields pre-filled.
-- Switching **Book Type** swaps the conditional fields (genre vs curriculum/class) and clears the now-irrelevant ones on save.
-- **Save** / **Cancel** buttons at the bottom. Save shows a confirmation toast.
-- On save: update DB → log activity (`listing_edited`) → notify the seller ("Your listing for X was updated by admin: <changed fields>") → refresh list → return to read-only view.
+**Orders as seller** (queried via `orders` joined to `listings` where `listings.seller_id = user.id`)
+- Total sales
+- Successful deliveries
+- Unsuccessful deliveries
+- In progress
 
-## Data writes
-
-Single `supabase.from('listings').update({...}).eq('id', l.id)` call. When `book_type` is changed:
-- to `general`: set `genre`, null out `curriculum` & `class_level`
-- to `academic`: set `curriculum` & `class_level`, null out `genre`
-
-`display_price` is recomputed by the existing DB trigger — no client-side calculation needed for persistence.
+## Technical details
+- New state: `detailUser`, `detailStats`, `detailLoading`.
+- `openDetails(user)` runs in parallel:
+  1. `supabase.from('listings').select('status').eq('seller_id', user.id)` — aggregate counts client-side.
+  2. `supabase.from('orders').select('status').eq('buyer_id', user.id)` — buyer stats.
+  3. `supabase.from('orders').select('status, listings!inner(seller_id)').eq('listings.seller_id', user.id)` — seller stats (explicit FK hint per existing query patterns).
+  4. `supabase.rpc('get_user_email', { _user_id: user.id })` — email.
+- Skeleton loaders while fetching; stats shown as a compact grid of `glass-panel-sm` stat cards.
+- Modal closes on overlay click / Close button; `e.stopPropagation()` on inner panel.
+- No DB schema changes, no new RLS policies (admin already has SELECT on `users`, `listings`, `orders`).
 
 ## Out of scope
-
-- Editing photos (would require re-upload flow)
-- Allowing sellers to edit (explicit project constraint stays)
-- Editing status, seller, or dates from this UI
+- Editing user fields from this modal.
+- Viewing the actual listing/order rows (counts only). Can be added later if needed.

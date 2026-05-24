@@ -1,64 +1,43 @@
-# Listing Approval & Rejection Emails
+## Add Seller Instructions to Sell a Book Page
 
-Add two new transactional emails sent to sellers from the admin Listings Queue, using the existing frosted-glass `emailTemplate` wrapper in `src/lib/email.ts` and the `send-email` edge function (same pattern as all other Book Loop BD emails).
+Add a new instructions panel **below** the "What type of book are you selling?" card on the book-type selection step (Step 1) of `src/pages/SellBook.tsx`. The form step (Step 2) stays unchanged.
 
-## 1. Email content
+### Placement
+- Same page, immediately under the existing `glass-panel` card that contains the Academic / General choices.
+- Same `max-w-2xl` width container — flows naturally on mobile and desktop.
 
-### A. Listing Approved — `sellerListingApproved(sellerFirstName, bookTitle)`
-- **Subject:** `Your listing "<bookTitle>" is now live on Book Loop BD`
-- **Hero emoji:** ✅
-- **Hero title:** `Listing approved!`
-- **Hero subtitle:** `Your book is now visible to buyers across Bangladesh.`
-- **Body copy:**
-  > Hi <sellerFirstName>,
-  >
-  > Great news — your listing for **"<bookTitle>"** has been reviewed and approved by our team. It's now live on Book Loop BD and discoverable by buyers.
-  >
-  > **What happens next:**
-  > - Buyers can view and order your book directly from the marketplace.
-  > - You'll get an in-app notification and an email as soon as someone places an order.
-  > - Your listing stays active for 90 days. We'll remind you 7 days before it expires.
-  >
-  > Tip: Share your listing link on WhatsApp or social media to reach more buyers faster.
-  >
-  > — The Book Loop BD Team
+### Structure
+A second `glass-panel` block containing:
 
-### B. Listing Rejected — `sellerListingRejected(sellerFirstName, bookTitle, reason)`
-- **Subject:** `Update on your listing "<bookTitle>"`
-- **Hero emoji:** 📝
-- **Hero title:** `Listing not approved`
-- **Hero subtitle:** `A small change is needed before it can go live.`
-- **Body copy:**
-  > Hi <sellerFirstName>,
-  >
-  > Thanks for submitting **"<bookTitle>"** to Book Loop BD. After review, our team wasn't able to approve this listing in its current form.
-  >
-  > **Reason from our team:**
-  > <reason in a highlighted card — faint magenta background `rgba(232,53,122,0.08)`, rounded, left-aligned>
-  >
-  > **What you can do:**
-  > - Review the reason above and prepare a fresh submission that addresses it.
-  > - Make sure photos are clear, the condition is accurate, and the price follows our guidelines.
-  > - Re-list the book from your dashboard whenever you're ready.
-  >
-  > If you believe this was a mistake or need clarification, reply to this email or message us on WhatsApp.
-  >
-  > — The Book Loop BD Team
+1. **Bold heading at top** (magenta `#E8357A` accent + bold):
+   > "Please read these seller instructions carefully before posting your book."
 
-Both emails reuse the existing wrapper (Book Loop BD header, frosted glass cards, magenta CTA button linking to the site, footer with support contact) — visually consistent with all other transactional emails.
+2. **Four grouped sections** with sub-headings and bullet lists:
 
-## 2. Wiring
+   - **Before you list**
+     - Photo must be your actual copy — no internet images
+     - Mention missing pages, heavy writing, or torn covers in description
+     - Set a fair price, correct weight, edition, class or genre etc.
 
-In `src/pages/admin/ListingsQueue.tsx`:
+   - **While listed**
+     - If your book sells elsewhere (e.g. Facebook group, in person), remove it from Book Loop BD immediately to avoid confusions
+     - Don't post the same book twice
 
-- **`approve(l)`** — after the existing `notifyUser(...)` in-app notification, fetch the seller's email via `getUserEmail(l.seller_id)`, derive `sellerFirstName` from their profile's `full_name` (first token, fallback `'there'`), build the email with `sellerListingApproved(...)`, and send via `sendEmail(...)`. Failures are logged but don't block the approve action (same pattern as expiry warning).
-- **`reject()`** — same flow, after the in-app notify call, using `sellerListingRejected(firstName, rejectModal.name, rejectReason.trim())`.
+   - **When ordered**
+     - Be ready to hand over the book when Steadfast comes for pickup; a no-show may result in account suspension
+     - Make sure your bKash/Nagad number is correct in your profile — that's how you get paid
 
-Seller first name lookup: a single `supabase.from('profiles').select('full_name').eq('id', sellerId).maybeSingle()` call alongside the email lookup. Both queries run in parallel.
+   - **General**
+     - Renew before expiry if still available
+     - If your listing is rejected, read the reason and fix it before reposting
 
-## 3. Files changed
+### Styling (matches existing design system)
+- Container: `glass-panel` with `mt-6 p-6` (consistent with site frosted-glass aesthetic).
+- Top heading: `text-sm sm:text-base font-bold text-[#E8357A]` with a faint magenta tint background card (`rgba(232,53,122,0.06)` rounded box) so it stands out.
+- Group sub-headings: `text-xs font-bold uppercase tracking-wide text-[#1A1A1A]`.
+- Bullets: `text-xs text-[#3A3A3A] leading-relaxed`, magenta dot markers.
+- Sections separated by subtle spacing (`space-y-5`), no harsh dividers.
 
-- `src/lib/email.ts` — add `sellerListingApproved()` and `sellerListingRejected()` exports.
-- `src/pages/admin/ListingsQueue.tsx` — fire the email after each admin action.
-
-No database, edge function, RLS, or schema changes — purely additive frontend + email content.
+### Scope
+- **Only edits `src/pages/SellBook.tsx`** — adds JSX inside the Step 1 branch.
+- No new components, no logic changes, no DB/backend changes, no animation overhaul (inherits page transition).

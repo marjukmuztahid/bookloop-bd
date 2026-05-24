@@ -266,3 +266,25 @@ export function sellerDeliveryUnsuccessful(sellerFirstName: string, bookTitle: s
     html: emailTemplate('📭', 'Delivery Unsuccessful', 'The delivery couldn\'t be completed', body),
   };
 }
+
+export function sellerListingExpiryWarning(sellerFirstName: string, bookTitle: string, daysLeft: number): { subject: string; html: string } {
+  const dayWord = daysLeft === 1 ? 'day' : 'days';
+  const body = `
+    ${bodyText(`Hi <strong>${sellerFirstName}</strong>,`)}
+    ${bodyText(`This is a friendly reminder that your listing for <strong style="color:#E8357A">${bookTitle}</strong> on Book Loop BD will expire in <strong>${daysLeft} ${dayWord}</strong>.`)}
+    <div style="background:rgba(232,53,122,0.06);border-radius:12px;padding:16px 18px;margin:16px 0">
+      <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#1A1A1A;font-family:Inter,system-ui,sans-serif">⏳ What happens on expiry?</p>
+      <p style="margin:0;font-size:12px;color:#3A3A3A;font-family:Inter,system-ui,sans-serif;line-height:1.9">
+        Listings stay live for 90 days. If your book remains unsold past that, it is automatically removed from the marketplace to keep the catalog fresh.
+      </p>
+    </div>
+    ${bodyText(`If you still want to sell this book, no action is needed right now — it stays live until the expiry date. After expiry, you can post a fresh listing for the same book any time.`)}
+    ${bodyText(`Thank you for helping give books a second life with Book Loop BD. 📚♻️`)}
+    ${signOff()}
+  `;
+  return {
+    subject: 'Your listing expires soon ⏳',
+    html: emailTemplate('⏳', 'Listing Expiring Soon', `Your book listing expires in ${daysLeft} ${dayWord}`, body),
+  };
+}
+

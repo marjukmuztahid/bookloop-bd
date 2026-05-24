@@ -25,6 +25,18 @@ const ListingsQueue = () => {
   const [removeModal, setRemoveModal] = useState<{ id: string; name: string; sellerId: string } | null>(null);
   const [deleteModal, setDeleteModal] = useState<{ id: string; name: string } | null>(null);
   const [rejectReason, setRejectReason] = useState('');
+  const [detailListing, setDetailListing] = useState<any | null>(null);
+  const [detailSeller, setDetailSeller] = useState<any | null>(null);
+  const [photoIdx, setPhotoIdx] = useState(0);
+
+  const openDetail = async (l: any) => {
+    setDetailListing(l);
+    setPhotoIdx(0);
+    setDetailSeller(null);
+    const { data } = await supabase.from('users').select('full_name, district, phone, detailed_address, bkash_nagad_number, payment_method').eq('id', l.seller_id).maybeSingle();
+    setDetailSeller(data);
+  };
+  const closeDetail = () => { setDetailListing(null); setDetailSeller(null); };
 
   const fetch = useCallback(async () => {
     setLoading(true);

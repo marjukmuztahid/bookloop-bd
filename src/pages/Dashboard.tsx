@@ -471,9 +471,8 @@ const MyProfile = () => {
   const [savingPersonal, setSavingPersonal] = useState(false);
   const [savingPayment, setSavingPayment] = useState(false);
 
-  // Wishlist
-  const [wishlist, setWishlist] = useState<any[]>([]);
-  const [wishlistLoading, setWishlistLoading] = useState(true);
+
+
 
   useEffect(() => {
     if (profile) {

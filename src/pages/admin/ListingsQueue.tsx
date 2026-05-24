@@ -134,7 +134,8 @@ const ListingsQueue = () => {
       ) : (
         <div className="flex flex-col gap-3">
           {listings.map((l) => (
-            <div key={l.id} className="glass-panel-sm flex flex-wrap items-center gap-3 p-3">
+            <div key={l.id} onClick={() => openDetail(l)}
+              className="glass-panel-sm flex flex-wrap items-center gap-3 p-3 cursor-pointer transition hover:bg-[rgba(232,53,122,0.04)]">
               <img src={l.photos?.[0] || '/placeholder.svg'} alt="" className="h-14 w-14 flex-shrink-0 rounded-lg object-cover" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
@@ -157,7 +158,7 @@ const ListingsQueue = () => {
                   <span className="text-[10px] text-[#8A8A8A]">Qty: {l.quantity ?? 1}</span>
                 </div>
               </div>
-              <div className="flex flex-shrink-0 flex-col items-end gap-2">
+              <div className="flex flex-shrink-0 flex-col items-end gap-2" onClick={(e) => e.stopPropagation()}>
                 {statusBadge(l.status)}
                 <p className="text-[10px] text-[#8A8A8A]">{new Date(l.created_at).toLocaleDateString()}</p>
                 {l.status === 'pending' && (

@@ -606,45 +606,75 @@ const MyProfile = () => {
         <p className="mt-2 text-xs text-[#8A8A8A]">To change your email, contact support</p>
       </div>
 
-      {/* Wishlist */}
-      <div className="glass-panel p-6">
-        <h3 className="mb-4 text-base font-bold text-[#1A1A1A]">Saved Books</h3>
-        {wishlistLoading ? <SkeletonList count={2} /> : !wishlist.length ? (
-          <div className="flex flex-col items-center py-6 text-center">
-            <Heart size={32} className="mb-2 text-[#8A8A8A]" />
-            <p className="text-sm text-[#8A8A8A]">No saved books yet</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            {wishlist.map((w) => {
-              const l = w.listings;
-              if (!l) return null;
-              const isSold = l.status === 'sold';
-              return (
-                <div key={w.id} className="glass-panel-sm relative overflow-hidden p-2.5">
-                  {isSold && (
-                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30 rounded-2xl">
-                      <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-[#3A3A3A]">Sold</span>
-                    </div>
-                  )}
-                  <img src={l.photos?.[0] || '/placeholder.svg'} alt={l.book_name}
-                    className="mb-2 aspect-[3/4] w-full rounded-lg object-cover" />
-                  <h4 className="truncate text-xs font-bold text-[#1A1A1A]">{l.book_name}</h4>
-                  <p className="text-xs font-bold text-[#E8357A]">{formatPrice(l.display_price)}</p>
-                  <div className="mt-2 flex gap-1">
-                    {!isSold && (
-                      <GlassButton className="flex-1 py-1.5 text-[10px]" onClick={() => navigate(`/listings/${l.id}`)}>View</GlassButton>
-                    )}
-                    <button onClick={() => removeWishlistItem(w.id)}
-                      className="rounded-lg p-1.5 text-[#8A8A8A] transition-colors hover:bg-[rgba(255,69,58,0.06)] hover:text-[#C0392B]">
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
+    </div>
+  );
+};
+
+/* ═══════════════ MY SAVED ═══════════════ */
+const MySaved = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [wishlist, setWishlist] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from('wishlists')
+      .select('*, listings(*)')
+      .eq('user_id', user.id)
+      .then(({ data }) => { setWishlist(data || []); setLoading(false); });
+  }, [user]);
+
+  const removeWishlistItem = async (wishlistId: string) => {
+    await supabase.from('wishlists').delete().eq('id', wishlistId);
+    setWishlist((prev) => prev.filter((w) => w.id !== wishlistId));
+  };
+
+  if (loading) return <SkeletonList count={2} />;
+
+  if (!wishlist.length) {
+    return (
+      <div className="glass-panel flex flex-col items-center p-10 text-center">
+        <Heart size={40} className="mb-3 text-[#8A8A8A]" />
+        <h3 className="mb-1 text-base font-bold text-[#1A1A1A]">No saved books yet</h3>
+        <p className="mb-4 text-sm text-[#8A8A8A]">Tap the heart on any listing to save it for later</p>
+        <GlassButton onClick={() => navigate('/')}>Browse Marketplace</GlassButton>
+      </div>
+    );
+  }
+
+  return (
+    <div className="glass-panel p-6">
+      <h3 className="mb-4 text-base font-bold text-[#1A1A1A]">Saved Books</h3>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {wishlist.map((w) => {
+          const l = w.listings;
+          if (!l) return null;
+          const isSold = l.status === 'sold';
+          return (
+            <div key={w.id} className="glass-panel-sm relative overflow-hidden p-2.5">
+              {isSold && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30 rounded-2xl">
+                  <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-[#3A3A3A]">Sold</span>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              )}
+              <img src={l.photos?.[0] || '/placeholder.svg'} alt={l.book_name}
+                className="mb-2 aspect-[3/4] w-full rounded-lg object-cover" />
+              <h4 className="truncate text-xs font-bold text-[#1A1A1A]">{l.book_name}</h4>
+              <p className="text-xs font-bold text-[#E8357A]">{formatPrice(l.display_price)}</p>
+              <div className="mt-2 flex gap-1">
+                {!isSold && (
+                  <GlassButton className="flex-1 py-1.5 text-[10px]" onClick={() => navigate(`/listings/${l.id}`)}>View</GlassButton>
+                )}
+                <button onClick={() => removeWishlistItem(w.id)}
+                  className="rounded-lg p-1.5 text-[#8A8A8A] transition-colors hover:bg-[rgba(255,69,58,0.06)] hover:text-[#C0392B]">
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

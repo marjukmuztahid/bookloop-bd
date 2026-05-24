@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, Pencil } from 'lucide-react';
 
 import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassBadge } from '@/components/ui/GlassBadge';
@@ -9,6 +9,25 @@ import { useAppToast } from '@/components/ui/GlassToast';
 import { supabase } from '@/integrations/supabase/client';
 import { logActivity, notifyUser } from '@/hooks/useAdmin';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { GENRES } from '@/data/genres';
+import type { BookCondition, Curriculum, BookType, Genre } from '@/types';
+
+const CURRICULUMS: Array<{ label: string; value: Curriculum }> = [
+  { label: 'Bangla Version', value: 'bangla_version' },
+  { label: 'English Version', value: 'english_version' },
+  { label: 'English Medium', value: 'english_medium' },
+  { label: 'University', value: 'university' },
+  { label: 'Test Prep', value: 'test_prep' },
+];
+const SCHOOL_COLLEGE_LEVELS = ['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6','Class 7','Class 8','SSC','HSC','O-Level','A-Level'];
+const CLASS_LEVELS_BY_CURRICULUM: Record<Curriculum, string[]> = {
+  bangla_version: SCHOOL_COLLEGE_LEVELS,
+  english_version: SCHOOL_COLLEGE_LEVELS,
+  english_medium: SCHOOL_COLLEGE_LEVELS,
+  university: ['Bachelors', 'Masters'],
+  test_prep: ['IELTS', 'TOEFL', 'GRE', 'SAT'],
+};
+const CONDITIONS: BookCondition[] = ['new', 'good', 'fair', 'worn'];
 
 const INPUT_CLASS = 'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
 const formatPrice = (n: number) => `৳ ${n.toLocaleString('en-BD')}`;

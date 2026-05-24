@@ -25,7 +25,7 @@ const SELLING_STEPS = [
 
 const GOOD_TO_KNOW = [
   { icon: '💵', title: 'Cash on Delivery', desc: 'You never pay in advance. Pay the courier when your book arrives.' },
-  { icon: '⏳', title: '60-Day Listings', desc: 'Listings stay live for 60 days. You\'ll get a reminder before expiry.' },
+  { icon: '⏳', title: '90-Day Listings', desc: 'Listings stay live for 90 days. You\'ll get a reminder before expiry.' },
   { icon: '🔒', title: 'Admin Approved', desc: 'Every listing and order is reviewed by our team for safety.' },
 ];
 
@@ -36,7 +36,7 @@ const FAQ_QA = [
   },
   {
     q: 'How do I sell my old school or college books?',
-    a: 'Sign up, add your bKash or Nagad number and address in your profile, then click Sell. Upload up to 3 photos, set the condition, class level or genre, and your asking price. After admin approval your listing goes live for 60 days.',
+    a: 'Sign up, add your bKash or Nagad number and address in your profile, then click Sell. Upload up to 3 photos, set the condition, class level or genre, and your asking price. After admin approval your listing goes live for 90 days.',
   },
   {
     q: 'Is cash on delivery available across Bangladesh?',
@@ -52,7 +52,7 @@ const FAQ_QA = [
   },
   {
     q: 'How long does a listing stay active?',
-    a: 'Listings stay live for 60 days. You\'ll get a reminder notification before they expire.',
+    a: 'Listings stay live for 90 days. You\'ll get a reminder notification before they expire.',
   },
 ];
 
@@ -104,7 +104,7 @@ const HowItWorks = () => {
   const steps = tab === 'buying' ? BUYING_STEPS : SELLING_STEPS;
   useSEO({
     title: 'How to Buy & Sell Used Books in Bangladesh — Book Loop BD',
-    description: 'Step-by-step guide to buying and selling second-hand school and college books on Book Loop BD. Cash on delivery, 10% seller fee, 60-day listings.',
+    description: 'Step-by-step guide to buying and selling second-hand school and college books on Book Loop BD. Cash on delivery, 10% seller fee, 90-day listings.',
     canonicalPath: '/how-it-works',
     jsonLd: {
       '@context': 'https://schema.org',

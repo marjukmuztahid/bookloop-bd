@@ -76,7 +76,7 @@ const Terms = () => {
             <ul className="mt-2 list-disc space-y-1 pl-5">
               <li>Once a listing is submitted, sellers cannot edit it. To change information, the listing must be deleted and re-created (subject to admin approval).</li>
               <li>Listings are reviewed by the admin before going live. Misleading, low-quality, fraudulent, or rule-breaking listings will be rejected without obligation to explain.</li>
-              <li>Approved listings that remain unsold are automatically removed after 60 days. A warning email is sent 7 days before removal.</li>
+              <li>Approved listings that remain unsold are automatically removed after 90 days. A warning email is sent 7 days before removal.</li>
               <li>The admin may remove any listing at any time, with notification to the seller, if it violates these Terms or any applicable law.</li>
             </ul>
           </Section>

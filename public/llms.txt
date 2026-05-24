@@ -33,7 +33,7 @@ Book Loop BD (bookloopbd.com) helps Bangladeshi students save money on textbooks
 3. The team reviews and approves your listing (you'll get an email notification).
 4. When a buyer orders, the team schedules a Steadfast pickup from your location.
 5. After delivery, you receive your payment via bKash or Nagad. A flat 10% platform fee is added on top of your asking price for the buyer.
-6. Listings stay live for 60 days, with a reminder before expiry.
+6. Listings stay live for 90 days, with a reminder before expiry.
 
 ## Trust and safety
 

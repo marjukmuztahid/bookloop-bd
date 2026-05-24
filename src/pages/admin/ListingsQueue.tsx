@@ -11,7 +11,7 @@ import { logActivity, notifyUser } from '@/hooks/useAdmin';
 import { sendEmail, getUserEmail, sellerListingApproved, sellerListingRejected } from '@/lib/email';
 
 async function getSellerFirstName(sellerId: string): Promise<string> {
-  const { data } = await supabase.from('profiles').select('full_name').eq('id', sellerId).maybeSingle();
+  const { data } = await supabase.from('users').select('full_name').eq('id', sellerId).maybeSingle();
   const full = (data as any)?.full_name?.trim();
   return full ? full.split(/\s+/)[0] : 'there';
 }

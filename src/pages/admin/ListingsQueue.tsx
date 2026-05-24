@@ -212,6 +212,122 @@ const ListingsQueue = () => {
           <GlassButton variant="destructive" className="flex-1" onClick={confirmPermanentDelete}>Delete Forever</GlassButton>
         </div>
       </Modal>
+
+      {/* Full Detail Modal */}
+      <Modal open={!!detailListing} onClose={closeDetail} panelClassName="glass-panel w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6">
+        {detailListing && (() => {
+          const l = detailListing;
+          const photos: string[] = l.photos?.length ? l.photos : ['/placeholder.svg'];
+          const sellerPrice = Number(l.seller_price) || 0;
+          const fee = Math.round(sellerPrice * 0.10);
+          return (
+            <div className="flex flex-col gap-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="mb-1 flex items-center gap-1.5">
+                    <GlassBadge variant={l.book_type === 'general' ? 'general' : 'academic'} className="text-[10px]">
+                      {l.book_type === 'general' ? 'General' : 'Academic'}
+                    </GlassBadge>
+                    {statusBadge(l.status)}
+                  </div>
+                  <h2 className="text-lg font-bold text-[#1A1A1A]">{l.book_name}</h2>
+                  <p className="text-xs text-[#8A8A8A]">{l.author_publisher}</p>
+                </div>
+                <button onClick={closeDetail} className="text-xs text-[#8A8A8A] hover:text-[#1A1A1A]">✕</button>
+              </div>
+
+              {/* Photo gallery */}
+              <div className="relative">
+                <img src={photos[photoIdx]} alt={`${l.book_name} photo ${photoIdx + 1}`}
+                  className="h-72 w-full rounded-xl object-contain bg-[rgba(0,0,0,0.04)]" />
+                {photos.length > 1 && (
+                  <>
+                    <button onClick={() => setPhotoIdx((p) => (p - 1 + photos.length) % photos.length)}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1 shadow"><ChevronLeft size={18} /></button>
+                    <button onClick={() => setPhotoIdx((p) => (p + 1) % photos.length)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1 shadow"><ChevronRight size={18} /></button>
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] text-white">
+                      {photoIdx + 1} / {photos.length}
+                    </div>
+                  </>
+                )}
+              </div>
+              {photos.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto">
+                  {photos.map((p, i) => (
+                    <img key={i} src={p} alt="" onClick={() => setPhotoIdx(i)}
+                      className={`h-14 w-14 flex-shrink-0 cursor-pointer rounded-lg object-cover border-2 ${i === photoIdx ? 'border-[#E8357A]' : 'border-transparent'}`} />
+                  ))}
+                </div>
+              )}
+
+              {/* Details grid */}
+              <div className="grid grid-cols-2 gap-3 text-sm md:grid-cols-3">
+                {l.book_type === 'general' && l.genre && <Field label="Genre" value={l.genre} />}
+                {l.book_type !== 'general' && l.curriculum && <Field label="Curriculum" value={l.curriculum} />}
+                {l.book_type !== 'general' && l.class_level && <Field label="Class Level" value={l.class_level} />}
+                <Field label="Condition" value={l.condition} />
+                <Field label="Weight" value={`${l.weight_kg} kg`} />
+                <Field label="Quantity" value={String(l.quantity ?? 1)} />
+                <Field label="Seller Price" value={formatPrice(sellerPrice)} />
+                <Field label="Platform Fee (10%)" value={formatPrice(fee)} />
+                <Field label="Display Price" value={formatPrice(l.display_price)} />
+                <Field label="Created" value={new Date(l.created_at).toLocaleString()} />
+                <Field label="Expires" value={new Date(l.expires_at).toLocaleString()} />
+              </div>
+
+              {/* Seller note */}
+              <div>
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Seller's Note</p>
+                <p className="whitespace-pre-wrap rounded-xl bg-[rgba(0,0,0,0.04)] p-3 text-sm text-[#3A3A3A]">
+                  {l.description?.trim() || <span className="text-[#8A8A8A]">No description provided.</span>}
+                </p>
+              </div>
+
+              {l.rejection_reason && (
+                <div>
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#E8357A]">Rejection Reason</p>
+                  <p className="rounded-xl bg-[rgba(232,53,122,0.08)] p-3 text-sm text-[#3A3A3A]">{l.rejection_reason}</p>
+                </div>
+              )}
+
+              {/* Seller info */}
+              <div>
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8A8A8A]">Seller</p>
+                {detailSeller ? (
+                  <div className="grid grid-cols-2 gap-3 rounded-xl bg-[rgba(0,0,0,0.04)] p-3 text-sm md:grid-cols-3">
+                    <Field label="Name" value={detailSeller.full_name} />
+                    <Field label="District" value={detailSeller.district} />
+                    <Field label="Phone" value={detailSeller.phone || '—'} />
+                    <Field label="Address" value={detailSeller.detailed_address || '—'} />
+                    <Field label="bKash/Nagad" value={detailSeller.bkash_nagad_number || '—'} />
+                    <Field label="Payment Method" value={detailSeller.payment_method || '—'} />
+                  </div>
+                ) : (
+                  <p className="text-xs text-[#8A8A8A]">Loading seller info...</p>
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-wrap justify-end gap-2 border-t border-[rgba(0,0,0,0.08)] pt-4">
+                <GlassButton variant="secondary" onClick={closeDetail}>Close</GlassButton>
+                {l.status === 'pending' && (
+                  <>
+                    <GlassButton variant="success" onClick={() => { approve(l); closeDetail(); }}>Approve</GlassButton>
+                    <GlassButton variant="destructive" onClick={() => { setRejectModal({ id: l.id, name: l.book_name, sellerId: l.seller_id }); closeDetail(); }}>Reject</GlassButton>
+                  </>
+                )}
+                {l.status === 'available' && (
+                  <GlassButton variant="destructive" onClick={() => { setRemoveModal({ id: l.id, name: l.book_name, sellerId: l.seller_id }); closeDetail(); }}>Remove</GlassButton>
+                )}
+                {['sold', 'deleted', 'rejected', 'expired'].includes(l.status) && (
+                  <GlassButton variant="destructive" onClick={() => { setDeleteModal({ id: l.id, name: l.book_name }); closeDetail(); }}>Delete Permanently</GlassButton>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+      </Modal>
     </AdminLayout>
   );
 };

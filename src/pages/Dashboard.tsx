@@ -22,6 +22,7 @@ const formatPrice = (n: number) => `৳ ${n.toLocaleString('en-BD')}`;
 const TABS = [
   { id: 'listings', label: 'My Listings', icon: BookOpen },
   { id: 'orders', label: 'My Orders', icon: ShoppingBag },
+  { id: 'saved', label: 'Saved Books', icon: Heart },
   { id: 'profile', label: 'My Profile', icon: User },
 ] as const;
 

@@ -47,15 +47,92 @@ const ListingsQueue = () => {
   const [detailListing, setDetailListing] = useState<any | null>(null);
   const [detailSeller, setDetailSeller] = useState<any | null>(null);
   const [photoIdx, setPhotoIdx] = useState(0);
+  const [editMode, setEditMode] = useState(false);
+  const [editForm, setEditForm] = useState<any>(null);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const openDetail = async (l: any) => {
     setDetailListing(l);
     setPhotoIdx(0);
     setDetailSeller(null);
+    setEditMode(false);
+    setEditForm(null);
     const { data } = await supabase.from('users').select('full_name, district, phone, detailed_address, bkash_nagad_number, payment_method').eq('id', l.seller_id).maybeSingle();
     setDetailSeller(data);
   };
-  const closeDetail = () => { setDetailListing(null); setDetailSeller(null); };
+  const closeDetail = () => { setDetailListing(null); setDetailSeller(null); setEditMode(false); setEditForm(null); };
+
+  const startEdit = () => {
+    if (!detailListing) return;
+    const l = detailListing;
+    setEditForm({
+      book_type: l.book_type || 'academic',
+      book_name: l.book_name || '',
+      author_publisher: l.author_publisher || '',
+      curriculum: l.curriculum || '',
+      class_level: l.class_level || '',
+      genre: l.genre || '',
+      condition: l.condition || 'good',
+      weight_kg: String(l.weight_kg ?? ''),
+      quantity: l.quantity ?? 1,
+      seller_price: String(l.seller_price ?? ''),
+      description: l.description || '',
+    });
+    setEditMode(true);
+  };
+
+  const saveEdit = async () => {
+    if (!detailListing || !editForm) return;
+    const f = editForm;
+    if (!f.book_name.trim()) { showToast('Book name is required', 'error'); return; }
+    if (!f.author_publisher.trim()) { showToast('Author/Publisher is required', 'error'); return; }
+    const weight = parseFloat(f.weight_kg);
+    const price = parseFloat(f.seller_price);
+    const qty = parseInt(String(f.quantity), 10);
+    if (isNaN(weight) || weight <= 0) { showToast('Valid weight required', 'error'); return; }
+    if (isNaN(price) || price <= 0) { showToast('Valid seller price required', 'error'); return; }
+    if (isNaN(qty) || qty < 1 || qty > 50) { showToast('Quantity must be 1–50', 'error'); return; }
+    if (f.book_type === 'academic') {
+      if (!f.curriculum) { showToast('Select a curriculum', 'error'); return; }
+      if (!f.class_level) { showToast('Select a class level', 'error'); return; }
+    } else {
+      if (!f.genre) { showToast('Select a genre', 'error'); return; }
+    }
+
+    const payload: any = {
+      book_type: f.book_type,
+      book_name: f.book_name.trim(),
+      author_publisher: f.author_publisher.trim(),
+      condition: f.condition,
+      weight_kg: weight,
+      quantity: qty,
+      seller_price: price,
+      description: f.description.trim() || null,
+    };
+    if (f.book_type === 'academic') {
+      payload.curriculum = f.curriculum;
+      payload.class_level = f.class_level;
+      payload.genre = null;
+    } else {
+      payload.genre = f.genre;
+      payload.curriculum = null;
+      payload.class_level = null;
+    }
+
+    setSavingEdit(true);
+    const { data, error } = await supabase.from('listings').update(payload).eq('id', detailListing.id).select('*').maybeSingle();
+    setSavingEdit(false);
+    if (error) { showToast(`Failed to save: ${error.message}`, 'error'); return; }
+
+    await logActivity('listing_edited', `Listing "${payload.book_name}" edited by admin`);
+    await notifyUser(detailListing.seller_id, `Your listing "${payload.book_name}" was updated by the admin.`);
+    showToast('Listing updated', 'success');
+    setEditMode(false);
+    setEditForm(null);
+    if (data) setDetailListing({ ...detailListing, ...data });
+    fetch();
+  };
+
 
   const fetch = useCallback(async () => {
     setLoading(true);

@@ -11,6 +11,45 @@ import logo from '@/assets/logo.png';
 const INPUT_CLASS =
   'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
 
+const getFriendlyAuthError = (err: any) => {
+  const code = err?.code || err?.error_code;
+  const msg = (err?.message || '').toLowerCase();
+
+  if (code === 'email_not_confirmed' || msg.includes('not confirmed') || msg.includes('confirm')) {
+    return 'Please verify your email first. Check your inbox for the confirmation link.';
+  }
+
+  if (code === 'user_banned' || msg.includes('banned')) {
+    return 'This account has been suspended. Contact support for help.';
+  }
+
+  if (msg.includes('rate') || code === 'over_request_rate_limit') {
+    return 'Too many attempts. Please wait a minute and try again.';
+  }
+
+  if (msg.includes('invalid login credentials') || code === 'invalid_credentials') {
+    return 'Incorrect email or password';
+  }
+
+  if (msg.includes('network') || msg.includes('fetch')) {
+    return 'Login could not start because saved browser session data looks broken. Please try again.';
+  }
+
+  return err?.message || 'Incorrect email or password';
+};
+
+const clearStoredAuthState = () => {
+  const url = import.meta.env.VITE_SUPABASE_URL;
+  const projectRef = url ? new URL(url).hostname.split('.')[0] : null;
+  const exactKeys = new Set(['supabase.auth.token', projectRef ? `sb-${projectRef}-auth-token` : '']);
+
+  Object.keys(localStorage).forEach((key) => {
+    if (exactKeys.has(key) || /^sb-[a-z0-9]+-auth-token$/i.test(key)) {
+      localStorage.removeItem(key);
+    }
+  });
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,26 +72,40 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      const normalizedEmail = email.trim();
+      const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
       if (error) throw error;
       showToast('Welcome back!', 'success');
       navigate(from, { replace: true });
     } catch (err: any) {
-      const code = err?.code || err?.error_code;
-      const msg = (err?.message || '').toLowerCase();
-      let friendly = 'Incorrect email or password';
-      if (code === 'email_not_confirmed' || msg.includes('not confirmed') || msg.includes('confirm')) {
-        friendly = 'Please verify your email first. Check your inbox for the confirmation link.';
-      } else if (code === 'user_banned' || msg.includes('banned')) {
-        friendly = 'This account has been suspended. Contact support for help.';
-      } else if (msg.includes('rate') || code === 'over_request_rate_limit') {
-        friendly = 'Too many attempts. Please wait a minute and try again.';
-      } else if (msg.includes('network') || msg.includes('fetch')) {
-        friendly = 'Network error. Check your connection and try again.';
-      } else if (err?.message) {
-        friendly = err.message;
+      const message = (err?.message || '').toLowerCase();
+
+      if (message.includes('network') || message.includes('fetch')) {
+        try {
+          await supabase.auth.signOut({ scope: 'local' });
+        } catch {
+          // ignore local cleanup failures and continue resetting local state
+        }
+
+        clearStoredAuthState();
+
+        const normalizedEmail = email.trim();
+        const { error: retryError } = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password,
+        });
+
+        if (!retryError) {
+          showToast('Welcome back!', 'success');
+          navigate(from, { replace: true });
+          return;
+        }
+
+        showToast(getFriendlyAuthError(retryError), 'error');
+        return;
       }
-      showToast(friendly, 'error');
+
+      showToast(getFriendlyAuthError(err), 'error');
     } finally {
       setLoading(false);
     }

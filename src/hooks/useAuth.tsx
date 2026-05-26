@@ -21,6 +21,7 @@ interface AuthContextType {
   loading: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  ensureProfile: (defaults?: Partial<Profile>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signOut: async () => {},
   refreshProfile: async () => {},
+  ensureProfile: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -57,6 +59,49 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (user) await fetchProfile(user.id);
   }, [user, fetchProfile]);
 
+  const ensureProfile = useCallback(async (defaults?: Partial<Profile>) => {
+    const { data: authUser } = await supabase.auth.getUser();
+    const currentUser = authUser.user;
+
+    if (!currentUser) return;
+
+    const { data: existingProfile } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', currentUser.id)
+      .maybeSingle();
+
+    if (existingProfile) {
+      setProfile(existingProfile as Profile);
+      return;
+    }
+
+    const fallbackName =
+      defaults?.full_name ||
+      currentUser.user_metadata?.full_name ||
+      currentUser.user_metadata?.name ||
+      currentUser.email?.split('@')[0] ||
+      'Book Loop BD User';
+
+    const fallbackPhone = defaults?.phone || currentUser.user_metadata?.phone || '01000000000';
+    const fallbackDistrict = defaults?.district || currentUser.user_metadata?.district || 'Dhaka';
+
+    const { data: insertedProfile, error } = await supabase
+      .from('users')
+      .insert({
+        id: currentUser.id,
+        full_name: fallbackName,
+        phone: fallbackPhone,
+        district: fallbackDistrict,
+      })
+      .select('*')
+      .single();
+
+    if (!error) {
+      setProfile(insertedProfile as Profile);
+    }
+  }, []);
+
   useEffect(() => {
     // Set up auth listener BEFORE getting session
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -66,6 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (session?.user) {
           // Use setTimeout to avoid Supabase deadlock
           setTimeout(() => fetchProfile(session.user.id), 0);
+          setTimeout(() => ensureProfile(), 0);
         } else {
           profileRequestRef.current += 1;
           setProfile(null);
@@ -80,6 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id);
+        ensureProfile();
       } else {
         profileRequestRef.current += 1;
         setProfile(null);
@@ -88,7 +135,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     return () => subscription.unsubscribe();
-  }, [fetchProfile]);
+  }, [ensureProfile, fetchProfile]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -99,7 +146,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, session, loading, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ user, profile, session, loading, signOut, refreshProfile, ensureProfile }}>
       {children}
     </AuthContext.Provider>
   );

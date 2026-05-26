@@ -76,15 +76,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    const fallbackName =
-      defaults?.full_name ||
-      currentUser.user_metadata?.full_name ||
-      currentUser.user_metadata?.name ||
-      currentUser.email?.split('@')[0] ||
-      'Book Loop BD User';
+    const fallbackName = defaults?.full_name || currentUser.user_metadata?.full_name || currentUser.user_metadata?.name;
+    const fallbackPhone = defaults?.phone || currentUser.user_metadata?.phone;
+    const fallbackDistrict = defaults?.district || currentUser.user_metadata?.district;
 
-    const fallbackPhone = defaults?.phone || currentUser.user_metadata?.phone || '01000000000';
-    const fallbackDistrict = defaults?.district || currentUser.user_metadata?.district || 'Dhaka';
+    if (!fallbackName || !fallbackPhone || !fallbackDistrict) {
+      setProfile(null);
+      return;
+    }
 
     const { data: insertedProfile, error } = await supabase
       .from('users')

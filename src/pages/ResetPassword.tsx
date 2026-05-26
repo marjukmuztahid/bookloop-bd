@@ -20,45 +20,20 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isRecovery, setIsRecovery] = useState(false);
-  const [checkingLink, setCheckingLink] = useState(true);
 
   useEffect(() => {
-    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
-    const queryParams = new URLSearchParams(window.location.search);
-    const recoveryType = queryParams.get('type') || hashParams.get('type');
-    const hasRecoveryIntent = recoveryType === 'recovery';
-
-    const establishRecoverySession = async () => {
-      const tokenHash = queryParams.get('token_hash') || hashParams.get('token_hash');
-
-      if (hasRecoveryIntent && tokenHash) {
-        const { error } = await supabase.auth.verifyOtp({
-          token_hash: tokenHash,
-          type: 'recovery',
-        });
-
-        if (!error) {
-          setIsRecovery(true);
-        }
-      }
-
-      const { data: { session } } = await supabase.auth.getSession();
-      if (hasRecoveryIntent && session) {
-        setIsRecovery(true);
-      }
-
-      setCheckingLink(false);
-    };
-
     // Listen for the PASSWORD_RECOVERY event
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
         setIsRecovery(true);
-        setCheckingLink(false);
       }
     });
 
-    void establishRecoverySession();
+    // Also check hash for type=recovery
+    const hash = window.location.hash;
+    if (hash.includes('type=recovery')) {
+      setIsRecovery(true);
+    }
 
     return () => subscription.unsubscribe();
   }, []);
@@ -82,7 +57,6 @@ const ResetPassword = () => {
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      await supabase.auth.signOut();
       showToast('Password updated successfully!', 'success');
       navigate('/login', { replace: true });
     } catch (err: any) {
@@ -91,21 +65,6 @@ const ResetPassword = () => {
       setLoading(false);
     }
   };
-
-  if (checkingLink) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <motion.div {...pageTransition} className="glass-panel w-full max-w-[440px] p-8 text-center">
-          <div className="mb-6 flex justify-center">
-            <Link to="/"><img src={logo} alt="Book Loop BD" className="h-12" /></Link>
-          </div>
-          <Loader2 size={22} className="mx-auto mb-4 animate-spin text-[#E8357A]" />
-          <h1 className="mb-2 text-xl font-bold text-[#1A1A1A]">Checking reset link</h1>
-          <p className="text-sm text-[#8A8A8A]">Please wait a moment while we verify your password reset link.</p>
-        </motion.div>
-      </div>
-    );
-  }
 
   if (!isRecovery) {
     return (

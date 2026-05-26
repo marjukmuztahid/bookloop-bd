@@ -1,6 +1,6 @@
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy } from 'react';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ToastProvider } from "@/components/ui/GlassToast";
@@ -43,23 +43,6 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
-const PasswordRecoveryRedirector = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const hashParams = new URLSearchParams(location.hash.replace(/^#/, ''));
-    const queryParams = new URLSearchParams(location.search);
-    const type = queryParams.get('type') || hashParams.get('type');
-
-    if (type === 'recovery' && location.pathname !== '/reset-password') {
-      navigate(`/reset-password${location.search}${location.hash}`, { replace: true });
-    }
-  }, [location.hash, location.pathname, location.search, navigate]);
-
-  return null;
-};
-
 const PageFallback = () => (
   <div className="flex min-h-screen items-center justify-center bg-background">
     <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#E8357A] border-t-transparent" />
@@ -73,7 +56,6 @@ const App = () => (
         <AuthProvider>
           <ToastProvider>
             <BrowserRouter>
-              <PasswordRecoveryRedirector />
               <TopProgressBar />
               <Suspense fallback={<PageFallback />}>
                 <Routes>

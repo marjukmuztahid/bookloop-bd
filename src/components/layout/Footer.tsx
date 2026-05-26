@@ -20,6 +20,7 @@ const Footer = () => {
             <div className="flex flex-col gap-2">
               <FooterLink to="/about" label="About" />
               <FooterLink to="/how-it-works" label="How It Works" />
+              <FooterLink to="/" label="Browse Books" />
               
               <FooterLink to="/sell" label="Sell a Book" />
               <FooterLink to="/faq" label="FAQ" />

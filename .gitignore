@@ -27,3 +27,4 @@ homepage.png
 *.njsproj
 *.sln
 *.sw?
+.vercel

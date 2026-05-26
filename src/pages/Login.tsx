@@ -11,21 +11,6 @@ import logo from '@/assets/logo.png';
 const INPUT_CLASS =
   'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
 
-const triggerPasswordResetRequest = (email: string, redirectTo: string) => {
-  const action = new URL(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-password-reset`);
-  action.searchParams.set('email', email);
-  action.searchParams.set('redirectTo', redirectTo);
-  action.searchParams.set('_t', Date.now().toString());
-
-  const iframe = document.createElement('iframe');
-  iframe.name = `password-reset-transport-${Date.now()}`;
-  iframe.style.display = 'none';
-  iframe.referrerPolicy = 'no-referrer';
-  iframe.src = action.toString();
-
-  document.body.appendChild(iframe);
-  window.setTimeout(() => iframe.remove(), 5000);
-};
 
 const Login = () => {
   const navigate = useNavigate();
@@ -70,12 +55,13 @@ const Login = () => {
 
     try {
       const redirectTo = `${window.location.origin}/reset-password`;
-      triggerPasswordResetRequest(email.trim(), redirectTo);
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo });
+      if (error) throw error;
       showToast('If an account exists for this email, a reset link has been sent. Check your inbox and spam folder.', 'success');
     } catch (err: any) {
       showToast(err.message || 'Failed to send reset email', 'error');
     } finally {
-      window.setTimeout(() => setResetLoading(false), 800);
+      setResetLoading(false);
     }
   };
 

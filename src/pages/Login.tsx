@@ -33,12 +33,26 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (error) throw error;
       showToast('Welcome back!', 'success');
       navigate(from, { replace: true });
     } catch (err: any) {
-      showToast('Incorrect email or password', 'error');
+      const code = err?.code || err?.error_code;
+      const msg = (err?.message || '').toLowerCase();
+      let friendly = 'Incorrect email or password';
+      if (code === 'email_not_confirmed' || msg.includes('not confirmed') || msg.includes('confirm')) {
+        friendly = 'Please verify your email first. Check your inbox for the confirmation link.';
+      } else if (code === 'user_banned' || msg.includes('banned')) {
+        friendly = 'This account has been suspended. Contact support for help.';
+      } else if (msg.includes('rate') || code === 'over_request_rate_limit') {
+        friendly = 'Too many attempts. Please wait a minute and try again.';
+      } else if (msg.includes('network') || msg.includes('fetch')) {
+        friendly = 'Network error. Check your connection and try again.';
+      } else if (err?.message) {
+        friendly = err.message;
+      }
+      showToast(friendly, 'error');
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, useRef, type ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
@@ -39,14 +39,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const profileRequestRef = useRef(0);
 
   const fetchProfile = useCallback(async (userId: string) => {
-    const { data } = await supabase
+    const requestId = ++profileRequestRef.current;
+    const { data, error } = await supabase
       .from('users')
       .select('*')
       .eq('id', userId)
-      .single();
-    setProfile(data as Profile | null);
+      .maybeSingle();
+
+    if (requestId !== profileRequestRef.current) return;
+    setProfile(error ? null : (data as Profile | null));
   }, []);
 
   const refreshProfile = useCallback(async () => {
@@ -63,6 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           // Use setTimeout to avoid Supabase deadlock
           setTimeout(() => fetchProfile(session.user.id), 0);
         } else {
+          profileRequestRef.current += 1;
           setProfile(null);
         }
         setLoading(false);
@@ -75,6 +80,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id);
+      } else {
+        profileRequestRef.current += 1;
+        setProfile(null);
       }
       setLoading(false);
     });
@@ -84,6 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    profileRequestRef.current += 1;
     setUser(null);
     setProfile(null);
     setSession(null);

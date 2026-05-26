@@ -11,6 +11,32 @@ import logo from '@/assets/logo.png';
 const INPUT_CLASS =
   'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
 
+const APP_ORIGIN = window.location.origin.includes('lovableproject.com')
+  ? window.location.origin
+  : `${window.location.protocol}//${window.location.hostname.replace(/^id-preview--/, '').replace(/\.lovable\.app$/, '.lovableproject.com')}`;
+
+const triggerPasswordResetFallback = async (email: string, redirectTo: string) => {
+  const endpoint = new URL(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/recover`);
+  endpoint.searchParams.set('apikey', import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+  endpoint.searchParams.set('redirect_to', redirectTo);
+
+  const response = await new Promise<number>((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open('POST', endpoint.toString(), true);
+    request.setRequestHeader('Content-Type', 'application/json');
+
+    request.onload = () => resolve(request.status);
+    request.onerror = () => reject(new Error('Network request failed'));
+    request.ontimeout = () => reject(new Error('Network request timed out'));
+    request.timeout = 15000;
+    request.send(JSON.stringify({ email }));
+  });
+
+  if (response >= 400 && response !== 429) {
+    throw new Error('Failed to send reset email');
+  }
+};
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -54,9 +80,16 @@ const Login = () => {
     setResetLoading(true);
 
     try {
-      const redirectTo = `${window.location.origin}/reset-password`;
-      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo });
-      if (error) throw error;
+      const normalizedEmail = email.trim();
+      const redirectTo = `${APP_ORIGIN}/reset-password`;
+
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, { redirectTo });
+        if (error) throw error;
+      } catch (error) {
+        await triggerPasswordResetFallback(normalizedEmail, redirectTo);
+      }
+
       showToast('If an account exists for this email, a reset link has been sent. Check your inbox and spam folder.', 'success');
     } catch (err: any) {
       showToast(err.message || 'Failed to send reset email', 'error');

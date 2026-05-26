@@ -11,38 +11,6 @@ import logo from '@/assets/logo.png';
 const INPUT_CLASS =
   'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
 
-const submitPasswordResetFallback = (url: string, email: string, redirectTo: string) => {
-  const iframeId = 'password-reset-fallback-frame';
-  let iframe = document.getElementById(iframeId) as HTMLIFrameElement | null;
-
-  if (!iframe) {
-    iframe = document.createElement('iframe');
-    iframe.id = iframeId;
-    iframe.name = iframeId;
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-  }
-
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = url;
-  form.target = iframeId;
-  form.style.display = 'none';
-
-  const emailInput = document.createElement('input');
-  emailInput.name = 'email';
-  emailInput.value = email;
-
-  const redirectInput = document.createElement('input');
-  redirectInput.name = 'redirectTo';
-  redirectInput.value = redirectTo;
-
-  form.append(emailInput, redirectInput);
-  document.body.appendChild(form);
-  form.submit();
-  form.remove();
-};
-
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -83,35 +51,13 @@ const Login = () => {
     }
     setResetLoading(true);
     try {
-      const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-      const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-      const resetUrl = `${SUPABASE_URL}/functions/v1/send-password-reset`;
       const redirectTo = `${window.location.origin}/reset-password`;
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo,
+      });
 
-      if (!SUPABASE_URL || !SUPABASE_KEY) {
-        throw new Error('Reset service is unavailable right now');
-      }
-
-      try {
-        const res = await fetch(resetUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            apikey: SUPABASE_KEY,
-            Authorization: `Bearer ${SUPABASE_KEY}`,
-          },
-          body: JSON.stringify({ email: email.trim(), redirectTo }),
-        });
-
-        if (!res.ok) {
-          throw new Error('Failed to send reset email');
-        }
-      } catch (err: any) {
-        if (err instanceof TypeError || /failed to fetch/i.test(String(err?.message))) {
-          submitPasswordResetFallback(resetUrl, email.trim(), redirectTo);
-        } else {
-          throw err;
-        }
+      if (error) {
+        throw error;
       }
 
       showToast('If an account exists for this email, a reset link has been sent. Check your inbox and spam folder.', 'success');

@@ -43,6 +43,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const profileRequestRef = useRef(0);
 
+  const clearAuthState = useCallback(() => {
+    profileRequestRef.current += 1;
+    setUser(null);
+    setProfile(null);
+    setSession(null);
+  }, []);
+
   const fetchProfile = useCallback(async (userId: string) => {
     const requestId = ++profileRequestRef.current;
     const { data, error } = await supabase
@@ -102,46 +109,60 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    // Set up auth listener BEFORE getting session
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          // Use setTimeout to avoid Supabase deadlock
-          setTimeout(() => fetchProfile(session.user.id), 0);
-          setTimeout(() => ensureProfile(), 0);
+    let mounted = true;
+
+    const syncAuthenticatedUser = async (nextUser: SupabaseUser | null, nextSession?: Session | null) => {
+      if (!mounted) return;
+
+      if (!nextUser) {
+        clearAuthState();
+        return;
+      }
+
+      setUser(nextUser);
+      setSession(nextSession ?? null);
+      await fetchProfile(nextUser.id);
+      await ensureProfile();
+    };
+
+    let unsubscribe = () => {};
+
+    const initAuth = async () => {
+      try {
+        const { data: { user: authenticatedUser } } = await supabase.auth.getUser();
+        if (!mounted) return;
+
+        if (authenticatedUser) {
+          const { data: { session: currentSession } } = await supabase.auth.getSession();
+          await syncAuthenticatedUser(authenticatedUser, currentSession);
         } else {
-          profileRequestRef.current += 1;
-          setProfile(null);
+          clearAuthState();
         }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+        void syncAuthenticatedUser(nextSession?.user ?? null, nextSession);
         setLoading(false);
-      }
-    );
+      });
 
-    // Then get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-        ensureProfile();
-      } else {
-        profileRequestRef.current += 1;
-        setProfile(null);
-      }
-      setLoading(false);
-    });
+      unsubscribe = () => subscription.unsubscribe();
+    };
 
-    return () => subscription.unsubscribe();
-  }, [ensureProfile, fetchProfile]);
+    void initAuth();
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
+  }, [clearAuthState, ensureProfile, fetchProfile]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    profileRequestRef.current += 1;
-    setUser(null);
-    setProfile(null);
-    setSession(null);
+    clearAuthState();
   };
 
   return (

@@ -17,9 +17,14 @@ const triggerPasswordResetRequest = (email: string, redirectTo: string) => {
   action.searchParams.set('redirectTo', redirectTo);
   action.searchParams.set('_t', Date.now().toString());
 
-  const beacon = new Image();
-  beacon.referrerPolicy = 'no-referrer';
-  beacon.src = action.toString();
+  const iframe = document.createElement('iframe');
+  iframe.name = `password-reset-transport-${Date.now()}`;
+  iframe.style.display = 'none';
+  iframe.referrerPolicy = 'no-referrer';
+  iframe.src = action.toString();
+
+  document.body.appendChild(iframe);
+  window.setTimeout(() => iframe.remove(), 5000);
 };
 
 const Login = () => {

@@ -11,38 +11,15 @@ import logo from '@/assets/logo.png';
 const INPUT_CLASS =
   'w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[rgba(0,0,0,0.04)] px-4 py-3 text-sm text-[#3A3A3A] placeholder-[#8A8A8A] outline-none transition-all duration-200 focus:border-[rgba(232,53,122,0.40)] focus:shadow-[0_0_0_3px_rgba(232,53,122,0.10)]';
 
-const submitPasswordResetForm = (email: string, redirectTo: string) => {
-  const iframeName = 'password-reset-transport';
-  const action = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-password-reset`;
+const triggerPasswordResetRequest = (email: string, redirectTo: string) => {
+  const action = new URL(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-password-reset`);
+  action.searchParams.set('email', email);
+  action.searchParams.set('redirectTo', redirectTo);
+  action.searchParams.set('_t', Date.now().toString());
 
-  let iframe = document.querySelector(`iframe[name="${iframeName}"]`) as HTMLIFrameElement | null;
-  if (!iframe) {
-    iframe = document.createElement('iframe');
-    iframe.name = iframeName;
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-  }
-
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = action;
-  form.target = iframeName;
-  form.style.display = 'none';
-
-  const emailInput = document.createElement('input');
-  emailInput.type = 'hidden';
-  emailInput.name = 'email';
-  emailInput.value = email;
-
-  const redirectInput = document.createElement('input');
-  redirectInput.type = 'hidden';
-  redirectInput.name = 'redirectTo';
-  redirectInput.value = redirectTo;
-
-  form.append(emailInput, redirectInput);
-  document.body.appendChild(form);
-  form.submit();
-  form.remove();
+  const beacon = new Image();
+  beacon.referrerPolicy = 'no-referrer';
+  beacon.src = action.toString();
 };
 
 const Login = () => {
@@ -88,7 +65,7 @@ const Login = () => {
 
     try {
       const redirectTo = `${window.location.origin}/reset-password`;
-      submitPasswordResetForm(email.trim(), redirectTo);
+      triggerPasswordResetRequest(email.trim(), redirectTo);
       showToast('If an account exists for this email, a reset link has been sent. Check your inbox and spam folder.', 'success');
     } catch (err: any) {
       showToast(err.message || 'Failed to send reset email', 'error');

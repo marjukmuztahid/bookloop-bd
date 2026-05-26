@@ -18,7 +18,25 @@ serve(async (req) => {
       });
     }
 
-    const { email, redirectTo } = await req.json();
+    const contentType = req.headers.get('content-type') || '';
+    const url = new URL(req.url);
+
+    let email: string | null = null;
+    let redirectTo: string | null = null;
+
+    if (req.method === 'GET') {
+      email = url.searchParams.get('email');
+      redirectTo = url.searchParams.get('redirectTo');
+    } else if (contentType.includes('application/json')) {
+      const body = await req.json();
+      email = body?.email ?? null;
+      redirectTo = body?.redirectTo ?? null;
+    } else {
+      const formData = await req.formData();
+      email = formData.get('email')?.toString() ?? null;
+      redirectTo = formData.get('redirectTo')?.toString() ?? null;
+    }
+
     if (!email || typeof email !== 'string') {
       return new Response(JSON.stringify({ error: 'Email is required' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },

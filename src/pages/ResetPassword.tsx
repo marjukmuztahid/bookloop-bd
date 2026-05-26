@@ -25,12 +25,13 @@ const ResetPassword = () => {
   useEffect(() => {
     const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
     const queryParams = new URLSearchParams(window.location.search);
+    const recoveryType = queryParams.get('type') || hashParams.get('type');
+    const hasRecoveryIntent = recoveryType === 'recovery';
 
     const establishRecoverySession = async () => {
       const tokenHash = queryParams.get('token_hash') || hashParams.get('token_hash');
-      const type = queryParams.get('type') || hashParams.get('type');
 
-      if (type === 'recovery' && tokenHash) {
+      if (hasRecoveryIntent && tokenHash) {
         const { error } = await supabase.auth.verifyOtp({
           token_hash: tokenHash,
           type: 'recovery',
@@ -42,7 +43,7 @@ const ResetPassword = () => {
       }
 
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      if (hasRecoveryIntent && session) {
         setIsRecovery(true);
       }
 
@@ -81,6 +82,7 @@ const ResetPassword = () => {
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
+      await supabase.auth.signOut();
       showToast('Password updated successfully!', 'success');
       navigate('/login', { replace: true });
     } catch (err: any) {

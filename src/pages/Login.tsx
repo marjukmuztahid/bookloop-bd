@@ -62,7 +62,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
-  const [sessionResetLoading, setSessionResetLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,25 +130,6 @@ const Login = () => {
     }
   };
 
-  const handleResetBrowserSession = async () => {
-    setSessionResetLoading(true);
-
-    try {
-      try {
-        await supabase.auth.signOut({ scope: 'local' });
-      } catch {
-        // continue clearing local browser state even if local sign-out fails
-      }
-
-      clearStoredAuthState();
-      sessionStorage.removeItem('admin_last_activity');
-      showToast('Saved browser session cleared. Please log in again.', 'success');
-      setPassword('');
-    } finally {
-      setSessionResetLoading(false);
-    }
-  };
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <motion.div {...pageTransition} className="glass-panel w-full max-w-[440px] p-8">
@@ -158,18 +138,6 @@ const Login = () => {
         </div>
         <h1 className="mb-1 text-center text-xl font-bold text-[#1A1A1A]">Welcome back</h1>
         <p className="mb-6 text-center text-sm text-[#8A8A8A]">Log in to your Book Loop BD account</p>
-
-        <div className="mb-4 rounded-xl border border-[rgba(232,53,122,0.12)] bg-[rgba(232,53,122,0.06)] p-3 text-sm text-[#3A3A3A]">
-          <p>If login keeps failing because of saved browser session data, clear it here first.</p>
-          <button
-            type="button"
-            onClick={handleResetBrowserSession}
-            disabled={sessionResetLoading}
-            className="mt-2 font-semibold text-[#E8357A] transition-colors hover:opacity-80 disabled:opacity-50"
-          >
-            {sessionResetLoading ? 'Clearing saved session...' : 'Clear saved session data'}
-          </button>
-        </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>

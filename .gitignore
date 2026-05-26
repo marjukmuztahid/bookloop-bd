@@ -11,11 +11,6 @@ node_modules
 dist
 dist-ssr
 *.local
-.env
-.env.*
-!.env.example
-supabase/.temp/
-homepage.png
 
 # Editor directories and files
 .vscode/*
@@ -27,4 +22,3 @@ homepage.png
 *.njsproj
 *.sln
 *.sw?
-.vercel

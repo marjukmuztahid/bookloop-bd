@@ -51,13 +51,21 @@ const Login = () => {
     }
     setResetLoading(true);
     try {
-      const { error } = await supabase.functions.invoke('send-password-reset', {
-        body: {
+      const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+      const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/send-password-reset`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+        },
+        body: JSON.stringify({
           email: email.trim(),
           redirectTo: `${window.location.origin}/reset-password`,
-        },
+        }),
       });
-      if (error) throw error;
+      if (!res.ok) throw new Error('Failed to send reset email');
       showToast('If an account exists for this email, a reset link has been sent. Check your inbox and spam folder.', 'success');
     } catch (err: any) {
       showToast(err.message || 'Failed to send reset email', 'error');

@@ -51,11 +51,14 @@ const Login = () => {
     }
     setResetLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+      const { error } = await supabase.functions.invoke('send-password-reset', {
+        body: {
+          email: email.trim(),
+          redirectTo: `${window.location.origin}/reset-password`,
+        },
       });
       if (error) throw error;
-      showToast('Password reset link sent! Check your email.', 'success');
+      showToast('If an account exists for this email, a reset link has been sent. Check your inbox and spam folder.', 'success');
     } catch (err: any) {
       showToast(err.message || 'Failed to send reset email', 'error');
     } finally {

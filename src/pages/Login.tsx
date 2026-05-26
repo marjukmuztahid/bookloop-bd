@@ -37,6 +37,11 @@ const triggerPasswordResetFallback = async (email: string, redirectTo: string) =
   }
 };
 
+const isLikelyPreviewFetchFailure = (error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error ?? '');
+  return /failed to fetch|fetch failed|network request failed/i.test(message);
+};
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -87,6 +92,10 @@ const Login = () => {
         const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, { redirectTo });
         if (error) throw error;
       } catch (error) {
+        if (!isLikelyPreviewFetchFailure(error)) {
+          throw error;
+        }
+
         await triggerPasswordResetFallback(normalizedEmail, redirectTo);
       }
 
